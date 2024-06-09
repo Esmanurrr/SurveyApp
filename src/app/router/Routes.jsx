@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from '../../App.jsx'
-import Surveys from "../../components/survey/Surveys";
-import CreateSurveyModal from "../../components/survey/CreateSurveyModal.jsx";
+import Surveys from "../../components/dashboard/Surveys";
+import SurveyHeader from "../../components/survey/SurveyHeader.jsx";
 
 
 export const router = createBrowserRouter(([
@@ -10,7 +10,8 @@ export const router = createBrowserRouter(([
         element: <App/>,
         children: [
             {path: '', element: <Surveys />},
-            {path: 'createsurveymodal', element: <CreateSurveyModal />}
+            { path: 'survey', element: <SurveyHeader /> },
+
         ]
     }
 ]))

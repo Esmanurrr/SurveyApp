@@ -1,0 +1,12 @@
+{
+  "surveys": [
+    {
+      "id": "68f6",
+      "title": "My first survey",
+      "description": "First description"
+    },
+    {
+      "id": "dc12"
+    }
+  ]
+}

@@ -45,6 +45,10 @@ export const Input = styled.input`
   border-radius: 1rem;
   border: 1px solid #d2d2d2;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+  &:focus {
+    border-color: red;
+  }
   &::placeholder {
     font-size: 1rem;
   }
@@ -56,6 +60,10 @@ export const Textarea = styled.textarea`
   border-radius: 1rem;
   border: 1px solid #d2d2d2;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+  &:focus {
+    border-color: red;
+  }
   &::placeholder {
     font-size: 1rem;
   }
