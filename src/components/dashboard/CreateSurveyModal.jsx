@@ -8,6 +8,7 @@ import {
   Textarea,
 } from "../../style";
 import { useState } from "react";
+import Requests from "../../../Requests";
 
 function CreateSurveyModal({ closePortal }) {
   const [title, setTitle] = useState("");
@@ -17,9 +18,10 @@ function CreateSurveyModal({ closePortal }) {
   const getTitle = (e) => setTitle(e.target.value);
   const getDescription = (e) => setDescription(e.target.value);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate(`/survey`, {
+  const handleSave = async () => {
+    const id = crypto.randomUUID();
+    await Requests.post("http://localhost:4000/surveys", { id, title: title, description: description});
+    navigate((`/survey/` + id), {
       state: { title: title, description: description },
     });
     closePortal();
@@ -39,7 +41,7 @@ function CreateSurveyModal({ closePortal }) {
               cols={20}
               rows={5}
             ></Textarea>
-            <Button onClick={(e) => handleSubmit(e)}>Create Survey</Button>
+            <Button onClick={() => handleSave()}>Create Survey</Button>
             <Link onClick={closePortal}>Back to Surveys</Link>
           </ModalContent>
         </SurveyModal>

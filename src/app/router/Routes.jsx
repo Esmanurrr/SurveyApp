@@ -10,7 +10,7 @@ export const router = createBrowserRouter(([
         element: <App/>,
         children: [
             {path: '', element: <Surveys />},
-            { path: 'survey', element: <SurveyHeader /> },
+            { path: 'survey/:id', element: <SurveyHeader /> },
 
         ]
     }

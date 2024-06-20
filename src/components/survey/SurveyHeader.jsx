@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Container } from "../../style";
 
 const SurveyHeader = () => {
@@ -8,9 +8,13 @@ const SurveyHeader = () => {
     description: "",
   };
 
+  const {id} = useParams();
+  console.log(id);
+
   return (
     <>
       <Container>
+        <span>Status</span>
         <h2>{title}</h2>
         <p>{description}</p>
       </Container>
