@@ -70,12 +70,12 @@ export const Textarea = styled.textarea`
 `;
 
 export const Button = styled.button`
-    background-color: #fff;
+    background-color: #1964ff;
     border: 1px solid #1964ff;
     padding: 1rem 2rem;
     border-radius: 1rem;
     font-size: 1rem;
-    color: #1964ff;
+    color: #fff;
     cursor: pointer;
     transition: 0.3s ease-in-out;
     &:hover{
@@ -85,4 +85,20 @@ export const Button = styled.button`
 `
 export const RelativeDiv = styled.div`
     position: relative;
+`
+
+export const Header = styled.div`
+  border-bottom: 1px solid #eee;
+  box-shadow: 2px 0px 10px 4px #ddd;
+`
+
+export const Span = styled.span`
+  color: #686D76;
+`
+export const TextCenter = styled.div`
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 50px 0;
 `

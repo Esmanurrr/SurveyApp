@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from '../../App.jsx'
 import Surveys from "../../components/dashboard/Surveys";
 import SurveyHeader from "../../components/survey/SurveyHeader.jsx";
+import Survey from "../../components/survey/Survey.jsx";
 
 
 export const router = createBrowserRouter(([
@@ -10,7 +11,7 @@ export const router = createBrowserRouter(([
         element: <App/>,
         children: [
             {path: '', element: <Surveys />},
-            { path: 'survey/:id', element: <SurveyHeader /> },
+            { path: 'survey/:id', element: <Survey /> },
 
         ]
     }

@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "react-router-dom";
-import { Container } from "../../style";
+import { Container, Header } from "../../style";
 
 const SurveyHeader = () => {
   const location = useLocation();
@@ -13,11 +13,13 @@ const SurveyHeader = () => {
 
   return (
     <>
+    <Header>
       <Container>
         <span>Status</span>
         <h2>{title}</h2>
         <p>{description}</p>
       </Container>
+    </Header>
     </>
   );
 };
