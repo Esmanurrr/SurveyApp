@@ -1,4 +1,4 @@
-import { Container, TextCenter } from "../../style"
+import { Container } from "../../style"
 import AddQuestionButton from "./AddQuestionButton"
 
 function QuestionList({question}) {

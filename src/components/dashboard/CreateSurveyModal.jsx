@@ -8,7 +8,7 @@ import {
   Textarea,
 } from "../../style";
 import { useState } from "react";
-import Requests from "../../../Requests";
+import axios from "axios";
 
 function CreateSurveyModal({ closePortal }) {
   const [title, setTitle] = useState("");
@@ -20,7 +20,7 @@ function CreateSurveyModal({ closePortal }) {
 
   const handleSave = async () => {
     const id = crypto.randomUUID();
-    await Requests.post("http://localhost:4000/surveys", { id, title: title, description: description});
+    await axios.post("http://localhost:4000/surveys", { id, title: title, description: description});
     navigate((`/survey/` + id), {
       state: { title: title, description: description },
     });

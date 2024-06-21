@@ -47,7 +47,7 @@ export const Input = styled.input`
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
   &:focus {
-    border-color: red;
+    border-color: #1964ff;
   }
   &::placeholder {
     font-size: 1rem;
@@ -62,7 +62,7 @@ export const Textarea = styled.textarea`
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
   &:focus {
-    border-color: red;
+    border-color: #1964ff;
   }
   &::placeholder {
     font-size: 1rem;
@@ -102,3 +102,14 @@ export const TextCenter = styled.div`
   gap: 15px;
   margin: 50px 0;
 `
+
+export const Card = styled.div`
+  border: 1px solid #ddd;
+  padding: .5rem 1rem;
+  margin: 1rem;
+  border-radius: 1.5rem;
+`
+export const FlexContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
