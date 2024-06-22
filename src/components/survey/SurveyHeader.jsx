@@ -1,15 +1,8 @@
 import { useLocation, useParams } from "react-router-dom";
 import { Container, Header } from "../../style";
 
-const SurveyHeader = () => {
-  const location = useLocation();
-  const { title, description } = location.state || {
-    title: "",
-    description: "",
-  };
+const SurveyHeader = ({title, description, id}) => {
 
-  const {id} = useParams();
-  console.log(id);
 
   return (
     <>

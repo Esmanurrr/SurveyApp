@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from '../../App.jsx'
 import Surveys from "../../components/dashboard/Surveys";
-import SurveyHeader from "../../components/survey/SurveyHeader.jsx";
 import Survey from "../../components/survey/Survey.jsx";
 
 
