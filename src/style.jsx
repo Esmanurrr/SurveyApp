@@ -113,3 +113,10 @@ export const FlexContainer = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
+export const CardContainer = styled.dìv`
+  width: 50%;
+  height: 500px;
+  background-color: red;
+
+`
