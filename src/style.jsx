@@ -40,12 +40,13 @@ export const ModalContent = styled.div`
 `;
 
 export const Input = styled.input`
-  line-height: 1rem;
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: .5rem;
+  border-radius: .5rem;
   border: 1px solid #d2d2d2;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
+  width: 100%;
+  font-size: 1rem;
   &:focus {
     border-color: #1964ff;
   }
@@ -55,7 +56,6 @@ export const Input = styled.input`
 `;
 
 export const Textarea = styled.textarea`
-  line-height: 1rem;
   padding: 1rem;
   border-radius: 1rem;
   border: 1px solid #d2d2d2;
@@ -112,11 +112,48 @@ export const Card = styled.div`
 export const FlexContainer = styled.div`
   display: flex;
   justify-content: space-between;
-`;
+`
 
-export const CardContainer = styled.dìv`
-  width: 50%;
+export const CardContainer = styled.div`
+  max-width: 1000px;
   height: 500px;
-  background-color: red;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  padding: 2rem;
+`
 
+export const LabelDiv = styled.div`
+  display: block;
+  margin-bottom: .5rem;
+  color: #686D76;
+`
+
+export const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+`
+
+export const DropdownWrapper = styled.div`
+  width: 50%;
+  margin: 1.5rem 0;
+`
+
+export const Dropdown = styled.select`
+  padding: .5rem;
+  border-radius: .5rem;
+  border: 1px solid #d2d2d2;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+  width: 100%;
+  font-size: 1rem;
+  &:focus {
+    border-color: #1964ff;
+  }
+  &::placeholder {
+    font-size: 1rem;
+  }
 `
