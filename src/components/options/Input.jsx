@@ -1,8 +1,9 @@
+import { InputRes } from "../../style"
 
 function Input({type, placeholder}) {
   return (
     <>
-    <Input type={type} placeholder={placeholder}/>
+    <InputRes type={type} placeholder={placeholder}/>
     </>
   )
 }

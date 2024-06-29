@@ -39,7 +39,7 @@ export const ModalContent = styled.div`
   margin-top: 1rem;
 `;
 
-export const Input = styled.input`
+export const InputRes = styled.input`
   padding: .5rem;
   border-radius: .5rem;
   border: 1px solid #d2d2d2;
@@ -116,7 +116,7 @@ export const FlexContainer = styled.div`
 
 export const CardContainer = styled.div`
   max-width: 1000px;
-  height: 500px;
+  min-height: 500px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 1rem;
@@ -156,4 +156,13 @@ export const Dropdown = styled.select`
   &::placeholder {
     font-size: 1rem;
   }
+`
+
+export const AddOptionsButton = styled.button`
+  padding: .5rem;
+  color: white;
+  background-color: #1964ff;
+  border: 1px solid #1964ff;
+  border-radius: .5rem; 
+  cursor: pointer;
 `

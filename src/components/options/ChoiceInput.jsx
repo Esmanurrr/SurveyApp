@@ -1,12 +1,12 @@
-import { Flex, Input } from '../../style'
+import { Flex, InputRes } from '../../style'
 import DeleteInput from './DeleteInput'
 
-function ChoiceInput({onDelete, index}) {
+function ChoiceInput({onDelete, placeholder}) {
 
   return (
     <Flex style={{marginBottom: "1rem"}}>
-        <Input type='text' placeholder={`Option ${index + 1}`} />
-        <DeleteInput onClick={() => onDelete(index)} />
+        <InputRes type='text' placeholder={placeholder} />
+        <DeleteInput onClick={onDelete} />
     </Flex>
   )
 }

@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dropdown } from '../../style'
 
-function InputType({email, text}) {
+function InputType({setInputType}) {
+
+  const handleInputType = (e) => {
+    setInputType(e.target.value);
+  }
+
   return (
     <>
-    <Dropdown>
-        <option value={email}>Email</option>
-        <option value={text}>Text</option>
+    <Dropdown onChange={handleInputType} style={{width:"30%"}}>
+        <option value="Email">Email</option>
+        <option value="Text">Text</option>
     </Dropdown>
     </>
   )

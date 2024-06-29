@@ -1,12 +1,38 @@
-import { useState } from "react";
-import { CardContainer, Container, Dropdown, DropdownWrapper, Flex, Input, LabelDiv } from "../../style";
-import ChoiceInput from "../options/ChoiceInput";
+import { useEffect, useState } from "react";
+import { CardContainer, Container, Dropdown, DropdownWrapper, Flex, InputRes, LabelDiv } from "../../style";
 import Choices from "../options/Choices";
-import DeleteInput from "../options/DeleteInput";
-import Options from "../options/Options";
+import InputResponse from "../options/InputResponse";
 
 function AddQuestion() {
-  const [questionType, setQuestionType] = useState("")
+  const [questionType, setQuestionType] = useState("");
+  // const [showInput, setShowInput] = useState(false);
+
+  // useEffect(() => {
+  //   if(questionType === "Single Choice" || questionType === "Multiple Choice"){
+  //     setShowInput(true);
+  //   }else{
+  //     setShowInput(false);
+  //   }
+  // }, [questionType])
+
+  const renderQuestionInput = () => {
+    switch(questionType) {
+      case "Single Choice":
+      case "Multiple Choice":
+        return (
+          <>
+            <LabelDiv>Options</LabelDiv>
+            <Choices />
+          </>
+        );
+      case "Text Response":
+        return (<><InputResponse /> {console.log("input çalıştı")}</>);
+      case "Long Text Response":
+        return <InputRes type="text" placeholder="Enter your response" />;
+      default:
+        return null;
+    }
+  };
 
   const handleQuestionType = (e) => {
     setQuestionType(e.target.value);
@@ -18,7 +44,7 @@ function AddQuestion() {
         <form>
           <div>
             <LabelDiv>Question</LabelDiv>
-            <Input type="text" />
+            <InputRes type="text" />
           </div>
           <Flex>
             <DropdownWrapper onChange={handleQuestionType}>
@@ -39,14 +65,7 @@ function AddQuestion() {
               </Dropdown>
             </DropdownWrapper>
           </Flex>
-          {
-            (questionType === "Single Choice" || questionType === "Multiple Choice") && (
-              <>
-                <LabelDiv>Options</LabelDiv>
-                <Choices/>
-              </>
-            )
-          }
+          {renderQuestionInput()}
         </form>
       </CardContainer>
     </Container>

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   BlackSection,
   Button,
-  Input,
+  InputRes,
   ModalContent,
   SurveyModal,
   Textarea,
@@ -33,7 +33,7 @@ function CreateSurveyModal({ closePortal }) {
         <SurveyModal>
           <h2>Create a new survey</h2>
           <ModalContent>
-            <Input placeholder="Survey name" value={title} onChange={getTitle}/>
+            <InputRes placeholder="Survey name" value={title} onChange={getTitle}/>
             <Textarea
               placeholder="Survey description"
               value={description}
