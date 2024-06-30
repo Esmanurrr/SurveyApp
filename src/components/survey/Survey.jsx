@@ -12,7 +12,6 @@ const Survey = () => {
     <div>
         <SurveyHeader title={title} description={description} id={id}/>
         <QuestionList/>
-        <AddQuestion/>
     </div>
   )
 }
