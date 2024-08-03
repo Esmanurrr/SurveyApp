@@ -119,7 +119,7 @@ export const CardContainer = styled.div`
   min-height: 500px;
   background-color: white;
   border: 1px solid #ddd;
-  border-radius: 1rem;
+  border-radius: .5rem;
   padding: 2rem;
 `
 
@@ -164,5 +164,25 @@ export const AddOptionsButton = styled.button`
   background-color: #1964ff;
   border: 1px solid #1964ff;
   border-radius: .5rem; 
+  cursor: pointer;
+`
+
+export const DeleteButton = styled.button`
+  padding: 1rem;
+  background-color: #FDF2F2;
+  border: 1px solid #F1D4D4;
+  color: #ff313e;
+  border-radius: 9px;
+  box-shadow: 0px 7px 12px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+`
+
+export const EditButton = styled.button`
+  padding: 1rem;
+  border: 1px solid #ECECF4;
+  border-radius: 9px;
+  background-color: #fff;
+  box-shadow: 0px 7px 12px rgba(0, 0, 0, 0.03);
+  margin-right: 1rem;
   cursor: pointer;
 `

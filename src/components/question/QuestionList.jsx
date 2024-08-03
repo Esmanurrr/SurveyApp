@@ -1,12 +1,24 @@
-import { Container } from "../../style"
+import { Container, Span } from "../../style"
 import AddQuestionButton from "./AddQuestionButton"
+import QuestionCard from "./QuestionCard"
 
-function QuestionList({question}) {
+function QuestionList({questions}) {
   return (
     <Container>
         {
-            !question && <AddQuestionButton/>
+            !questions && 
+            <div>
+              <h2>Lets add some questions to your survey</h2>
+              <Span>Click the button below to get your survey up and running</Span>
+              <AddQuestionButton/>
+            </div>
         }
+        {
+          questions.length > 0 && questions.map((question,index) => (
+            <QuestionCard key={index} question={question} />
+          ))
+        }
+        <AddQuestionButton />
     </Container>
   )
 }

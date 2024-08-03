@@ -20,7 +20,7 @@ function CreateSurveyModal({ closePortal }) {
 
   const handleSave = async () => {
     const id = crypto.randomUUID();
-    await axios.post("http://localhost:4000/surveys", { id, title: title, description: description});
+    await axios.post("http://localhost:4000/surveys", { id, title: title, description: description, questions: []});
     navigate((`/survey/` + id), {
       state: { title: title, description: description },
     });

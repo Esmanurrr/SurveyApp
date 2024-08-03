@@ -96,76 +96,69 @@
           "type": "Long Text Response",
           "options": [],
           "responseType": ""
+        },
+        {
+          "id": "19942f58-a5af-4ffa-9f47-67a9c3db3d6b",
+          "name": "deneme",
+          "type": "Single Choice",
+          "options": [
+            "ilk option",
+            "ikinci option"
+          ],
+          "responseType": ""
         }
       ]
     },
     {
-      "id": "dc12"
+      "id": "620f5572-e344-4202-9e74-375f6055822c",
+      "title": "sorular eklenecek mi ",
+      "description": "",
+      "questions": [
+        {
+          "id": "85e8ccf2-f3fa-4754-a6a5-e223e4522d55",
+          "name": "fdsfsdfsf",
+          "type": "Single Choice",
+          "options": [
+            "dsf",
+            "dfsf"
+          ],
+          "responseType": ""
+        },
+        {
+          "id": "934e0e68-4528-4806-9959-f40447368bd8",
+          "name": "2. deneme",
+          "type": "Multiple Choice",
+          "options": [
+            "fsdfds",
+            "fdfsd"
+          ],
+          "responseType": ""
+        },
+        {
+          "id": "094e16e4-d07e-49b7-b5bc-d9f2025f8e4c",
+          "name": "3. deneme",
+          "type": "Text Response",
+          "options": [],
+          "responseType": "Email"
+        }
+      ]
     },
     {
-      "id": "232725e6-8b72-45e1-a0d2-502c8011ef60",
-      "title": "denem",
-      "description": "denem1342"
-    },
-    {
-      "id": "f1f63399-080d-40b8-927b-21b5132a4772",
-      "title": "deneme",
-      "description": "deneme234243"
-    },
-    {
-      "id": "1ff5014f-c026-4358-9bc1-f3b6aacef3c7",
-      "title": "deneme",
-      "description": "defsfsdg"
-    },
-    {
-      "id": "d20b33da-ca33-4dba-b8a6-98fac455ae6c",
-      "title": "denem",
-      "description": "denemerwrwfs"
-    },
-    {
-      "id": "04c8b1b5-7e9b-4f3e-a832-edc427254cbb",
-      "title": "deneme ",
-      "description": "lsdfksdlkfs"
-    },
-    {
-      "id": "d970bf53-82ff-412d-939d-bc65ca749bfc",
-      "title": "deneme",
-      "description": "deneme423423"
-    },
-    {
-      "id": "0456a289-8475-44c4-be2d-cdade9b0ef64",
-      "title": "deneme",
-      "description": "dslşkfşlsdkfşlsf"
-    },
-    {
-      "id": "d737ca72-7405-43b4-8f97-250e890c459b",
-      "title": "fdsfds",
-      "description": "fdsfs"
-    },
-    {
-      "id": "0bad0937-9b4d-4812-8db1-bb0e90a0d765",
-      "title": "deneme1",
-      "description": "klkşlkşldfs"
-    },
-    {
-      "id": "ec0e7457-e356-4cc1-a740-9ea2187e4994",
-      "title": "deneme",
-      "description": "denemeeee"
-    },
-    {
-      "id": "6b5e07ce-68fc-4f1e-98cc-f05475406c2d",
-      "title": "123453453",
-      "description": "fsdfsdfsdf "
-    },
-    {
-      "id": "313eb407-2890-4f05-a2c2-15d4de2915d6",
-      "title": "fdsfds",
-      "description": "fdfsf"
-    },
-    {
-      "id": "96bb300e-74ff-4d91-b702-484bf113c764",
-      "title": "deneme123",
-      "description": "açıklamaa"
+      "id": "171f47f6-0de2-4939-8b4a-9b61964ae219",
+      "title": "sorular gelecek mi deneme123",
+      "description": "",
+      "questions": [
+        {
+          "id": "b384f586-26b5-4f86-a8ba-7af17dcc4cb1",
+          "name": "ilk soru 123243",
+          "type": "Single Choice",
+          "options": [
+            "fdfsf",
+            "dsfsdf"
+          ],
+          "responseType": ""
+        }
+      ]
     }
   ]
 }

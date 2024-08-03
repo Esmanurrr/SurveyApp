@@ -1,9 +1,9 @@
 import { Link, useParams } from "react-router-dom";
-import { Card, DeleteButton, EditButton, Flex } from "../../style";
+import { Card, DeleteButton, EditButton } from "../../style";
 import axios from "axios";
 
 
-function QuestionCard({question, surveyId, onDelete}) {
+function QuestionCard({question }) {
 
     const id = question.id;
     console.log(id);
@@ -20,7 +20,7 @@ function QuestionCard({question, surveyId, onDelete}) {
           </div>
           <div>
             <EditButton>Edit</EditButton>
-            <DeleteButton onClick={onDelete}><i className="fi fi-rs-trash"></i></DeleteButton>
+            <DeleteButton><i className="fa-solid fa-trash"></i></DeleteButton>
           </div>
     </Card>
   )
