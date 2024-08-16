@@ -2,7 +2,7 @@ import { Container, Span } from "../../style"
 import AddQuestionButton from "./AddQuestionButton"
 import QuestionCard from "./QuestionCard"
 
-function QuestionList({questions}) {
+function QuestionList({questions, surveyId}) {
   return (
     <Container>
         {
@@ -15,7 +15,7 @@ function QuestionList({questions}) {
         }
         {
           questions.length > 0 && questions.map((question,index) => (
-            <QuestionCard key={index} question={question} />
+            <QuestionCard surveyId={surveyId} key={index} question={question} />
           ))
         }
         <AddQuestionButton />

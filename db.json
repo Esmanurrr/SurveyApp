@@ -106,6 +106,26 @@
             "ikinci option"
           ],
           "responseType": ""
+        },
+        {
+          "id": "0f7c943b-3fbd-4481-8a97-e9bd8a39534e",
+          "name": "deneme4234234",
+          "type": "Single Choice",
+          "options": [
+            "errwr",
+            "werwer"
+          ],
+          "responseType": ""
+        },
+        {
+          "id": "002d2533-d967-4e78-b11e-ce5102154ff2",
+          "name": "tek seçimli seçenek",
+          "type": "Single Choice",
+          "options": [
+            "tek seçiim 1",
+            "tek seçim 2"
+          ],
+          "responseType": ""
         }
       ]
     },

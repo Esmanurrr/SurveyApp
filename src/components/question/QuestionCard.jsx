@@ -1,16 +1,26 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, DeleteButton, EditButton } from "../../style";
 import axios from "axios";
 
 
-function QuestionCard({question }) {
+function QuestionCard({question , surveyId}) {
+    const navigate = useNavigate();
 
-    const id = question.id;
-    console.log(id);
+    const handleEdit = () => {
+      navigate(`/survey/edit-question/${question.id}`, {
+        state: {surveyId}
+      });
+    };
 
-    // const handleDeleteQuestion = async (surveyId, id) => {
-    //     await axios.delete(`http://localhost:4000/surveys/${surveyId}/questions/${id}`);
-    // }
+    const handleDelete = async () => {
+      try {
+        const surveys = await axios.get(`http://localhost:4000/surveys/${surveyId}`);
+        const question = surveys.data.questions.filter(q => q.id === question.id);
+        console.log("Soru başarıyla silindi");
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
   return (
     <Card style={{width: "60%", padding: "1rem", display: "flex", justifyContent:"space-between", alignItems: "center"}}>
@@ -19,8 +29,8 @@ function QuestionCard({question }) {
             <span>{question.type}</span>
           </div>
           <div>
-            <EditButton>Edit</EditButton>
-            <DeleteButton><i className="fa-solid fa-trash"></i></DeleteButton>
+            <EditButton onClick={handleEdit}>Edit</EditButton>
+            <DeleteButton onClick={handleDelete}><i className="fa-solid fa-trash"></i></DeleteButton>
           </div>
     </Card>
   )

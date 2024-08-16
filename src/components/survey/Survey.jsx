@@ -34,7 +34,7 @@ const Survey = () => {
   return (
     <div>
         <SurveyHeader title={title} description={description} id={id}/>
-        <QuestionList questions={questions}/>
+        <QuestionList questions={questions} surveyId={id}/>
     </div>
   )
 }
