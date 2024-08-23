@@ -14,9 +14,6 @@ function EditQuestion() {
   const location = useLocation();
   const {surveyId} = location.state || {}; 
 
-  console.log(surveyId);
-  console.log(questionId);
-
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
@@ -66,19 +63,26 @@ function EditQuestion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedQuestion = {
-      ...questionData
-    };
-
+  
     try {
-      await axios.put(`http://localhost:4000/questions/${questionId}`, updatedQuestion);
+      const surveyResponse = await axios.get(`http://localhost:4000/surveys/${surveyId}`);
+      const survey = surveyResponse.data;
+  
+      const updatedQuestions = survey.questions.map((question) =>
+        question.id === questionId ? { ...question, ...questionData } : question
+      );
+  
+      const updatedSurvey = { ...survey, questions: updatedQuestions };
+  
+      await axios.put(`http://localhost:4000/surveys/${surveyId}`, updatedSurvey);
+  
       console.log("Soru başarıyla güncellendi");
-      navigate(-1); // önceki sayfaya yönlendirme
+      navigate(-1);
     } catch (err) {
       console.log(err);
     }
   };
+  
 
   const renderQuestionInput = () => {
     switch (questionData.type) {

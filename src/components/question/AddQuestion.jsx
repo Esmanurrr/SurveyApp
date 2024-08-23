@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Button, CardContainer, Container, Dropdown, DropdownWrapper, Flex, InputRes, LabelDiv } from "../../style";
 import Choices from "../options/Choices";
 import InputResponse from "../options/InputResponse";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 function AddQuestion() {
+  const navigate = useNavigate();
   const { surveyId } = useParams();
   const [survey, setSurvey] = useState(null);
   const [questionData, setQuestionData] = useState({
@@ -66,6 +67,7 @@ function AddQuestion() {
     try {
       const response = await axios.put(`http://localhost:4000/surveys/${surveyId}`, updatedSurvey);
       console.log("soru başarıyla eklendi", response.data);
+      navigate(-1);
     }catch(err) {
       console.log(err);
     }

@@ -1,12 +1,10 @@
-import { useNavigate } from "react-router-dom"; // useNavigate hook'unu import et
+import { useNavigate } from "react-router-dom"; 
 import { Container, Header } from "../../style";
 
 const SurveyHeader = ({ title, description, id }) => {
-  const navigate = useNavigate(); // useNavigate hook'u ile yönlendirme yapacağız
-
-  // Butona tıklandığında fill-survey sayfasına yönlendirme yap
+  const navigate = useNavigate(); 
   const handleFillSurvey = () => {
-    navigate(`/survey/fill-survey/${id}`); // Survey ID'yi path'te kullan
+    navigate(`/survey/fill-survey/${id}`); 
   };
 
   return (
@@ -16,7 +14,6 @@ const SurveyHeader = ({ title, description, id }) => {
           <span>Status</span>
           <h2>{title}</h2>
           <p>{description}</p>
-          {/* "Fill the Survey" butonu */}
           <button 
             onClick={handleFillSurvey} 
             style={{
