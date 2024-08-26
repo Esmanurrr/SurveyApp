@@ -186,3 +186,30 @@ export const EditButton = styled.button`
   margin-right: 1rem;
   cursor: pointer;
 `
+
+export const SurveyWrapper = styled.div`
+  display: flex;
+  align-items:center;
+
+`
+
+export const SurveyDef = styled.div`
+  width: 40%;
+  float: left;
+  height: 100%;
+  background-color: red;
+  padding-inline: 3rem;
+`
+
+export const Question = styled.div`
+  float: left;
+  width: 100%;
+  font-weight: 500;
+  font-size: 17px;
+  color: #0A213E;
+  margin-block: .5rem;
+`
+
+export const Checkbox = styled.input`
+  padding-left: 1rem;
+`
