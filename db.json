@@ -199,6 +199,13 @@
             "dsfsdf"
           ],
           "responseType": ""
+        },
+        {
+          "id": "6aae0859-2dc1-41e5-9c60-e0c121f35e7d",
+          "name": "textarea denemesi",
+          "type": "Long Text Response",
+          "options": [],
+          "responseType": ""
         }
       ]
     }

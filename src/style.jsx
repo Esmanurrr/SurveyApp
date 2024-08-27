@@ -194,11 +194,20 @@ export const SurveyWrapper = styled.div`
 `
 
 export const SurveyDef = styled.div`
-  width: 40%;
+  width: 30%;
   float: left;
-  height: 100%;
-  background-color: red;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  display:flex;
+  align-items: center;
+  background-color: white;
+  border-right: 1px solid #ececf4;
+  box-shadow: 0px 7px 12px rgb(0 0 0 / 3%);
   padding-inline: 3rem;
+  flex-direction: column; /* İçeriklerin dikey hizalanması için */
+  justify-content: center; /* İçeriği ortalamak için */
 `
 
 export const Question = styled.div`
@@ -210,6 +219,26 @@ export const Question = styled.div`
   margin-block: .5rem;
 `
 
-export const Checkbox = styled.input`
-  padding-left: 1rem;
+export const BaseWrapper = styled.div`
+  background-color: #F6F5F5;
+  width: 100%;
+  min-height: 100vh;
+  height: cover;
+  display: flex;
+  align-items:center;
+  margin-left: 30%;
+  padding-left: 2rem;
+`
+export const SubmitButton = styled(Button)`
+  padding: .5rem 1rem;
+  margin-top: 2rem;
+`
+export const ShortInput = styled(InputRes)`
+  width: 70%;
+`
+export const ShortTextarea = styled(Textarea)`
+  width: 70%;
+`
+export const ShortDropdown = styled(Dropdown)`
+  width: 70%;
 `

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Checkbox, Container, Dropdown, Flex, InputRes, Question, SurveyDef, SurveyWrapper, Textarea } from "../../style";
+import { BaseWrapper, Container, Question, ShortDropdown, ShortInput, ShortTextarea, SubmitButton, SurveyDef, SurveyWrapper, Textarea } from "../../style";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
@@ -48,7 +48,7 @@ const FillSurvey = () => {
         <h1>{survey.title}</h1>
         <p>{survey.description}</p>
       </SurveyDef>
-      <div>
+      <BaseWrapper>
         <Container>
           <form onSubmit={handleSubmit}>
             {survey.questions.map((question, index) => (
@@ -57,7 +57,7 @@ const FillSurvey = () => {
                   {index+1}. {question.name}
                 </Question>
                 {question.type === "Single Choice" && (
-                  <Dropdown
+                  <ShortDropdown
                     value={responses[question.id] || ""}
                     onChange={(e) =>
                       handleResponseChange(question.id, e.target.value)
@@ -71,7 +71,7 @@ const FillSurvey = () => {
                           {option}
                         </option>
                       ))}
-                  </Dropdown>
+                  </ShortDropdown>
                 )}
 
                 {question.type === "Multiple Choice" && (
@@ -79,7 +79,7 @@ const FillSurvey = () => {
                     {question.options
                       .filter((option) => option !== "")
                       .map((option) => (
-                        <label key={option} className="mb-1">
+                        <label key={option}>
                           <input
                             type="checkbox"
                             value={option}
@@ -102,14 +102,14 @@ const FillSurvey = () => {
                               }
                             }}
                           />
-                          {option}
+                          <span>{option}</span>
                         </label>
                       ))}
                   </div>
                 )}
 
                 {question.type === "Text Response" && (
-                  <InputRes
+                  <ShortInput
                     type="text"
                     placeholder="Cevabınızı girin"
                     value={responses[question.id] || ""}
@@ -120,7 +120,7 @@ const FillSurvey = () => {
                 )}
 
                 {question.type === "Long Text Response" && (
-                  <Textarea
+                  <ShortTextarea
                     rows={4}
                     placeholder="Cevabınızı yazın"
                     value={responses[question.id] || ""}
@@ -132,14 +132,14 @@ const FillSurvey = () => {
               </div>
             ))}
 
-            <button
+            <SubmitButton
               type="submit"
             >
               Submit
-            </button>
+            </SubmitButton>
           </form>
         </Container>
-      </div>
+      </BaseWrapper>
     </SurveyWrapper>
   );
 };
