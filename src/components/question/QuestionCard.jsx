@@ -3,7 +3,7 @@ import { Card, DeleteButton, EditButton } from "../../style";
 import axios from "axios";
 
 
-function QuestionCard({question , surveyId}) {
+function QuestionCard({question , surveyId, onQuestionDelete}) {
     const navigate = useNavigate();
 
     const handleEdit = () => {
@@ -12,10 +12,19 @@ function QuestionCard({question , surveyId}) {
       });
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (questionId) => {
       try {
-        const surveys = await axios.get(`http://localhost:4000/surveys/${surveyId}`);
-        const question = surveys.data.questions.filter(q => q.id === question.id);
+        const survey = await axios.get(`http://localhost:4000/surveys/${surveyId}`);
+
+        const updatedQuestions = survey.data.questions.filter((q) => q.id !== questionId);
+        const updatedSurvey = { ...survey.data, questions: updatedQuestions };
+
+        await axios.put(`http://localhost:4000/surveys/${surveyId}`, updatedSurvey);
+
+        if (onQuestionDelete) {
+          onQuestionDelete(questionId);
+        }
+
         console.log("Soru başarıyla silindi");
       } catch (err) {
         console.log(err);
@@ -30,7 +39,7 @@ function QuestionCard({question , surveyId}) {
           </div>
           <div>
             <EditButton onClick={handleEdit}>Edit</EditButton>
-            <DeleteButton onClick={handleDelete}><i className="fa-solid fa-trash"></i></DeleteButton>
+            <DeleteButton onClick={()=> handleDelete(question.id)}><i className="fa-solid fa-trash"></i></DeleteButton>
           </div>
     </Card>
   )
