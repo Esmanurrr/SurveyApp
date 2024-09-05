@@ -242,3 +242,10 @@ export const ShortTextarea = styled(Textarea)`
 export const ShortDropdown = styled(Dropdown)`
   width: 70%;
 `
+
+export const NavbarWrapper = styled.div`
+  padding-block: 5rem;
+  padding-inline: 1rem;
+  
+
+`
