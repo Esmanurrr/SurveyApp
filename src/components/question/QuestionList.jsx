@@ -39,12 +39,14 @@ function QuestionList({ surveyId }) {
       )}
       {questions.length > 0 &&
         questions.map((question, index) => (
-          <QuestionCard
+          <div key={index}>
+            <h3>{index + 1}.</h3>
+            <QuestionCard
             surveyId={surveyId}
-            key={index}
             question={question}
             onQuestionDelete={handleQuestionDelete}
           />
+          </div>
         ))}
       <AddQuestionButton />
     </Container>

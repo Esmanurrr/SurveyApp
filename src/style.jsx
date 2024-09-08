@@ -7,14 +7,14 @@ export const Container = styled.div`
 `;
 
 export const BlackSection = styled.div`
-    position: absolute;
-    top:0;
-    letf:0;
-    background-color: #B4B4B8;
-    opacity: 75%;
-    width: 100%;
-    height: 100vh;
-`
+  position: absolute;
+  top: 0;
+  letf: 0;
+  background-color: #b4b4b8;
+  opacity: 75%;
+  width: 100%;
+  height: 100vh;
+`;
 
 export const SurveyModal = styled.div`
   position: absolute;
@@ -28,7 +28,7 @@ export const SurveyModal = styled.div`
   border-radius: 1rem;
   height: 400px;
   padding: 2rem 2rem;
-  text-align: center; 
+  text-align: center;
 `;
 
 export const ModalContent = styled.div`
@@ -40,8 +40,8 @@ export const ModalContent = styled.div`
 `;
 
 export const InputRes = styled.input`
-  padding: .5rem;
-  border-radius: .5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   border: 1px solid #d2d2d2;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
@@ -70,64 +70,86 @@ export const Textarea = styled.textarea`
 `;
 
 export const Button = styled.button`
+  background-color: #1964ff;
+  border: 1px solid #1964ff;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  &:hover {
     background-color: #1964ff;
-    border: 1px solid #1964ff;
-    padding: 1rem 2rem;
-    border-radius: 1rem;
-    font-size: 1rem;
     color: #fff;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    &:hover{
-        background-color: #1964ff;
-        color: #fff;
-    }
-`
+  }
+`;
 export const RelativeDiv = styled.div`
-    position: relative;
-`
+  position: relative;
+`;
 
 export const Header = styled.div`
   border-bottom: 1px solid #eee;
-  box-shadow: 2px 0px 10px 4px #ddd;
-`
+  box-shadow: 0px 5px 10px -5px #d2d2d2;
+`;
 
 export const Span = styled.span`
-  color: #686D76;
-`
+  color: #686d76;
+`;
 export const TextCenter = styled.div`
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin: 50px 0;
-`
+`;
 
 export const Card = styled.div`
+  display: flex;
+  justify-content:space-between;
   border: 1px solid #ddd;
-  padding: .5rem 1rem;
+  padding: 1rem 2rem;
   margin: 1rem;
-  border-radius: 1.5rem;
-`
+  border-radius: .5rem;
+  a{
+    text-decoration: none;
+  }
+  h2{
+    color: #18395d;
+  }
+  span{
+    color: #8d9cad;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  @media (max-width: 900px){
+    width: 100%;
+  }
+`;
+
+
 export const FlexContainer = styled.div`
   display: flex;
   justify-content: space-between;
-`
+  flex-direction: row;
+  @media(max-width: 900px){
+    flex-direction: column;
+  }
+`;
 
 export const CardContainer = styled.div`
   max-width: 1000px;
   min-height: 500px;
   background-color: white;
   border: 1px solid #ddd;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   padding: 2rem;
-`
+`;
 
 export const LabelDiv = styled.div`
   display: block;
-  margin-bottom: .5rem;
-  color: #686D76;
-`
+  margin-bottom: 0.5rem;
+  color: #686d76;
+`;
 
 export const Flex = styled.div`
   display: flex;
@@ -135,16 +157,16 @@ export const Flex = styled.div`
   gap: 1.5rem;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const DropdownWrapper = styled.div`
   width: 50%;
   margin: 1.5rem 0;
-`
+`;
 
 export const Dropdown = styled.select`
-  padding: .5rem;
-  border-radius: .5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   border: 1px solid #d2d2d2;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
@@ -156,42 +178,41 @@ export const Dropdown = styled.select`
   &::placeholder {
     font-size: 1rem;
   }
-`
+`;
 
 export const AddOptionsButton = styled.button`
-  padding: .5rem;
+  padding: 0.5rem;
   color: white;
   background-color: #1964ff;
   border: 1px solid #1964ff;
-  border-radius: .5rem; 
+  border-radius: 0.5rem;
   cursor: pointer;
-`
+`;
 
 export const DeleteButton = styled.button`
   padding: 1rem;
-  background-color: #FDF2F2;
-  border: 1px solid #F1D4D4;
+  background-color: #fdf2f2;
+  border: 1px solid #f1d4d4;
   color: #ff313e;
   border-radius: 9px;
   box-shadow: 0px 7px 12px rgba(0, 0, 0, 0.03);
   cursor: pointer;
-`
+`;
 
 export const EditButton = styled.button`
   padding: 1rem;
-  border: 1px solid #ECECF4;
+  border: 1px solid #ececf4;
   border-radius: 9px;
   background-color: #fff;
   box-shadow: 0px 7px 12px rgba(0, 0, 0, 0.03);
   margin-right: 1rem;
   cursor: pointer;
-`
+`;
 
 export const SurveyWrapper = styled.div`
   display: flex;
-  align-items:center;
-
-`
+  align-items: center;
+`;
 
 export const SurveyDef = styled.div`
   width: 30%;
@@ -200,7 +221,7 @@ export const SurveyDef = styled.div`
   left: 0;
   top: 0;
   height: 100vh;
-  display:flex;
+  display: flex;
   align-items: center;
   background-color: white;
   border-right: 1px solid #ececf4;
@@ -208,44 +229,59 @@ export const SurveyDef = styled.div`
   padding-inline: 3rem;
   flex-direction: column; /* İçeriklerin dikey hizalanması için */
   justify-content: center; /* İçeriği ortalamak için */
-`
+`;
 
 export const Question = styled.div`
   float: left;
   width: 100%;
   font-weight: 500;
   font-size: 17px;
-  color: #0A213E;
-  margin-block: .5rem;
-`
+  color: #0a213e;
+  margin-block: 0.5rem;
+`;
 
 export const BaseWrapper = styled.div`
-  background-color: #F6F5F5;
+  background-color: #f6f5f5;
   width: 100%;
   min-height: 100vh;
   height: cover;
   display: flex;
-  align-items:center;
+  align-items: center;
   margin-left: 30%;
   padding-left: 2rem;
-`
+`;
 export const SubmitButton = styled(Button)`
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   margin-top: 2rem;
-`
+`;
 export const ShortInput = styled(InputRes)`
   width: 70%;
-`
+`;
 export const ShortTextarea = styled(Textarea)`
   width: 70%;
-`
+`;
 export const ShortDropdown = styled(Dropdown)`
   width: 70%;
-`
+`;
 
 export const NavbarWrapper = styled.div`
-  padding-block: 5rem;
-  padding-inline: 1rem;
-  
-
-`
+  padding-block: 2rem;
+  padding-inline: 3rem;
+  border-bottom: 1px solid #d2d2d2;
+  box-shadow: 0px 5px 15px #eee;
+  a {
+    text-decoration: none;
+    color: #8285a5;
+    font-weight: 500;
+    &:hover {
+      color: #1964ff;
+    }
+  }
+  ul {
+    display: flex;
+    gap: 3rem;
+  }
+  ul > li {
+    list-style: none;
+  }
+`;

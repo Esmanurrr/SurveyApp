@@ -32,7 +32,7 @@ function QuestionCard({question , surveyId, onQuestionDelete}) {
     };
 
   return (
-    <Card style={{width: "60%", padding: "1rem", display: "flex", justifyContent:"space-between", alignItems: "center"}}>
+    <Card>
           <div>
             <h2>{question.name}</h2>
             <span>{question.type}</span>
