@@ -4,6 +4,7 @@ export const Container = styled.div`
   padding: 90px 0;
   margin: 0 auto;
   width: 70%;
+  background-color: red;
 `;
 
 export const BlackSection = styled.div`
@@ -92,6 +93,10 @@ export const Header = styled.div`
   box-shadow: 0px 5px 10px -5px #d2d2d2;
 `;
 
+export const HeaderWrapper = styled.div`
+  padding-inline:1rem;
+`
+
 export const Span = styled.span`
   color: #686d76;
 `;
@@ -121,7 +126,7 @@ export const Card = styled.div`
     font-size: 14px;
     font-weight: 500;
   }
-  @media (max-width: 900px){
+  @media (max-width: 920px){
     width: 100%;
   }
 `;
@@ -131,19 +136,30 @@ export const FlexContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  @media(max-width: 900px){
+  @media(max-width: 920px){
     flex-direction: column;
   }
 `;
 
 export const CardContainer = styled.div`
-  max-width: 1000px;
+  max-width: 800px;
   min-height: 500px;
+  width: 100%;
+  height: 500px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
   padding: 2rem;
+
 `;
+
+export const CardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+  background-color: yellow;
+`
 
 export const LabelDiv = styled.div`
   display: block;
@@ -285,3 +301,4 @@ export const NavbarWrapper = styled.div`
     list-style: none;
   }
 `;
+

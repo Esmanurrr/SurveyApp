@@ -63,7 +63,7 @@ const FillSurvey = () => {
                       handleResponseChange(question.id, e.target.value)
                     }
                   >
-                    <option value="">Bir seçenek seçin</option>
+                    <option value="">Select an option</option>
                     {question.options
                       .filter((option) => option !== "")
                       .map((option) => (

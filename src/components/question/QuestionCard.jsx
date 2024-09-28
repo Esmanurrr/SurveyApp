@@ -3,7 +3,7 @@ import { Card, DeleteButton, EditButton } from "../../style";
 import axios from "axios";
 
 
-function QuestionCard({question , surveyId, onQuestionDelete}) {
+function QuestionCard({question , surveyId, onQuestionDelete, index}) {
     const navigate = useNavigate();
 
     const handleEdit = () => {
@@ -34,7 +34,7 @@ function QuestionCard({question , surveyId, onQuestionDelete}) {
   return (
     <Card>
           <div>
-            <h2>{question.name}</h2>
+            <h2>{index +1}. {question.name}</h2>
             <span>{question.type}</span>
           </div>
           <div>
