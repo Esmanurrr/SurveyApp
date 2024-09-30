@@ -174,7 +174,7 @@ function EditQuestion() {
             </Flex>
             {renderQuestionInput()}
             <Button
-              style={{ marginTop: "20px", display: "block" }}
+              style={{ marginTop: "20px", display: "block", float:"right" }}
               type="submit"
             >
               Save Changes

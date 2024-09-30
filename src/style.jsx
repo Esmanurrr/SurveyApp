@@ -3,8 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   padding: 90px 0;
   margin: 0 auto;
-  width: 70%;
-  background-color: red;
+  width: 80%;
 `;
 
 export const BlackSection = styled.div`
@@ -93,9 +92,6 @@ export const Header = styled.div`
   box-shadow: 0px 5px 10px -5px #d2d2d2;
 `;
 
-export const HeaderWrapper = styled.div`
-  padding-inline:1rem;
-`
 
 export const Span = styled.span`
   color: #686d76;
@@ -113,8 +109,10 @@ export const Card = styled.div`
   justify-content:space-between;
   border: 1px solid #ddd;
   padding: 1rem 2rem;
-  margin: 1rem;
+  margin: .5rem;
   border-radius: .5rem;
+  background-color: #fff;
+  height: cover;
   a{
     text-decoration: none;
   }
@@ -125,6 +123,9 @@ export const Card = styled.div`
     color: #8d9cad;
     font-size: 14px;
     font-weight: 500;
+  }
+  @media (min-width: 920px){
+    width: 80%;
   }
   @media (max-width: 920px){
     width: 100%;
@@ -143,9 +144,9 @@ export const FlexContainer = styled.div`
 
 export const CardContainer = styled.div`
   max-width: 800px;
-  min-height: 500px;
+  min-height: 300px;
   width: 100%;
-  height: 500px;
+  height: cover;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
@@ -158,7 +159,6 @@ export const CardWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items:center;
-  background-color: yellow;
 `
 
 export const LabelDiv = styled.div`
@@ -243,8 +243,9 @@ export const SurveyDef = styled.div`
   border-right: 1px solid #ececf4;
   box-shadow: 0px 7px 12px rgb(0 0 0 / 3%);
   padding-inline: 3rem;
-  flex-direction: column; /* İçeriklerin dikey hizalanması için */
-  justify-content: center; /* İçeriği ortalamak için */
+  flex-direction: column; 
+  justify-content: center; 
+  z-index: 10;
 `;
 
 export const Question = styled.div`
@@ -284,7 +285,9 @@ export const NavbarWrapper = styled.div`
   padding-block: 2rem;
   padding-inline: 3rem;
   border-bottom: 1px solid #d2d2d2;
-  box-shadow: 0px 5px 15px #eee;
+  background-color : #fff;
+  z-index: 11;
+  position: relative;
   a {
     text-decoration: none;
     color: #8285a5;
@@ -302,3 +305,6 @@ export const NavbarWrapper = styled.div`
   }
 `;
 
+export const BaseBackground = styled.div`
+  background-color: #f6f5f5;
+`
