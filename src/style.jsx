@@ -169,7 +169,6 @@ export const LabelDiv = styled.div`
 
 export const Flex = styled.div`
   display: flex;
-  width: 100%;
   gap: 1.5rem;
   justify-content: center;
   align-items: center;
@@ -307,4 +306,6 @@ export const NavbarWrapper = styled.div`
 
 export const BaseBackground = styled.div`
   background-color: #f6f5f5;
+  min-height: 90vh;
+  height: cover;
 `

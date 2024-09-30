@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Container, Header, HeaderWrapper } from "../../style";
+import { Button, Container, Header } from "../../style";
 
 const SurveyHeader = ({ title, description, id }) => {
   const navigate = useNavigate();
@@ -11,25 +11,22 @@ const SurveyHeader = ({ title, description, id }) => {
     <>
       <Header>
         <Container>
-          <HeaderWrapper>
-            <span>Status</span>
-            <h2>{title}</h2>
-            <p>{description}</p>
-            <button
-              onClick={handleFillSurvey}
-              style={{
-                backgroundColor: "#4CAF50",
-                color: "white",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                marginTop: "10px",
-              }}
-            >
-              Fill the Survey
-            </button>
-          </HeaderWrapper>
+          <span>Status</span>
+          <h1>{title}</h1>
+          <p>{description}</p>
+          <Button
+            onClick={handleFillSurvey}
+            style={{
+              color: "white",
+              padding: "1rem 1.5rem",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginTop: "10px",
+            }}
+          >
+            Fill the Survey
+          </Button>
         </Container>
       </Header>
     </>

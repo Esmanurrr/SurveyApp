@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Span } from "../../style";
+import { BaseBackground, Container, Span } from "../../style";
 import AddQuestionButton from "./AddQuestionButton";
 import QuestionCard from "./QuestionCard";
 import axios from "axios";
@@ -29,26 +29,30 @@ function QuestionList({ surveyId }) {
   };
 
   return (
-    <Container>
-      {!questions.length && (
-        <div>
-          <h2>Lets add some questions to your survey</h2>
-          <Span>Click the button below to get your survey up and running</Span>
-          <AddQuestionButton />
-        </div>
-      )}
-      {questions.length > 0 &&
-        questions.map((question, index) => (
+    <BaseBackground>
+      <Container>
+        {!questions.length && (
+          <div>
+            <h2>Lets add some questions to your survey</h2>
+            <Span>
+              Click the button below to get your survey up and running
+            </Span>
+            <AddQuestionButton />
+          </div>
+        )}
+        {questions.length > 0 &&
+          questions.map((question, index) => (
             <QuestionCard
-            surveyId={surveyId}
-            key={index}
-            index={index}
-            question={question}
-            onQuestionDelete={handleQuestionDelete}
-          />
-        ))}
-      <AddQuestionButton />
-    </Container>
+              surveyId={surveyId}
+              key={index}
+              index={index}
+              question={question}
+              onQuestionDelete={handleQuestionDelete}
+            />
+          ))}
+        <AddQuestionButton />
+      </Container>
+    </BaseBackground>
   );
 }
 

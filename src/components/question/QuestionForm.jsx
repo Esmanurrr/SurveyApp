@@ -49,8 +49,9 @@ function QuestionForm({ isEdit, surveyId}) {
             console.log("Question not found");
           }
         }
-      } catch (err) {
+    } catch (err) {
         console.log(err);
+        console.log("survey id:", surveyId);
       }
     };
 
@@ -187,7 +188,7 @@ function QuestionForm({ isEdit, surveyId}) {
               </DropdownWrapper>
             </Flex>
             {renderQuestionInput()}
-            <Button style={{ marginTop: "20px", display: "block" }} type="submit">
+            <Button style={{ marginTop: "20px", display: "block", float:"right" }} type="submit">
               {isEdit ? "Save Changes" : "Add Question"}
             </Button>
           </form>

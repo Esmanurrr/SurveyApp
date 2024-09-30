@@ -3,6 +3,7 @@ import QuestionList from '../question/QuestionList'
 import SurveyHeader from './SurveyHeader'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { BaseBackground } from '../../style';
 
 const Survey = () => {
   const location = useLocation();

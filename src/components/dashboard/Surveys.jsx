@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Container, FlexContainer, RelativeDiv } from "../../style";
+import { BaseBackground, Container, FlexContainer, RelativeDiv } from "../../style";
 import CreateSurveyModal from "./CreateSurveyModal";
 import { createPortal } from 'react-dom';
 import CreateSurvey from "./CreateSurvey";
@@ -26,7 +26,7 @@ function Surveys() {
 
 
   return (
-    <>
+    <BaseBackground>
         <Container>
           <RelativeDiv>
               {
@@ -43,7 +43,7 @@ function Surveys() {
               }
           </RelativeDiv>
         </Container>
-    </>
+    </BaseBackground>
   )
 }
 
