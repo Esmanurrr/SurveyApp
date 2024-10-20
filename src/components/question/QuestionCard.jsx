@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardWrapper, DeleteButton, EditButton } from "../../style";
-import axios from "axios";
+import { db } from "../../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 function QuestionCard({ question, surveyId, onQuestionDelete, index }) {
   const navigate = useNavigate();
@@ -13,27 +14,31 @@ function QuestionCard({ question, surveyId, onQuestionDelete, index }) {
 
   const handleDelete = async (questionId) => {
     try {
-      const survey = await axios.get(
-        `http://localhost:4000/surveys/${surveyId}`
-      );
-
-      const updatedQuestions = survey.data.questions.filter(
-        (q) => q.id !== questionId
-      );
-      const updatedSurvey = { ...survey.data, questions: updatedQuestions };
-
-      await axios.put(
-        `http://localhost:4000/surveys/${surveyId}`,
-        updatedSurvey
-      );
-
-      if (onQuestionDelete) {
-        onQuestionDelete(questionId);
+      // Anketi Firestore'dan al
+      const surveyRef = doc(db, "surveys", surveyId);
+      const surveyDoc = await getDoc(surveyRef);
+  
+      if (surveyDoc.exists()) {
+        const surveyData = surveyDoc.data();
+        
+        // Soruları filtrele
+        const updatedQuestions = surveyData.questions.filter(
+          (q) => q.id !== questionId
+        );
+  
+        // Güncellenmiş anketi kaydet
+        await updateDoc(surveyRef, { questions: updatedQuestions });
+  
+        if (onQuestionDelete) {
+          onQuestionDelete(questionId);
+        }
+  
+        console.log("Soru başarıyla silindi");
+      } else {
+        console.log("Anket bulunamadı!");
       }
-
-      console.log("Soru başarıyla silindi");
     } catch (err) {
-      console.log(err);
+      console.error("Soru silinirken hata oluştu:", err);
     }
   };
 

@@ -12,8 +12,10 @@ import {
 } from "../../style";
 import Choices from "../options/Choices";
 import InputResponse from "../options/InputResponse";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 function QuestionForm({ isEdit, surveyId}) {
   const navigate = useNavigate();
@@ -30,25 +32,49 @@ function QuestionForm({ isEdit, surveyId}) {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/surveys/${surveyId}`
-        );
-        setSurvey(response.data);
+        const surveyRef = doc(db, "surveys", surveyId);
+        const surveyDoc = await getDoc(surveyRef);
 
-        // Eğer edit mode'da ise, ilgili soruyu doldur
-        if (isEdit) {
-          const question = response.data.questions.find((q) => q.id === questionId);
-          if (question) {
-            setQuestionData({
-              name: question.name,
-              type: question.type,
-              options: question.options || [],
-              responseType: question.responseType || "",
-            });
-          } else {
-            console.log("Question not found");
+        if (surveyDoc.exists()) {
+          const surveyData = surveyDoc.data();
+          setSurvey(surveyData); // Anket verisini ayarla
+
+          // Eğer edit mode'da ise, ilgili soruyu doldur
+          if (isEdit) {
+            const question = surveyData.questions.find((q) => q.id === questionId);
+            if (question) {
+              setQuestionData({
+                name: question.name,
+                type: question.type,
+                options: question.options || [],
+                responseType: question.responseType || "",
+              });
+            } else {
+              console.log("Question not found");
+            }
           }
+        } else {
+          console.log("Survey not found");
         }
+        // const response = await axios.get(
+        //   `http://localhost:4000/surveys/${surveyId}`
+        // );
+        // setSurvey(response.data);
+
+        // // Eğer edit mode'da ise, ilgili soruyu doldur
+        // if (isEdit) {
+        //   const question = response.data.questions.find((q) => q.id === questionId);
+        //   if (question) {
+        //     setQuestionData({
+        //       name: question.name,
+        //       type: question.type,
+        //       options: question.options || [],
+        //       responseType: question.responseType || "",
+        //     });
+        //   } else {
+        //     console.log("Question not found");
+        //   }
+        // }
     } catch (err) {
         console.log(err);
         console.log("survey id:", surveyId);
@@ -95,7 +121,9 @@ function QuestionForm({ isEdit, surveyId}) {
       responseType: questionData.responseType,
     };
 
+    const surveyRef = doc(db, "surveys", surveyId);
     let updatedSurvey;
+
     if (isEdit) {
       // Düzenleme modu: soruyu güncelle
       const updatedQuestions = survey.questions.map((question) =>
@@ -103,6 +131,13 @@ function QuestionForm({ isEdit, surveyId}) {
       );
       console.log("edit butonuna tıklanıldı")
       updatedSurvey = { ...survey, questions: updatedQuestions };
+
+      try {
+        await updateDoc(surveyRef, { questions: updatedQuestions }); // Sadece soruları güncelle
+        console.log("Soru başarıyla güncellendi");
+      } catch (err) {
+        console.log("Güncelleme hatası: ", err);
+      }
     } else {
       // Ekleme modu: yeni soruyu ekle
       updatedSurvey = {
@@ -112,8 +147,8 @@ function QuestionForm({ isEdit, surveyId}) {
     }
 
     try {
-      await axios.put(`http://localhost:4000/surveys/${surveyId}`, updatedSurvey);
-      console.log(isEdit ? "Soru başarıyla güncellendi" : "Soru başarıyla eklendi");
+      await updateDoc(surveyRef, { questions: updatedSurvey.questions }); // Yeni soruyu ekle
+      console.log("Soru başarıyla eklendi");
       navigate(-1);
     } catch (err) {
       console.log(err);

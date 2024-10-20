@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { BaseWrapper, Container, Question, ShortDropdown, ShortInput, ShortTextarea, SubmitButton, SurveyDef, SurveyWrapper, Textarea } from "../../style";
+import { db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
@@ -10,16 +11,24 @@ const FillSurvey = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:4000/surveys/${surveyId}`)
-      .then((response) => {
-        setSurvey(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
+    const fetchSurveyData = async () => {
+      try {
+        const surveyRef = doc(db, "surveys", surveyId);
+        const surveyDoc = await getDoc(surveyRef);
+
+        if (surveyDoc.exists()) {
+          setSurvey(surveyDoc.data());
+        } else {
+          console.log("Anket bulunamadı!");
+        }
+      } catch (error) {
         console.error("Anket verisi çekilemedi:", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchSurveyData();
   }, [surveyId]);
 
   if (loading) {

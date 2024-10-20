@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { BaseBackground, Container, Span } from "../../style";
+import { BaseBackground, Container, Span, TextCenter } from "../../style";
 import AddQuestionButton from "./AddQuestionButton";
 import QuestionCard from "./QuestionCard";
-import axios from "axios";
+import { db } from "../../firebase";
+import { collection, doc, getDoc } from "firebase/firestore";
 
 function QuestionList({ surveyId }) {
   const [questions, setQuestions] = useState([]);
@@ -10,12 +11,26 @@ function QuestionList({ surveyId }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/surveys/${surveyId}`
-        );
-        setQuestions(response.data.questions);
+        // Belge referansı al
+        console.log(surveyId);
+        const surveyRef = doc(db, "surveys", surveyId);
+        // Belgeden veriyi al
+        const surveyDoc = await getDoc(surveyRef);
+        
+        if (surveyDoc.exists()) {
+          const surveyData = surveyDoc.data();
+          console.log("Anket verisi: ", surveyData); // Veriyi kontrol etmek için ekledim
+          
+          if (surveyData.questions) {
+            setQuestions(surveyData.questions); // Eğer questions varsa ayarla
+          } else {
+            console.log("Questions alanı bulunamadı.");
+          }
+        } else {
+          console.log("Belge bulunamadı!");
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Veri çekme hatası: ", err);
       }
     };
 
@@ -32,19 +47,19 @@ function QuestionList({ surveyId }) {
     <BaseBackground>
       <Container>
         {!questions.length && (
-          <div>
+          <TextCenter>
             <h2>Lets add some questions to your survey</h2>
             <Span>
               Click the button below to get your survey up and running
             </Span>
-            <AddQuestionButton />
-          </div>
+            {/* <AddQuestionButton /> */}
+          </TextCenter>
         )}
         {questions.length > 0 &&
           questions.map((question, index) => (
             <QuestionCard
               surveyId={surveyId}
-              key={index}
+              key={question.id}
               index={index}
               question={question}
               onQuestionDelete={handleQuestionDelete}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SurveyCard from "./SurveyCard";
-import axios from "axios";
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 function SurveyList() {
 
@@ -8,10 +9,21 @@ function SurveyList() {
 
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/surveys");
-        setSurveys(response.data);
+        // Anketler koleksiyonuna referans al
+        const surveysCollection = collection(db, "surveys");
+        
+        // Koleksiyondaki tüm belgeleri al
+        const surveySnapshot = await getDocs(surveysCollection);
+        
+        // Anket verilerini düzenle
+        const surveyList = surveySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+    
+        setSurveys(surveyList);
       } catch (err) {
-        console.log(err);
+        console.log("Anketler çekilirken hata oluştu:", err);
       }
     };
   

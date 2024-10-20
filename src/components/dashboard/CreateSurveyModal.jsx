@@ -8,7 +8,8 @@ import {
   Textarea,
 } from "../../style";
 import { useState } from "react";
-import axios from "axios";
+import { db } from "../../firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 function CreateSurveyModal({ closePortal }) {
   const [title, setTitle] = useState("");
@@ -19,12 +20,27 @@ function CreateSurveyModal({ closePortal }) {
   const getDescription = (e) => setDescription(e.target.value);
 
   const handleSave = async () => {
-    const id = crypto.randomUUID();
-    await axios.post("http://localhost:4000/surveys", { id, title: title, description: description, questions: []});
-    navigate((`/survey/` + id), {
-      state: { title: title, description: description },
-    });
-    closePortal();
+    //const id = crypto.randomUUID(); // UUID oluştur
+    const newSurvey = {
+      //id: id, // Oluşturulan ID
+      title: title,
+      description: description,
+      questions: [], // Başlangıçta boş sorular
+    };
+  
+    try {
+      // Firestore'a yeni anket ekle
+      const docRef = await addDoc(collection(db, "surveys"), newSurvey);
+      console.log("Anket başarıyla eklendi, ID: ", docRef.id);
+  
+      // Kullanıcıyı anket sayfasına yönlendir
+      navigate(`/survey/${docRef.id}`, {
+        state: { title: title, description: description },
+      });
+      closePortal();
+    } catch (err) {
+      console.error("Anket eklenirken hata oluştu: ", err);
+    }
   };
 
   return (

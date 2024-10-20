@@ -4,6 +4,8 @@ import SurveyHeader from './SurveyHeader'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BaseBackground } from '../../style';
+import { db } from '../../firebase';
+import { collection, doc, getDoc } from 'firebase/firestore';
 
 const Survey = () => {
   const location = useLocation();
@@ -13,18 +15,26 @@ const Survey = () => {
 
   useEffect(() => {
     const fetchQuestions = async () => {
+      if (!id) {
+        console.log("ID tanımlı değil.");
+        return; // Eğer id tanımlı değilse, fonksiyonu sonlandır
+      }
+
       try {
-        const response = await axios.get("http://localhost:4000/surveys");
-        const survey = response.data.find(survey => survey.id === id);
-        if(survey){
-          setQuestions(survey.questions);
-        }else{
+        const surveyRef = doc(collection(db, "surveys"), id); // Firestore'daki anket referansı
+        const surveyDoc = await getDoc(surveyRef); // Anket belgesini al
+        console.log(surveyDoc);
+
+        if (surveyDoc.exists()) {
+          const surveyData = surveyDoc.data();
+          setQuestions(surveyData.questions); // Soruları ayarla
+        } else {
           console.log("Survey not found");
         }
       } catch (err) {
         console.log(err);
       }
-    }
+    };
 
     fetchQuestions();
 

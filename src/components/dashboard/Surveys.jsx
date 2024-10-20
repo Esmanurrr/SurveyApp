@@ -10,8 +10,8 @@ function Surveys() {
   const [loading, setLoading] = useState(false);
 
   const handlePortal = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       setPortal(true);
     } catch (error) {
       console.log(error);
