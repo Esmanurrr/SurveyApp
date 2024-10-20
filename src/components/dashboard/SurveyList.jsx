@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import SurveyCard from "./SurveyCard";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import LoadingPage from "../infos/LoadingPage";
+import { TextCenter } from "../../style";
 
 function SurveyList() {
 
@@ -36,7 +38,7 @@ function SurveyList() {
         {surveys.length > 0 ? (
           surveys.map((survey) => <SurveyCard key={survey.id} survey={survey} />)
         ) : (
-          <p>No surveys available</p>
+          <LoadingPage/>
         )}
       </>
     );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  BaseBackground,
   Button,
   CardContainer,
   CardWrapper,
@@ -16,8 +17,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import LoadingPage from "../infos/LoadingPage";
 
-function QuestionForm({ isEdit, surveyId}) {
+function QuestionForm({ isEdit, surveyId }) {
   const navigate = useNavigate();
   const { questionId } = useParams();
   const [survey, setSurvey] = useState(null);
@@ -27,21 +29,22 @@ function QuestionForm({ isEdit, surveyId}) {
     options: [],
     responseType: "",
   });
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
         const surveyRef = doc(db, "surveys", surveyId);
         const surveyDoc = await getDoc(surveyRef);
-
         if (surveyDoc.exists()) {
           const surveyData = surveyDoc.data();
           setSurvey(surveyData); // Anket verisini ayarla
-
+          setLoading(false);
           // Eğer edit mode'da ise, ilgili soruyu doldur
           if (isEdit) {
-            const question = surveyData.questions.find((q) => q.id === questionId);
+            const question = surveyData.questions.find(
+              (q) => q.id === questionId
+            );
             if (question) {
               setQuestionData({
                 name: question.name,
@@ -55,29 +58,14 @@ function QuestionForm({ isEdit, surveyId}) {
           }
         } else {
           console.log("Survey not found");
+          // not found
         }
-        // const response = await axios.get(
-        //   `http://localhost:4000/surveys/${surveyId}`
-        // );
-        // setSurvey(response.data);
-
-        // // Eğer edit mode'da ise, ilgili soruyu doldur
-        // if (isEdit) {
-        //   const question = response.data.questions.find((q) => q.id === questionId);
-        //   if (question) {
-        //     setQuestionData({
-        //       name: question.name,
-        //       type: question.type,
-        //       options: question.options || [],
-        //       responseType: question.responseType || "",
-        //     });
-        //   } else {
-        //     console.log("Question not found");
-        //   }
-        // }
-    } catch (err) {
+      } catch (err) {
         console.log(err);
         console.log("survey id:", surveyId);
+        // soru eklenemedi
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -129,7 +117,7 @@ function QuestionForm({ isEdit, surveyId}) {
       const updatedQuestions = survey.questions.map((question) =>
         question.id === questionId ? { ...question, ...questionData } : question
       );
-      console.log("edit butonuna tıklanıldı")
+      console.log("edit butonuna tıklanıldı");
       updatedSurvey = { ...survey, questions: updatedQuestions };
 
       try {
@@ -184,52 +172,61 @@ function QuestionForm({ isEdit, surveyId}) {
     }
   };
 
+  if (loading) return <LoadingPage />;
+
   return (
-    <Container>
-      <CardWrapper>
-        <CardContainer>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <LabelDiv>Question</LabelDiv>
-              <InputRes
-                type="text"
-                name="name"
-                value={questionData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <Flex>
-              <DropdownWrapper>
-                <LabelDiv>Question type</LabelDiv>
-                <Dropdown
-                  name="type"
+    <BaseBackground>
+      <Container>
+        <CardWrapper>
+          <CardContainer>
+            <form onSubmit={handleSubmit}>
+              <div>
+                <LabelDiv>Question</LabelDiv>
+                <InputRes
+                  type="text"
+                  name="name"
+                  value={questionData.name}
                   onChange={handleChange}
-                  value={questionData.type}
-                  disabled={isEdit} // Edit modunda question type değiştirilemesin
-                >
-                  <option value="">Choose a question type</option>
-                  <option value="Single Choice">Single Choice</option>
-                  <option value="Multiple Choice">Multiple Choice</option>
-                  <option value="Text Response">Text Response</option>
-                  <option value="Long Text Response">Long Text Response</option>
-                </Dropdown>
-              </DropdownWrapper>
-              <DropdownWrapper>
-                <LabelDiv>Can this question be skipped?</LabelDiv>
-                <Dropdown>
-                  <option value={true}>Yes</option>
-                  <option value={false}>No</option>
-                </Dropdown>
-              </DropdownWrapper>
-            </Flex>
-            {renderQuestionInput()}
-            <Button style={{ marginTop: "20px", display: "block", float:"right" }} type="submit">
-              {isEdit ? "Save Changes" : "Add Question"}
-            </Button>
-          </form>
-        </CardContainer>
-      </CardWrapper>
-    </Container>
+                />
+              </div>
+              <Flex>
+                <DropdownWrapper>
+                  <LabelDiv>Question type</LabelDiv>
+                  <Dropdown
+                    name="type"
+                    onChange={handleChange}
+                    value={questionData.type}
+                    disabled={isEdit} // Edit modunda question type değiştirilemesin
+                  >
+                    <option value="">Choose a question type</option>
+                    <option value="Single Choice">Single Choice</option>
+                    <option value="Multiple Choice">Multiple Choice</option>
+                    <option value="Text Response">Text Response</option>
+                    <option value="Long Text Response">
+                      Long Text Response
+                    </option>
+                  </Dropdown>
+                </DropdownWrapper>
+                <DropdownWrapper>
+                  <LabelDiv>Can this question be skipped?</LabelDiv>
+                  <Dropdown>
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                  </Dropdown>
+                </DropdownWrapper>
+              </Flex>
+              {renderQuestionInput()}
+              <Button
+                style={{ marginTop: "20px", display: "block", float: "right" }}
+                type="submit"
+              >
+                {isEdit ? "Save Changes" : "Add Question"}
+              </Button>
+            </form>
+          </CardContainer>
+        </CardWrapper>
+      </Container>
+    </BaseBackground>
   );
 }
 

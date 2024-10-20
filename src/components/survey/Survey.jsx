@@ -1,11 +1,10 @@
-import { useLocation, useParams } from 'react-router-dom';
-import QuestionList from '../question/QuestionList'
-import SurveyHeader from './SurveyHeader'
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { BaseBackground } from '../../style';
-import { db } from '../../firebase';
-import { collection, doc, getDoc } from 'firebase/firestore';
+import { useLocation, useParams } from "react-router-dom";
+import QuestionList from "../question/QuestionList";
+import SurveyHeader from "./SurveyHeader";
+import { useEffect, useState } from "react";
+import { db } from "../../firebase";
+import { collection, doc, getDoc } from "firebase/firestore";
+import LoadingPage from "../infos/LoadingPage";
 
 const Survey = () => {
   const location = useLocation();
@@ -23,13 +22,13 @@ const Survey = () => {
       try {
         const surveyRef = doc(collection(db, "surveys"), id); // Firestore'daki anket referansı
         const surveyDoc = await getDoc(surveyRef); // Anket belgesini al
-        console.log(surveyDoc);
 
         if (surveyDoc.exists()) {
           const surveyData = surveyDoc.data();
           setQuestions(surveyData.questions); // Soruları ayarla
         } else {
           console.log("Survey not found");
+          // not found sayfası ekle
         }
       } catch (err) {
         console.log(err);
@@ -37,17 +36,17 @@ const Survey = () => {
     };
 
     fetchQuestions();
-
-  },[id])
-
+  }, [id]);
 
 
   return (
     <div>
-        <SurveyHeader title={title} description={description} id={id}/>
-        <QuestionList questions={questions} surveyId={id}/>
+      <div>
+        <SurveyHeader title={title} description={description} id={id} />
+        <QuestionList questions={questions} surveyId={id} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Survey
+export default Survey;

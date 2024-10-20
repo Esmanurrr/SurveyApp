@@ -4,6 +4,7 @@ import CreateSurveyModal from "./CreateSurveyModal";
 import { createPortal } from 'react-dom';
 import CreateSurvey from "./CreateSurvey";
 import SurveyList from "./SurveyList";
+import LoadingPage from "../infos/LoadingPage";
 
 function Surveys() {
   const [portal, setPortal] = useState(false);
@@ -23,7 +24,6 @@ function Surveys() {
   const closePortal = () => {
     setPortal(false);
   }
-
 
   return (
     <BaseBackground>

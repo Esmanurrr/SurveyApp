@@ -4,9 +4,11 @@ import AddQuestionButton from "./AddQuestionButton";
 import QuestionCard from "./QuestionCard";
 import { db } from "../../firebase";
 import { collection, doc, getDoc } from "firebase/firestore";
+import LoadingPage from "../infos/LoadingPage";
 
 function QuestionList({ surveyId }) {
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +22,7 @@ function QuestionList({ surveyId }) {
         if (surveyDoc.exists()) {
           const surveyData = surveyDoc.data();
           console.log("Anket verisi: ", surveyData); // Veriyi kontrol etmek için ekledim
-          
+          setLoading(false);
           if (surveyData.questions) {
             setQuestions(surveyData.questions); // Eğer questions varsa ayarla
           } else {
@@ -28,9 +30,12 @@ function QuestionList({ surveyId }) {
           }
         } else {
           console.log("Belge bulunamadı!");
+          setLoading(true);
         }
       } catch (err) {
         console.error("Veri çekme hatası: ", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -42,6 +47,8 @@ function QuestionList({ surveyId }) {
       prevQuestions.filter((q) => q.id !== questionId)
     );
   };
+
+  if(loading) return <LoadingPage/>;
 
   return (
     <BaseBackground>

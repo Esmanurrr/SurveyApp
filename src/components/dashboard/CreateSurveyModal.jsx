@@ -20,12 +20,10 @@ function CreateSurveyModal({ closePortal }) {
   const getDescription = (e) => setDescription(e.target.value);
 
   const handleSave = async () => {
-    //const id = crypto.randomUUID(); // UUID oluştur
     const newSurvey = {
-      //id: id, // Oluşturulan ID
       title: title,
       description: description,
-      questions: [], // Başlangıçta boş sorular
+      questions: [], 
     };
   
     try {
@@ -33,7 +31,6 @@ function CreateSurveyModal({ closePortal }) {
       const docRef = await addDoc(collection(db, "surveys"), newSurvey);
       console.log("Anket başarıyla eklendi, ID: ", docRef.id);
   
-      // Kullanıcıyı anket sayfasına yönlendir
       navigate(`/survey/${docRef.id}`, {
         state: { title: title, description: description },
       });
