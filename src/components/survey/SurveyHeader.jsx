@@ -11,7 +11,6 @@ const SurveyHeader = ({ title, description, id }) => {
     <>
       <Header>
         <Container>
-          <span>Status</span>
           <h1>{title}</h1>
           <p>{description}</p>
           <Button

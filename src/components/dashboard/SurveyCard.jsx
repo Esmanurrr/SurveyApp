@@ -12,7 +12,6 @@ function SurveyCard({survey}) {
           >
           <h2>{survey.title}</h2>
           <span>{survey.description}</span>
-          <p>status</p>
         </Link>
     </Card>
   )
