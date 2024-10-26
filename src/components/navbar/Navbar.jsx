@@ -7,7 +7,7 @@ const Navbar = () => {
     <NavbarWrapper>
         <ul>
             <li><Link to="/">Surveys</Link></li>
-            <li><Link to="/deneme1">Responses</Link></li>
+            <li><Link to="/responses">Responses</Link></li>
         </ul>
     </NavbarWrapper>
   )
