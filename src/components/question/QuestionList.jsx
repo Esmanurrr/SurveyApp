@@ -3,7 +3,7 @@ import { BaseBackground, Container, Span, TextCenter } from "../../style";
 import AddQuestionButton from "./AddQuestionButton";
 import QuestionCard from "./QuestionCard";
 import { db } from "../../firebase";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
 
 function QuestionList({ surveyId }) {

@@ -22,13 +22,20 @@ export const SurveyModal = styled.div`
   left: 33%;
   transform: translate(-%50, -%50);
   width: 30%;
+  min-width: 300px;
   background-color: white;
   border: 1px solid #dedede;
   box-shadow: 10px 10px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
-  height: 400px;
+  min-height: 400px;
   padding: 2rem 2rem;
   text-align: center;
+
+    @media (max-width: 1020px) {
+      width: 40%;
+      left: 20%;
+      padding: 1.5rem;
+    }
 `;
 
 export const ModalContent = styled.div`

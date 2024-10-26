@@ -42,7 +42,7 @@ function CreateSurveyModal({ closePortal }) {
 
   return (
     <>
-      <BlackSection></BlackSection>
+      <BlackSection/>
         <SurveyModal>
           <h2>Create a new survey</h2>
           <ModalContent>
