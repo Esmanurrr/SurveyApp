@@ -27,16 +27,15 @@ function CreateSurveyModal({ closePortal }) {
     };
   
     try {
-      // Firestore'a yeni anket ekle
       const docRef = await addDoc(collection(db, "surveys"), newSurvey);
-      console.log("Anket başarıyla eklendi, ID: ", docRef.id);
+      console.log("Survey succesfully added, ID: ", docRef.id);
   
       navigate(`/survey/${docRef.id}`, {
         state: { title: title, description: description },
       });
       closePortal();
     } catch (err) {
-      console.error("Anket eklenirken hata oluştu: ", err);
+      console.error("There is an error", err);
     }
   };
 
@@ -55,7 +54,7 @@ function CreateSurveyModal({ closePortal }) {
               rows={5}
             ></Textarea>
             <Button onClick={() => handleSave()}>Create Survey</Button>
-            <Link onClick={closePortal}>Back to Surveys</Link>
+            <Link to='/' onClick={closePortal}>Back to Surveys</Link>
           </ModalContent>
         </SurveyModal>
     </>

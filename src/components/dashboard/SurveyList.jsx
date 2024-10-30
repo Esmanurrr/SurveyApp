@@ -3,7 +3,6 @@ import SurveyCard from "./SurveyCard";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
-import { TextCenter } from "../../style";
 
 function SurveyList() {
 

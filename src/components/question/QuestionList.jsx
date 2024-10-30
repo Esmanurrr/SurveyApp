@@ -13,18 +13,14 @@ function QuestionList({ surveyId }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Belge referansı al
-        console.log(surveyId);
         const surveyRef = doc(db, "surveys", surveyId);
-        // Belgeden veriyi al
         const surveyDoc = await getDoc(surveyRef);
         
         if (surveyDoc.exists()) {
           const surveyData = surveyDoc.data();
-          console.log("Anket verisi: ", surveyData); // Veriyi kontrol etmek için ekledim
           setLoading(false);
           if (surveyData.questions) {
-            setQuestions(surveyData.questions); // Eğer questions varsa ayarla
+            setQuestions(surveyData.questions); 
           } else {
             console.log("Questions alanı bulunamadı.");
           }

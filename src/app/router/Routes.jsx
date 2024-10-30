@@ -6,6 +6,8 @@ import AddQuestion from "../../components/question/AddQuestion.jsx";
 import EditQuestion from "../../components/question/EditQuestion.jsx";
 import FillSurvey from "../../components/survey/FillSurvey.jsx";
 import NotFound from "../../components/infos/NotFound.jsx";
+import Responses from "../../components/responses/Responses.jsx";
+import ResponseDetail from "../../components/responses/ResponseDetail.jsx";
 
 
 export const router = createBrowserRouter(([
@@ -18,6 +20,8 @@ export const router = createBrowserRouter(([
             { path: 'survey/new-question/:surveyId', element: <AddQuestion/>},
             { path: 'survey/edit-question/:questionId', element: <EditQuestion/>},
             { path: 'survey/fill-survey/:surveyId', element: <FillSurvey/>},
+            { path: '/responses', element: <Responses/>},
+            { path: '/responses/:surveyId', element: <ResponseDetail/>},
             { path: '*', element: <NotFound/>}
 
         ]

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BaseWrapper, Container, Question, ShortDropdown, ShortInput, ShortTextarea, SubmitButton, SurveyDef, SurveyWrapper, Textarea } from "../../style";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -9,6 +9,7 @@ const FillSurvey = () => {
   const [survey, setSurvey] = useState(null);
   const [responses, setResponses] = useState({});
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSurveyData = async () => {
@@ -48,7 +49,8 @@ const FillSurvey = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitted responses:", responses);
+    // console.log("Submitted responses:", responses);
+    navigate(`/responses`, {state: {responses}});
   };
 
   return (
@@ -143,6 +145,7 @@ const FillSurvey = () => {
 
             <SubmitButton
               type="submit"
+              navigate='/responses'
             >
               Submit
             </SubmitButton>
