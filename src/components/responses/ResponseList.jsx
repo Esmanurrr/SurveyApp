@@ -8,7 +8,7 @@ function ResponseList() {
     console.log(location.state.responses);
   return (
     <div>
-        <ResponseCard  />
+        <ResponseCard />
     </div>
   )
 }

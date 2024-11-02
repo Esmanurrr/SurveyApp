@@ -49,7 +49,7 @@ const FillSurvey = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log("Submitted responses:", responses);
+    console.log("Submitted responses:", responses, surveyId);
     navigate(`/responses`, {state: {responses}});
   };
 

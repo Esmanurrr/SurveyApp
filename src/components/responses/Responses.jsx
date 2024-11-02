@@ -4,10 +4,13 @@ import ResponseList from './ResponseList'
 import CreateSurvey from '../dashboard/CreateSurvey'
 import CreateSurveyModal from '../dashboard/CreateSurveyModal'
 import { createPortal } from 'react-dom'
+import ResponseSurveyCard from './ResponseSurveyCard'
+// import { useNavigate } from 'react-router-dom'
 
 function Responses() {
     const [portal, setPortal] = useState(false);
     const [loading, setLoading] = useState(false);
+    // const navigate = useNavigate();
   
     const handlePortal = async () => {
       setLoading(true);
@@ -24,8 +27,8 @@ function Responses() {
       setPortal(false);
     }
   
-
-
+    // navigate(`/responses`, {state: {responses}});
+ 
   return (
     <BaseBackground>
         <Container>
@@ -34,7 +37,7 @@ function Responses() {
                 !loading && 
                 <FlexContainer>
                   <div style={{flexGrow: 1}}>
-                    <ResponseList/>
+                    <ResponseSurveyCard />
                   </div>
                   <div style={{flexShrink: 0, marginTop: "1rem"}}>
                   <CreateSurvey handlePortal={handlePortal} />
