@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BaseWrapper, Container, Question, ShortDropdown, ShortInput, ShortTextarea, SubmitButton, SurveyDef, SurveyWrapper, Textarea } from "../../style";
 import { db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
@@ -47,10 +47,23 @@ const FillSurvey = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted responses:", responses, surveyId);
-    navigate(`/responses`, {state: {responses}});
+    // console.log("Submitted responses:", responses, surveyId);
+    // navigate(`/responses`, {state: {responses}});
+
+    try {
+      const responsesRef = collection(db, "responses");
+      await addDoc(responsesRef, {
+        id: surveyId,
+        responses: responses,
+        title: survey.title
+      });
+      console.log("yanıtlar başarıyla kaydedildi: ", responses);
+      navigate(`/responses`, {state: {surveyId}});
+    } catch (error) {
+      console.log("yanıtlar kaydedilemedi: ", error);
+    }
   };
 
   return (

@@ -1,11 +1,13 @@
-import React from 'react'
+import React from 'react';
+import { Card } from '../../style';
 
-function ResponseSurveyCard() {
+function ResponseSurveyCard({ title }) {
   return (
-    <div>
-        <h3>Buraya doldurulmuş anketler gelecek</h3>
-    </div>
-  )
+    <Card style={{ border: "1px solid #ddd", padding: "16px", margin: "8px", borderRadius: "8px" }}>
+      <h3>{title}</h3>
+      <p>Yanıtlanma Tarihi: {title}</p>
+    </Card>
+  );
 }
 
-export default ResponseSurveyCard
+export default ResponseSurveyCard;
