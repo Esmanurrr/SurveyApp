@@ -61,6 +61,7 @@ function Responses() {
                         responsesList.map((response) => (
                           <ResponseSurveyCard 
                             key={response.id}
+                            id={response.id}
                             title={response.title}
                           />
                         ))

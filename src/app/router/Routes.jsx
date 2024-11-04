@@ -21,7 +21,7 @@ export const router = createBrowserRouter(([
             { path: 'survey/edit-question/:questionId', element: <EditQuestion/>},
             { path: 'survey/fill-survey/:surveyId', element: <FillSurvey/>},
             { path: '/responses', element: <Responses/>},
-            { path: '/responses/:surveyId', element: <ResponseDetail/>},
+            { path: '/response/:surveyId', element: <ResponseDetail/>},
             { path: '*', element: <NotFound/>}
 
         ]
