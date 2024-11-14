@@ -1,20 +1,74 @@
-import React from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { BaseBackground, Container } from '../../style';
+import { collection, getDocs } from "firebase/firestore";
+import { db } from '../../firebase';
+
+// Tüm `responses` koleksiyonunu çekmek için kullanılan fonksiyon
+const fetchAllSurveyResponses = async () => {
+  const responsesRef = collection(db, "responses");
+  const querySnapshot = await getDocs(responsesRef);
+
+  const surveyResponses = [];
+  querySnapshot.forEach((doc) => {
+    surveyResponses.push({ id: doc.id, ...doc.data() });
+  });
+
+  return surveyResponses;
+};
 
 function ResponseDetail() {
   const location = useLocation();
-  const {title} = location.state ||{}
-  // const id = useParams();
-  console.log(title);
+  const { title } = location.state || {}; // location.state'den gelen başlık (isteğe bağlı)
+  
+  const [responses, setResponses] = useState([]); // Tüm yanıtlar burada tutulacak
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getResponses = async () => {
+      setLoading(true);
+      try {
+        const fetchedResponses = await fetchAllSurveyResponses();
+        setResponses(fetchedResponses);
+      } catch (error) {
+        console.error("Veriler alınırken hata oluştu:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getResponses();
+  }, []); // Bu useEffect sadece bileşen yüklendiğinde çalışır
+
+  if (loading) return <p>Loading responses...</p>;
+
   return (
     <BaseBackground>
       <Container>
-        {title} - 
-        response detail cnm
+        <h2>{title || "Tüm Yanıtlar"}</h2>
+        {responses.length > 0 ? (
+          <ul>
+            {responses.map((response) => (
+              <li key={response.id}>
+                <h3>Yanıt ID: {response.id}</h3>
+                <h4>Anket Başlığı: {response.title}</h4>
+                <ul>
+                  {response.questions.map((question) => (
+                    <li key={question.id}>
+                      <p><strong>Soru:</strong> {question.name}</p>
+                      <p><strong>Yanıt:</strong> {question.answer.join(", ")}</p>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Hiç yanıt bulunamadı.</p>
+        )}
       </Container>
     </BaseBackground>
-  )
+  );
 }
 
-export default ResponseDetail
+export default ResponseDetail;

@@ -49,22 +49,32 @@ const FillSurvey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("Submitted responses:", responses, surveyId);
-    // navigate(`/responses`, {state: {responses}});
-
+  
+    // `survey.questions` ve `responses` nesnesini kullanarak `questions` dizisini oluşturuyoruz
+    const formattedResponses = {
+      title: survey.title,
+      questions: survey.questions.map((question) => ({
+        id: question.id,
+        name: question.name,
+        answer: Array.isArray(responses[question.id])
+          ? responses[question.id]  // Multiple Choice ise dizi olarak sakla
+          : [responses[question.id]], // Single Choice veya Text ise diziye çevir
+      })),
+    };
+  
     try {
       const responsesRef = collection(db, "responses");
       await addDoc(responsesRef, {
-        id: surveyId,
-        responses: responses,
-        title: survey.title
+        surveyId: surveyId,
+        ...formattedResponses, // Veriyi doğrudan `formattedResponses` olarak kaydediyoruz
       });
-      console.log("yanıtlar başarıyla kaydedildi: ", responses);
-      navigate(`/responses`, {state: {surveyId}});
+      console.log("Yanıtlar başarıyla kaydedildi:", formattedResponses);
+      navigate(`/responses`, { state: { surveyId } });
     } catch (error) {
-      console.log("yanıtlar kaydedilemedi: ", error);
+      console.log("Yanıtlar kaydedilemedi:", error);
     }
   };
+  
 
   return (
     <SurveyWrapper>
