@@ -43,7 +43,7 @@ const Survey = () => {
     <div>
       <div>
         <SurveyHeader title={title} description={description} id={id} />
-        <QuestionList questions={questions} surveyId={id} />
+        <QuestionList surveyId={id} />
       </div>
     </div>
   );
