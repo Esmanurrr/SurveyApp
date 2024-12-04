@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { BaseBackground, Container } from "../../style";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { BaseBackground, Card, CardWrapper, Container, Header, TextCenter } from "../../style";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import LoadingPage from "../infos/LoadingPage";
 
 function ResponseDetail() {
   const location = useLocation();
-  const { title } = location.state || {}; 
-  const [response, setResponse] = useState(null); 
+  const { title } = location.state || {};
+  const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(true);
   const { responseId } = useParams();
 
@@ -32,28 +39,44 @@ function ResponseDetail() {
     };
 
     fetchResponse();
-  }, [responseId]); 
+  }, [responseId]);
 
-  if (loading) return <LoadingPage/>;
+  if (loading) return <LoadingPage />;
 
   return (
     <BaseBackground>
-    <Container>
-      <h2>{title}</h2>
-      <ul>
-        {response.questions.map((question) => (
-          <li key={question.id}>
-            <p>
-              <strong>Soru:</strong> {question.name}
-            </p>
-            <p>
-              <strong>Yanıt:</strong> {question.answer.join(", ")}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </Container>
-  </BaseBackground>
+    <Header>
+      <Container>
+      <h1>{title}</h1>
+      </Container>
+    </Header>
+      <Container>
+        <CardWrapper>
+          {response.questions.map((question, i) => (
+            <Card
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding:"0px"
+              }}
+              key={question.id}
+            >
+              <div style={{padding: "1.5rem"}}>
+                <p>
+                  <strong>{i + 1}.</strong> {question.name}
+                </p>
+              </div>
+              <hr style={{border: "1px solid #ddd"}} />
+              <div style={{padding: "1.5rem"}}>
+                <p>
+                  {question.answer.join(", ")}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </CardWrapper>
+      </Container>
+    </BaseBackground>
   );
 }
 

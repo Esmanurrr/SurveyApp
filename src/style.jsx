@@ -97,6 +97,7 @@ export const RelativeDiv = styled.div`
 export const Header = styled.div`
   border-bottom: 1px solid #eee;
   box-shadow: 0px 5px 10px -5px #d2d2d2;
+  background-color: white;
 `;
 
 
