@@ -55,7 +55,6 @@ function QuestionList({ surveyId }) {
             <Span>
               Click the button below to get your survey up and running
             </Span>
-            {/* <AddQuestionButton /> */}
           </TextCenter>
         )}
         {questions.length > 0 &&

@@ -14,19 +14,16 @@ function QuestionCard({ question, surveyId, onQuestionDelete, index }) {
 
   const handleDelete = async (questionId) => {
     try {
-      // Anketi Firestore'dan al
       const surveyRef = doc(db, "surveys", surveyId);
       const surveyDoc = await getDoc(surveyRef);
   
       if (surveyDoc.exists()) {
         const surveyData = surveyDoc.data();
         
-        // Soruları filtrele
         const updatedQuestions = surveyData.questions.filter(
           (q) => q.id !== questionId
         );
   
-        // Güncellenmiş anketi kaydet
         await updateDoc(surveyRef, { questions: updatedQuestions });
   
         if (onQuestionDelete) {

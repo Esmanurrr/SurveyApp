@@ -4,7 +4,6 @@ import { AddOptionsButton } from '../../style';
 
 function Choices({options, setOptions}) {
   useEffect(() => {
-    // Eğer options boşsa, varsayılan olarak 4 seçenek ekle
     if (options.length === 0) {
       setOptions(["", ""]);
     }

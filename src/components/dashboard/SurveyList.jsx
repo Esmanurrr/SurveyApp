@@ -10,13 +10,9 @@ function SurveyList() {
 
     const fetchSurveys = async () => {
       try {
-        // Anketler koleksiyonuna referans al
         const surveysCollection = collection(db, "surveys");
-        
-        // Koleksiyondaki tüm belgeleri al
         const surveySnapshot = await getDocs(surveysCollection);
         
-        // Anket verilerini düzenle
         const surveyList = surveySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data()

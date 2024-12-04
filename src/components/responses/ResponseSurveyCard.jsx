@@ -6,7 +6,7 @@ function ResponseSurveyCard({ title, id }) {
 
 
   return (
-    <Card style={{ border: "1px solid #ddd", padding: "16px", margin: "8px", borderRadius: "8px" }}>
+    <Card>
       <div>
         <h3>Anonymous</h3>
         <p>completed <strong>{title}</strong></p>
@@ -14,6 +14,7 @@ function ResponseSurveyCard({ title, id }) {
       <Link 
         to={`/response/${id}`}
         state={{ title: title}}
+        style={{ border: "1px solid #ddd", padding: "10px", margin: "8px", borderRadius: "8px", color: "#1964ff" }}
       >
         View
       </Link>

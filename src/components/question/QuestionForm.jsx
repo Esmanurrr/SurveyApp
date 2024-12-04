@@ -38,9 +38,8 @@ function QuestionForm({ isEdit, surveyId }) {
         const surveyDoc = await getDoc(surveyRef);
         if (surveyDoc.exists()) {
           const surveyData = surveyDoc.data();
-          setSurvey(surveyData); // Anket verisini ayarla
+          setSurvey(surveyData);
           setLoading(false);
-          // Eğer edit mode'da ise, ilgili soruyu doldur
           if (isEdit) {
             const question = surveyData.questions.find(
               (q) => q.id === questionId
@@ -58,12 +57,10 @@ function QuestionForm({ isEdit, surveyId }) {
           }
         } else {
           console.log("Survey not found");
-          // not found
         }
       } catch (err) {
         console.log(err);
         console.log("survey id:", surveyId);
-        // soru eklenemedi
       } finally {
         setLoading(false);
       }
@@ -127,7 +124,6 @@ function QuestionForm({ isEdit, surveyId }) {
         console.log("Güncelleme hatası: ", err);
       }
     } else {
-      // Ekleme modu: yeni soruyu ekle
       updatedSurvey = {
         ...survey,
         questions: [...survey.questions, newQuestion],
@@ -196,7 +192,7 @@ function QuestionForm({ isEdit, surveyId }) {
                     name="type"
                     onChange={handleChange}
                     value={questionData.type}
-                    disabled={isEdit} // Edit modunda question type değiştirilemesin
+                    disabled={isEdit}
                   >
                     <option value="">Choose a question type</option>
                     <option value="Single Choice">Single Choice</option>

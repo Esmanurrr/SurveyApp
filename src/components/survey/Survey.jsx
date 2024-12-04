@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { collection, doc, getDoc } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
+import NotFound from "../infos/NotFound";
 
 const Survey = () => {
   const location = useLocation();
@@ -16,19 +17,18 @@ const Survey = () => {
     const fetchQuestions = async () => {
       if (!id) {
         console.log("ID tanımlı değil.");
-        return; // Eğer id tanımlı değilse, fonksiyonu sonlandır
+        return; 
       }
 
       try {
-        const surveyRef = doc(collection(db, "surveys"), id); // Firestore'daki anket referansı
-        const surveyDoc = await getDoc(surveyRef); // Anket belgesini al
+        const surveyRef = doc(collection(db, "surveys"), id); 
+        const surveyDoc = await getDoc(surveyRef); 
 
         if (surveyDoc.exists()) {
           const surveyData = surveyDoc.data();
-          setQuestions(surveyData.questions); // Soruları ayarla
+          setQuestions(surveyData.questions); 
         } else {
           console.log("Survey not found");
-          // not found sayfası ekle
         }
       } catch (err) {
         console.log(err);

@@ -50,15 +50,14 @@ const FillSurvey = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // `survey.questions` ve `responses` nesnesini kullanarak `questions` dizisini oluşturuyoruz
     const formattedResponses = {
       title: survey.title,
       questions: survey.questions.map((question) => ({
         id: question.id,
         name: question.name,
         answer: Array.isArray(responses[question.id])
-          ? responses[question.id]  // Multiple Choice ise dizi olarak sakla
-          : [responses[question.id]], // Single Choice veya Text ise diziye çevir
+          ? responses[question.id] 
+          : [responses[question.id]], 
       })),
     };
   
@@ -66,7 +65,7 @@ const FillSurvey = () => {
       const responsesRef = collection(db, "responses");
       await addDoc(responsesRef, {
         surveyId: surveyId,
-        ...formattedResponses, // Veriyi doğrudan `formattedResponses` olarak kaydediyoruz
+        ...formattedResponses, 
       });
       console.log("Yanıtlar başarıyla kaydedildi:", formattedResponses);
       navigate(`/responses`, { state: { surveyId } });

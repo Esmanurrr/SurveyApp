@@ -4,7 +4,6 @@ import CreateSurveyModal from "./CreateSurveyModal";
 import { createPortal } from 'react-dom';
 import CreateSurvey from "./CreateSurvey";
 import SurveyList from "./SurveyList";
-import LoadingPage from "../infos/LoadingPage";
 
 function Surveys() {
   const [portal, setPortal] = useState(false);
@@ -28,6 +27,7 @@ function Surveys() {
   return (
     <BaseBackground>
         <Container>
+          <h1>Recent Surveys</h1>
           <RelativeDiv>
               {
                 !loading && 

@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { BaseBackground, Container } from "../../style";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
+import LoadingPage from "../infos/LoadingPage";
 
 function ResponseDetail() {
   const location = useLocation();
@@ -10,8 +11,6 @@ function ResponseDetail() {
   const [response, setResponse] = useState(null); 
   const [loading, setLoading] = useState(true);
   const { responseId } = useParams();
-
-  console.log(responseId);
 
   useEffect(() => {
     const fetchResponse = async () => {
@@ -35,12 +34,12 @@ function ResponseDetail() {
     fetchResponse();
   }, [responseId]); 
 
-  if (loading) return <p>Loading responses...</p>;
+  if (loading) return <LoadingPage/>;
 
   return (
     <BaseBackground>
     <Container>
-      <h2>Anket Başlığı: {title}</h2>
+      <h2>{title}</h2>
       <ul>
         {response.questions.map((question) => (
           <li key={question.id}>
