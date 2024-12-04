@@ -1,78 +1,60 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { BaseBackground, Container } from "../../style";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 
 function ResponseDetail() {
   const location = useLocation();
-  const { title } = location.state || {}; // location.state'den gelen başlık (isteğe bağlı)
-  const { id } = useParams();
-  const [responses, setResponses] = useState([]); // Tüm yanıtlar burada tutulacak
+  const { title } = location.state || {}; 
+  const [response, setResponse] = useState(null); 
   const [loading, setLoading] = useState(true);
+  const { responseId } = useParams();
 
-  console.log(id);
+  console.log(responseId);
 
-  // Tüm `responses` koleksiyonunu çekmek için kullanılan fonksiyon
-  const fetchSurveyResponses = async () => {
-    const responsesRef = collection(db, "responses", id);
-    const querySnapshot = await getDocs(responsesRef);
-
-    const surveyResponses = [];
-    querySnapshot.forEach((doc) => {
-      surveyResponses.push({ id: doc.id, ...doc.data() });
-    });
-
-    return surveyResponses;
-  };
   useEffect(() => {
-    const getResponses = async () => {
+    const fetchResponse = async () => {
       setLoading(true);
       try {
-        const fetchedResponses = await fetchSurveyResponses();
-        setResponses(fetchedResponses);
+        const docRef = doc(db, "responses", responseId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setResponse({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          console.error("Belge bulunamadı!");
+        }
       } catch (error) {
-        console.error("Veriler alınırken hata oluştu:", error);
+        console.error("Yanıt alınırken hata oluştu:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    getResponses();
-  }, []); // Bu useEffect sadece bileşen yüklendiğinde çalışır
+    fetchResponse();
+  }, [responseId]); 
 
   if (loading) return <p>Loading responses...</p>;
 
   return (
     <BaseBackground>
-      <Container>
-        <h2>{title || "Tüm Yanıtlar"}</h2>
-        {responses.length > 0 ? (
-          <ul>
-            {responses.map((response) => (
-              <li key={response.id}>
-                <h3>Yanıt ID: {response.id}</h3>
-                <h4>Anket Başlığı: {response.title}</h4>
-                <ul>
-                  {response.questions.map((question) => (
-                    <li key={question.id}>
-                      <p>
-                        <strong>Soru:</strong> {question.name}
-                      </p>
-                      <p>
-                        <strong>Yanıt:</strong> {question.answer.join(", ")}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Hiç yanıt bulunamadı.</p>
-        )}
-      </Container>
-    </BaseBackground>
+    <Container>
+      <h2>Anket Başlığı: {title}</h2>
+      <ul>
+        {response.questions.map((question) => (
+          <li key={question.id}>
+            <p>
+              <strong>Soru:</strong> {question.name}
+            </p>
+            <p>
+              <strong>Yanıt:</strong> {question.answer.join(", ")}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </BaseBackground>
   );
 }
 

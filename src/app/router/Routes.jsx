@@ -20,8 +20,8 @@ export const router = createBrowserRouter(([
             { path: 'survey/new-question/:surveyId', element: <AddQuestion/>},
             { path: 'survey/edit-question/:questionId', element: <EditQuestion/>},
             { path: 'survey/fill-survey/:surveyId', element: <FillSurvey/>},
-            { path: '/responses', element: <Responses/>},
-            { path: '/response/:responseId', element: <ResponseDetail/>},
+            { path: 'responses', element: <Responses/>},
+            { path: 'response/:responseId', element: <ResponseDetail/>},
             { path: '*', element: <NotFound/>}
 
         ]
