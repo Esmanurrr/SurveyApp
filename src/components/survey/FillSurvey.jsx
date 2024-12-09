@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BaseWrapper, Container, Question, ShortDropdown, ShortInput, ShortTextarea, SubmitButton, SurveyDef, SurveyWrapper, Textarea } from "../../style";
+import {
+  BaseWrapper,
+  Container,
+  Question,
+  ShortDropdown,
+  ShortInput,
+  ShortTextarea,
+  SubmitButton,
+  SurveyDef,
+  SurveyWrapper,
+  Textarea,
+} from "../../style";
 import { db } from "../../firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 
@@ -51,10 +62,10 @@ const FillSurvey = () => {
     e.preventDefault();
 
     const requiredQuestions = survey.questions.filter(
-      question => !question.canBeSkipped && !responses[question.id]
+      (question) => !question.canBeSkipped && !responses[question.id]
     );
 
-    if(requiredQuestions.length > 0){
+    if (requiredQuestions.length > 0) {
       alert("Please answer all required questions before submitting.");
       return;
     }
@@ -69,22 +80,22 @@ const FillSurvey = () => {
       }
       return question.canBeSkipped ? ["Unanswered"] : null;
     };
-  
+
     const formattedResponses = {
       title: survey.title,
       questions: survey.questions.map((question) => ({
         id: question.id,
         name: question.name,
         answer: getAnswer(question, responses),
-        isRequired: !question.canBeSkipped,
+        canBeSkipped: question.canBeSkipped,
       })),
     };
-  
+
     try {
       const responsesRef = collection(db, "responses");
       await addDoc(responsesRef, {
         surveyId: surveyId,
-        ...formattedResponses, 
+        ...formattedResponses,
       });
       console.log("Yanıtlar başarıyla kaydedildi:", formattedResponses);
       navigate(`/responses`, { state: { surveyId } });
@@ -92,7 +103,6 @@ const FillSurvey = () => {
       console.log("Yanıtlar kaydedilemedi:", error);
     }
   };
-  
 
   return (
     <SurveyWrapper>
@@ -106,7 +116,10 @@ const FillSurvey = () => {
             {survey.questions.map((question, index) => (
               <div key={question.id}>
                 <Question>
-                  {index+1}. {question.name}
+                  {index + 1}. {question.name}
+                  {!question.canBeSkipped && (
+                    <span style={{ color: "red", marginLeft: "5px" }}> *</span>
+                  )}
                 </Question>
                 {question.type === "Single Choice" && (
                   <ShortDropdown
@@ -184,10 +197,7 @@ const FillSurvey = () => {
               </div>
             ))}
 
-            <SubmitButton
-              type="submit"
-              navigate='/responses'
-            >
+            <SubmitButton type="submit" navigate="/responses">
               Submit
             </SubmitButton>
           </form>

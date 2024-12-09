@@ -49,7 +49,7 @@ function QuestionForm({ isEdit, surveyId }) {
                 type: question.type,
                 options: question.options || [],
                 responseType: question.responseType || "",
-                canBeSkipped: true,
+                canBeSkipped: question.canBeSkipped !== undefined ? question.canBeSkipped : true,
               });
             } else {
               console.log("Question not found");
@@ -73,7 +73,7 @@ function QuestionForm({ isEdit, surveyId }) {
     const { name, value } = e.target;
     setQuestionData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "canBeSkipped" ? value === "true" : value,
     }));
   };
 
@@ -104,7 +104,7 @@ function QuestionForm({ isEdit, surveyId }) {
           ? questionData.options
           : [],
       responseType: questionData.responseType,
-      canBeSkipped: questionData.canBeSkipped !== undefined ? questionData.canBeSkipped : true,
+      canBeSkipped: questionData.canBeSkipped !== undefined ? questionData.canBeSkipped : "true",
     };
 
     const surveyRef = doc(db, "surveys", surveyId);
@@ -207,10 +207,8 @@ function QuestionForm({ isEdit, surveyId }) {
                   <LabelDiv>Can this question be skipped?</LabelDiv>
                   <Dropdown
                     name="canBeSkipped"
-                    onChange={(e) => setQuestionData((prevData) => ({
-                      ...prevData,
-                      canBeSkipped: e.target.value === "true"
-                    }))}
+                    value={questionData.canBeSkipped ? "true" : "false"}
+                    onChange={handleChange}
                   >
                     <option value="true">Yes</option>
                     <option value="false">No</option>
