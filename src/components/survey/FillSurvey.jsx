@@ -14,12 +14,16 @@ import {
 } from "../../style";
 import { db } from "../../firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { createValidationSchema } from "../../validations/schemas/surveySchema";
+import * as yup from "yup"; 
+
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
   const [survey, setSurvey] = useState(null);
   const [responses, setResponses] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,37 +65,34 @@ const FillSurvey = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredQuestions = survey.questions.filter(
-      (question) => !question.canBeSkipped && !responses[question.id]
-    );
-
-    if (requiredQuestions.length > 0) {
-      alert("Please answer all required questions before submitting.");
-      return;
-    }
-
-    const getAnswer = (question, responses) => {
-      const response = responses[question.id];
-      if (Array.isArray(response)) {
-        return response;
-      }
-      if (response !== undefined) {
-        return [response];
-      }
-      return question.canBeSkipped ? ["Unanswered"] : null;
-    };
-
-    const formattedResponses = {
-      title: survey.title,
-      questions: survey.questions.map((question) => ({
-        id: question.id,
-        name: question.name,
-        answer: getAnswer(question, responses),
-        canBeSkipped: question.canBeSkipped,
-      })),
-    };
+    const validationSchema = createValidationSchema(survey.questions);
 
     try {
+      await validationSchema.validate(responses, { abortEarly: false });
+
+      setError({});
+
+      const getAnswer = (question, responses) => {
+        const response = responses[question.id];
+        if (Array.isArray(response)) {
+          return response;
+        }
+        if (response !== undefined) {
+          return [response];
+        }
+        return question.canBeSkipped ? ["Unanswered"] : null;
+      };
+
+      const formattedResponses = {
+        title: survey.title,
+        questions: survey.questions.map((question) => ({
+          id: question.id,
+          name: question.name,
+          answer: getAnswer(question, responses),
+          canBeSkipped: question.canBeSkipped,
+        })),
+      };
+
       const responsesRef = collection(db, "responses");
       await addDoc(responsesRef, {
         surveyId: surveyId,
@@ -100,7 +101,15 @@ const FillSurvey = () => {
       console.log("Yanıtlar başarıyla kaydedildi:", formattedResponses);
       navigate(`/responses`, { state: { surveyId } });
     } catch (error) {
-      console.log("Yanıtlar kaydedilemedi:", error);
+      if (error instanceof yup.ValidationError) {
+        const newErrors = {};
+        error.inner.forEach((err) => {
+          newErrors[err.path] = err.message;
+        });
+        setError(newErrors);
+      } else {
+        console.log("Yanıtlar kaydedilemedi:", error);
+      }
     }
   };
 
@@ -117,8 +126,10 @@ const FillSurvey = () => {
               <div key={question.id}>
                 <Question>
                   {index + 1}. {question.name}
-                  {!question.canBeSkipped && (
-                    <span style={{ color: "red", marginLeft: "5px" }}> *</span>
+                  {error[question.id] && (
+                    <div style={{ color: "red", fontSize: "12px" }}>
+                      {error[question.id]}
+                    </div>
                   )}
                 </Question>
                 {question.type === "Single Choice" && (
