@@ -14,7 +14,6 @@ import {
 import Choices from "../options/Choices";
 import InputResponse from "../options/InputResponse";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import LoadingPage from "../infos/LoadingPage";
@@ -50,6 +49,7 @@ function QuestionForm({ isEdit, surveyId }) {
                 type: question.type,
                 options: question.options || [],
                 responseType: question.responseType || "",
+                canBeSkipped: true,
               });
             } else {
               console.log("Question not found");
@@ -104,13 +104,13 @@ function QuestionForm({ isEdit, surveyId }) {
           ? questionData.options
           : [],
       responseType: questionData.responseType,
+      canBeSkipped: questionData.canBeSkipped !== undefined ? questionData.canBeSkipped : true,
     };
 
     const surveyRef = doc(db, "surveys", surveyId);
     let updatedSurvey;
 
     if (isEdit) {
-      // Düzenleme modu: soruyu güncelle
       const updatedQuestions = survey.questions.map((question) =>
         question.id === questionId ? { ...question, ...questionData } : question
       );
@@ -118,7 +118,7 @@ function QuestionForm({ isEdit, surveyId }) {
       updatedSurvey = { ...survey, questions: updatedQuestions };
 
       try {
-        await updateDoc(surveyRef, { questions: updatedQuestions }); // Sadece soruları güncelle
+        await updateDoc(surveyRef, { questions: updatedQuestions });
         console.log("Soru başarıyla güncellendi");
       } catch (err) {
         console.log("Güncelleme hatası: ", err);
@@ -131,7 +131,7 @@ function QuestionForm({ isEdit, surveyId }) {
     }
 
     try {
-      await updateDoc(surveyRef, { questions: updatedSurvey.questions }); // Yeni soruyu ekle
+      await updateDoc(surveyRef, { questions: updatedSurvey.questions }); 
       console.log("Soru başarıyla eklendi");
       navigate(-1);
     } catch (err) {
@@ -205,9 +205,15 @@ function QuestionForm({ isEdit, surveyId }) {
                 </DropdownWrapper>
                 <DropdownWrapper>
                   <LabelDiv>Can this question be skipped?</LabelDiv>
-                  <Dropdown>
-                    <option value={true}>Yes</option>
-                    <option value={false}>No</option>
+                  <Dropdown
+                    name="canBeSkipped"
+                    onChange={(e) => setQuestionData((prevData) => ({
+                      ...prevData,
+                      canBeSkipped: e.target.value === "true"
+                    }))}
+                  >
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
                   </Dropdown>
                 </DropdownWrapper>
               </Flex>

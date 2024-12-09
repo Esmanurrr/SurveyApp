@@ -49,15 +49,34 @@ const FillSurvey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const requiredQuestions = survey.questions.filter(
+      question => !question.canBeSkipped && !responses[question.id]
+    );
+
+    if(requiredQuestions.length > 0){
+      alert("Please answer all required questions before submitting.");
+      return;
+    }
+
+    const getAnswer = (question, responses) => {
+      const response = responses[question.id];
+      if (Array.isArray(response)) {
+        return response;
+      }
+      if (response !== undefined) {
+        return [response];
+      }
+      return question.canBeSkipped ? ["Unanswered"] : null;
+    };
   
     const formattedResponses = {
       title: survey.title,
       questions: survey.questions.map((question) => ({
         id: question.id,
         name: question.name,
-        answer: Array.isArray(responses[question.id])
-          ? responses[question.id] 
-          : [responses[question.id]], 
+        answer: getAnswer(question, responses),
+        isRequired: !question.canBeSkipped,
       })),
     };
   
