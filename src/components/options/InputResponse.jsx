@@ -8,7 +8,7 @@ const InputResponse = ({inputType, setInputType}) => {
   return (
     <Flex>
         <Input type={inputType} placeholder={`Enter ${inputType}`}/>
-        <InputType setInputType={setInputType}/>
+        <InputType inputType={inputType} setInputType={setInputType}/>
     </Flex>
   )
 }
