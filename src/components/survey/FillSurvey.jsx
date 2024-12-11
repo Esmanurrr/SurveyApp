@@ -10,13 +10,11 @@ import {
   SubmitButton,
   SurveyDef,
   SurveyWrapper,
-  Textarea,
 } from "../../style";
 import { db } from "../../firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { createValidationSchema } from "../../validations/schemas/surveySchema";
-import * as yup from "yup"; 
-
+import * as yup from "yup";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
@@ -33,7 +31,19 @@ const FillSurvey = () => {
         const surveyDoc = await getDoc(surveyRef);
 
         if (surveyDoc.exists()) {
-          setSurvey(surveyDoc.data());
+          const surveyData = surveyDoc.data();
+          setSurvey(surveyData);
+
+          // responses başlangıç değerlerini burada ayarla
+          const initialResponses = {};
+          surveyData.questions.forEach((question) => {
+            if (question.type === "Multiple Choice") {
+              initialResponses[question.id] = []; // Multiple Choice için boş dizi
+            } else {
+              initialResponses[question.id] = ""; // Diğer türler için boş string
+            }
+          });
+          setResponses(initialResponses); 
         } else {
           console.log("Anket bulunamadı!");
         }
@@ -62,6 +72,23 @@ const FillSurvey = () => {
     });
   };
 
+  const getAnswer = (question, responses) => {
+    const response = responses[question.id];
+  
+    if (Array.isArray(response)) {
+      if (response.length === 0 && !question.canBeSkipped) {
+        throw new Error(`${question.name} requires at least one option to be selected.`);
+      }
+      return response; 
+    }
+  
+    if (response !== undefined && response !== null) {
+      return response;
+    }
+  
+    return question.canBeSkipped ? "Unanswered" : null; 
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,24 +99,13 @@ const FillSurvey = () => {
 
       setError({});
 
-      const getAnswer = (question, responses) => {
-        const response = responses[question.id];
-        if (Array.isArray(response)) {
-          return response;
-        }
-        if (response !== undefined) {
-          return [response];
-        }
-        return question.canBeSkipped ? ["Unanswered"] : null;
-      };
-
       const formattedResponses = {
         title: survey.title,
         questions: survey.questions.map((question) => ({
           id: question.id,
           name: question.name,
           answer: getAnswer(question, responses),
-          canBeSkipped: question.canBeSkipped,
+          canBeSkipped: question.canBeSkipped || false,
         })),
       };
 

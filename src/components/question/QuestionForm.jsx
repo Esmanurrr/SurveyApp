@@ -207,7 +207,7 @@ function QuestionForm({ isEdit, surveyId }) {
                   <LabelDiv>Can this question be skipped?</LabelDiv>
                   <Dropdown
                     name="canBeSkipped"
-                    value={questionData.canBeSkipped ? "true" : "false"}
+                    value={String(questionData.canBeSkipped)}
                     onChange={handleChange}
                   >
                     <option value="true">Yes</option>
