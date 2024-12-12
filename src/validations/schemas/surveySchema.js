@@ -8,6 +8,35 @@ export const surveySchema = yup.object().shape({
     description: yup.string().max(100, "Description can not exceed 100 characters")
 });
 
+export const questionSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required("Question name is required"),
+  type: yup
+    .string()
+    .required("Question type is required")
+    .oneOf(["Single Choice", "Multiple Choice", "Text Response", "Long Text Response"], "Select a valid question type"),
+  options: yup.array().of(
+    yup
+      .string()
+      .trim()
+      .required("Option can not be empty")
+  )
+  .test(
+    "at-least-one-filled",
+    "At least one option must be filled in",
+    (options) => options.some((option) => option && option.trim().length > 0)
+  )
+  .when("type", {
+    is: (type) => type === "Single Choice" || type === "Multiple Choice",
+    then: (schema) => schema.required("Options are required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  responseType: yup.string().nullable(),
+});
+
+
+
 const textResponseValidator = (question) => {
     let validator = yup.string();
   
@@ -26,13 +55,11 @@ const textResponseValidator = (question) => {
     let validator = yup.array().of(yup.string().required("Option cannot be empty"));
   
     if (!question.canBeSkipped) {
-      // Zorunlu bir soru için en az bir seçeneğin seçilmesini zorunlu kıl
       validator = validator.min(
         1,
         `${question.name} requires at least one option to be selected`
       );
     } else {
-      // Geçilebilir soru için nullable olmasına izin ver
       validator = validator.nullable();
     }
   

@@ -17,6 +17,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import LoadingPage from "../infos/LoadingPage";
+import {
+  questionSchema,
+} from "../../validations/schemas/surveySchema";
+import * as yup from "yup";
+
 
 function QuestionForm({ isEdit, surveyId }) {
   const navigate = useNavigate();
@@ -29,6 +34,7 @@ function QuestionForm({ isEdit, surveyId }) {
     responseType: "",
   });
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -49,7 +55,10 @@ function QuestionForm({ isEdit, surveyId }) {
                 type: question.type,
                 options: question.options || [],
                 responseType: question.responseType || "",
-                canBeSkipped: question.canBeSkipped !== undefined ? question.canBeSkipped : true,
+                canBeSkipped:
+                  question.canBeSkipped !== undefined
+                    ? question.canBeSkipped
+                    : true,
               });
             } else {
               console.log("Question not found");
@@ -69,12 +78,35 @@ function QuestionForm({ isEdit, surveyId }) {
     fetchSurvey();
   }, [surveyId, questionId, isEdit]);
 
+  const validateField = (name, value) => {
+    yup
+      .reach(questionSchema, name)
+      .validate(value)
+      .then(() => {
+        setErrors((prevErrors) => {
+          const updatedErrors = { ...prevErrors };
+          delete updatedErrors[name]; // Hata varsa temizle
+          return updatedErrors;
+        });
+      })
+      .catch((err) => {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: err.message, // Yeni hata mesajını ekle
+        }));
+      });
+  };
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setQuestionData((prevData) => ({
       ...prevData,
       [name]: name === "canBeSkipped" ? value === "true" : value,
     }));
+
+    validateField(name, value);
+
   };
 
   const handleOptionsChange = (newOptions) => {
@@ -82,6 +114,8 @@ function QuestionForm({ isEdit, surveyId }) {
       ...prevData,
       options: newOptions,
     }));
+
+    
   };
 
   const setInputType = (inputType) => {
@@ -94,48 +128,66 @@ function QuestionForm({ isEdit, surveyId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newQuestion = {
-      id: isEdit ? questionId : crypto.randomUUID(),
-      name: questionData.name,
-      type: questionData.type,
-      options:
-        questionData.type === "Single Choice" ||
-        questionData.type === "Multiple Choice"
-          ? questionData.options
-          : [],
-      responseType: questionData.responseType,
-      canBeSkipped: questionData.canBeSkipped !== undefined ? questionData.canBeSkipped : "true",
-    };
-
-    const surveyRef = doc(db, "surveys", surveyId);
-    let updatedSurvey;
-
-    if (isEdit) {
-      const updatedQuestions = survey.questions.map((question) =>
-        question.id === questionId ? { ...question, ...questionData } : question
-      );
-      console.log("edit butonuna tıklanıldı");
-      updatedSurvey = { ...survey, questions: updatedQuestions };
-
-      try {
-        await updateDoc(surveyRef, { questions: updatedQuestions });
-        console.log("Soru başarıyla güncellendi");
-      } catch (err) {
-        console.log("Güncelleme hatası: ", err);
-      }
-    } else {
-      updatedSurvey = {
-        ...survey,
-        questions: [...survey.questions, newQuestion],
-      };
-    }
+    const filteredOptions = questionData.options.filter(
+      (option) => option && option.trim().length > 0
+    );
+  
 
     try {
-      await updateDoc(surveyRef, { questions: updatedSurvey.questions }); 
+      await questionSchema.validate({...questionData, options: filteredOptions}, { abortEarly: false });
+
+      const newQuestion = {
+        id: isEdit ? questionId : crypto.randomUUID(),
+        name: questionData.name,
+        type: questionData.type,
+        options:
+          questionData.type === "Single Choice" ||
+          questionData.type === "Multiple Choice"
+            ? filteredOptions
+            : [],
+        responseType: questionData.responseType,
+        canBeSkipped:
+          questionData.canBeSkipped !== undefined
+            ? questionData.canBeSkipped
+            : "true",
+      };
+
+      const surveyRef = doc(db, "surveys", surveyId);
+      let updatedSurvey;
+
+      if (isEdit) {
+        const updatedQuestions = survey.questions.map((question) =>
+          question.id === questionId
+            ? { ...question, ...questionData }
+            : question
+        );
+        console.log("edit butonuna tıklanıldı");
+        updatedSurvey = { ...survey, questions: updatedQuestions };
+
+        try {
+          await updateDoc(surveyRef, { questions: updatedQuestions });
+          console.log("Soru başarıyla güncellendi");
+        } catch (err) {
+          console.log("Güncelleme hatası: ", err);
+        }
+      } else {
+        updatedSurvey = {
+          ...survey,
+          questions: [...survey.questions, newQuestion],
+        };
+      }
+
+      await updateDoc(surveyRef, { questions: updatedSurvey.questions });
       console.log("Soru başarıyla eklendi");
       navigate(-1);
-    } catch (err) {
-      console.log(err);
+    } catch (validationError) {
+      if (validationError.inner) {
+        const errorMessages = validationError.inner.reduce((acc, error) => {
+          acc[error.path] = error.message;
+          return acc;
+        }, {});
+        setErrors(errorMessages);
+      }
     }
   };
 
@@ -150,6 +202,7 @@ function QuestionForm({ isEdit, surveyId }) {
               options={questionData.options}
               setOptions={handleOptionsChange}
             />
+            {errors.options && <p style={{ color: "red" }}>{errors.options}</p>}
           </>
         );
       case "Text Response":
@@ -185,6 +238,11 @@ function QuestionForm({ isEdit, surveyId }) {
                   onChange={handleChange}
                 />
               </div>
+              {errors.name && (
+                <p style={{ color: "red" }} className="error-message">
+                  {errors.name}
+                </p>
+              )}
               <Flex>
                 <DropdownWrapper>
                   <LabelDiv>Question type</LabelDiv>
@@ -202,6 +260,7 @@ function QuestionForm({ isEdit, surveyId }) {
                       Long Text Response
                     </option>
                   </Dropdown>
+                  {errors.type && <p style={{ color: "red" }}>{errors.type}</p>}
                 </DropdownWrapper>
                 <DropdownWrapper>
                   <LabelDiv>Can this question be skipped?</LabelDiv>
