@@ -8,6 +8,8 @@ import FillSurvey from "../../components/survey/FillSurvey.jsx";
 import NotFound from "../../components/infos/NotFound.jsx";
 import Responses from "../../components/responses/Responses.jsx";
 import ResponseDetail from "../../components/responses/ResponseDetail.jsx";
+import Login from "../../components/auth/Login.jsx";
+import Register from "../../components/auth/Register.jsx";
 
 
 export const router = createBrowserRouter(([
@@ -22,8 +24,9 @@ export const router = createBrowserRouter(([
             { path: 'survey/fill-survey/:surveyId', element: <FillSurvey/>},
             { path: 'responses', element: <Responses/>},
             { path: 'response/:responseId', element: <ResponseDetail/>},
+            { path: 'login', element: <Login/>},
+            { path: 'register', element: <Register/>},
             { path: '*', element: <NotFound/>}
-
         ]
     }
 ]))
