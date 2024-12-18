@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useAuth } from "../../contexts/authContext";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 function Login() {
   const { userLoggedIn } = useAuth();
@@ -18,6 +18,7 @@ function Login() {
       setIsSigningIn(false);
     }
   };
+
 
   if (userLoggedIn) {
     return <Navigate to="/" replace />;
@@ -40,6 +41,7 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">Login</button>
+        <p>Dont u have an account? <Link to={'/register'}>Register</Link></p>
       </form>
     </>
   );
