@@ -7,17 +7,18 @@ export const Container = styled.div`
 `;
 
 export const BlackSection = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   letf: 0;
   background-color: #b4b4b8;
   opacity: 75%;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: cover;
 `;
 
 export const SurveyModal = styled.div`
-  position: absolute;
+  position: fixed;
   top: 30%;
   left: 33%;
   transform: translate(-%50, -%50);
