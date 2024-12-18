@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SurveyCard from "./SurveyCard";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
 

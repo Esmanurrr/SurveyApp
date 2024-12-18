@@ -11,7 +11,7 @@ import {
   SurveyDef,
   SurveyWrapper,
 } from "../../style";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { createValidationSchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";

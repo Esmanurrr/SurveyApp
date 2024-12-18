@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { collection, getDocs, query } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import ResponseSurveyCard from "./ResponseSurveyCard";
 import LoadingPage from "../infos/LoadingPage";
 

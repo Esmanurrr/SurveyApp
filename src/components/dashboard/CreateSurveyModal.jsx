@@ -8,7 +8,7 @@ import {
   Textarea,
 } from "../../style";
 import { useState } from "react";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { surveySchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup"; 

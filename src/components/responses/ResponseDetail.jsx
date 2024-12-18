@@ -9,7 +9,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import LoadingPage from "../infos/LoadingPage";
 
 function ResponseDetail() {
