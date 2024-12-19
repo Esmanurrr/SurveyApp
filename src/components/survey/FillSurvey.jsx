@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   BaseWrapper,
   Container,
@@ -15,6 +15,8 @@ import { db } from "../../firebase/firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { createValidationSchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";
+import SurveyComplete from "../infos/SurveyComplete";
+import LoadingPage from "../infos/LoadingPage";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
@@ -22,7 +24,7 @@ const FillSurvey = () => {
   const [responses, setResponses] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({});
-  const navigate = useNavigate();
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchSurveyData = async () => {
@@ -34,13 +36,12 @@ const FillSurvey = () => {
           const surveyData = surveyDoc.data();
           setSurvey(surveyData);
 
-          // responses başlangıç değerlerini burada ayarla
           const initialResponses = {};
           surveyData.questions.forEach((question) => {
             if (question.type === "Multiple Choice") {
-              initialResponses[question.id] = []; // Multiple Choice için boş dizi
+              initialResponses[question.id] = []; 
             } else {
-              initialResponses[question.id] = ""; // Diğer türler için boş string
+              initialResponses[question.id] = ""; 
             }
           });
           setResponses(initialResponses); 
@@ -58,12 +59,15 @@ const FillSurvey = () => {
   }, [surveyId]);
 
   if (loading) {
-    return <p>Loading survey...</p>;
+    return <LoadingPage/>;
   }
 
   if (!survey || !survey.questions) {
     return <p>Survey data is missing or corrupted.</p>;
   }
+
+  // if(isSubmitted) return <SurveyComplete/>;
+
 
   const handleResponseChange = (questionId, value) => {
     setResponses({
@@ -89,6 +93,8 @@ const FillSurvey = () => {
     return question.canBeSkipped ? "Unanswered" : null; 
   };
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -112,10 +118,11 @@ const FillSurvey = () => {
       const responsesRef = collection(db, "responses");
       await addDoc(responsesRef, {
         surveyId: surveyId,
+        surveyOwnerId: survey.userId,
         ...formattedResponses,
       });
       console.log("Yanıtlar başarıyla kaydedildi:", formattedResponses);
-      navigate(`/responses`, { state: { surveyId } });
+      setIsSubmitted(true);
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         const newErrors = {};
@@ -137,7 +144,8 @@ const FillSurvey = () => {
       </SurveyDef>
       <BaseWrapper>
         <Container>
-          <form onSubmit={handleSubmit}>
+          { isSubmitted ? <SurveyComplete /> : 
+            <form onSubmit={handleSubmit}>
             {survey.questions.map((question, index) => (
               <div key={question.id}>
                 <Question>
@@ -224,10 +232,10 @@ const FillSurvey = () => {
               </div>
             ))}
 
-            <SubmitButton type="submit" navigate="/responses">
+            <SubmitButton type="submit">
               Submit
             </SubmitButton>
-          </form>
+          </form>}
         </Container>
       </BaseWrapper>
     </SurveyWrapper>
