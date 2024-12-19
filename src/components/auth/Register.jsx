@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
+import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -19,44 +20,49 @@ function Register() {
     }
   };
 
-  return (
-    <>
-      {userLoggedIn && <Navigate to={"/"} replace={true} />}
+  if (userLoggedIn) {
+    return <Navigate to="/" replace={true} />;
+  }
 
-      <form onSubmit={handleRegister}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <div>
-          <label>Confirm Password</label>
-          <input
-            disabled={isRegistering}
-            type="password"
-            autoComplete="off"
-            required
-            value={confirmPassword}
-            onChange={(e) => {
-              setconfirmPassword(e.target.value);
-            }}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isRegistering}
-        >
-          {isRegistering ? "Signing Up..." : "Sign Up"}
-        </button>
-      </form>
-    </>
+  return (
+    <FormWrapper>
+      <LoginDiv>
+        <h1>Welcome!</h1>
+        <form onSubmit={handleRegister}>
+          <InputWrapper>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+              <Input
+                disabled={isRegistering}
+                type="password"
+                placeholder="Confirm Password"
+                autoComplete="off"
+                required
+                value={confirmPassword}
+                onChange={(e) => {
+                  setconfirmPassword(e.target.value);
+                }}
+              />
+          </InputWrapper>
+          <button type="submit" disabled={isRegistering}>
+            {isRegistering ? "Signing Up..." : "Sign Up"}
+          </button>
+          <p>
+            Do you have an account? <Link to={"/login"}>Login</Link>
+          </p>
+        </form>
+      </LoginDiv>
+    </FormWrapper>
   );
 }
 
