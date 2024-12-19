@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { collection, getDocs, query } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "../../firebase/firebase";
 import ResponseSurveyCard from "./ResponseSurveyCard";
 import LoadingPage from "../infos/LoadingPage";
 
@@ -12,7 +12,8 @@ function ResponseList() {
   useEffect(() => {
     const fetchResponses = async () => {
       try {
-        const q = query(collection(db, "responses"));
+        const userId = auth.currentUser.uid;
+        const q = query(collection(db, "responses"), where("surveyOwnerId", "==", userId));
         const querySnapshot = await getDocs(q);
         const fetchedResponses = querySnapshot.docs.map((doc) => ({
           id: doc.id,
