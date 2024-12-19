@@ -13,7 +13,19 @@ const SurveyHeader = ({ title, description, id }) => {
     try {
       const surveyRef = doc(db, "surveys", surveyId);
       await updateDoc(surveyRef, {
-        isActive: true,
+        status: "active",
+      });
+      console.log("Survey activated!");
+    } catch (error) {
+      console.error("Error activating survey:", error);
+    }
+  };
+
+  const disableSurvey = async (surveyId) => {
+    try {
+      const surveyRef = doc(db, "surveys", surveyId);
+      await updateDoc(surveyRef, {
+        status: "disable",
       });
       console.log("Survey activated!");
     } catch (error) {
@@ -42,7 +54,7 @@ const SurveyHeader = ({ title, description, id }) => {
           >
             Fill the Survey
           </Button>
-          <button onClick={() => activateSurvey(id)}>Activate Survey</button>
+          <button onClick={() => activateSurvey(id)}>Active Survey</button>
           <p>
             Share this link: <a href={shareableLink}>{shareableLink}</a>
           </p>

@@ -70,7 +70,7 @@ export const Textarea = styled.textarea`
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
   &:focus {
-    border-color: #1964ff;
+    border-color: #0071e2;
   }
   &::placeholder {
     font-size: 1rem;
@@ -78,8 +78,8 @@ export const Textarea = styled.textarea`
 `;
 
 export const Button = styled.button`
-  background-color: #1964ff;
-  border: 1px solid #1964ff;
+  background-color: #0071e2;
+  border: 1px solid #0071e2;
   padding: 1rem 2rem;
   border-radius: 1rem;
   font-size: 1rem;
@@ -87,7 +87,7 @@ export const Button = styled.button`
   cursor: pointer;
   transition: 0.3s ease-in-out;
   &:hover {
-    background-color: #1964ff;
+    background-color:rgb(0, 85, 255);
     color: #fff;
   }
 `;
@@ -133,7 +133,8 @@ export const Card = styled.div`
     font-weight: 500;
   }
   @media (min-width: 920px) {
-    width: 80%;
+    width: 70%;
+    min-width: 400px;
   }
   @media (max-width: 920px) {
     width: 100%;
@@ -194,7 +195,7 @@ export const Dropdown = styled.select`
   width: 100%;
   font-size: 1rem;
   &:focus {
-    border-color: #1964ff;
+    border-color: #0071e2;
   }
   &::placeholder {
     font-size: 1rem;
@@ -204,8 +205,8 @@ export const Dropdown = styled.select`
 export const AddOptionsButton = styled.button`
   padding: 0.5rem;
   color: white;
-  background-color: #1964ff;
-  border: 1px solid #1964ff;
+  background-color: #0071e2;
+  border: 1px solid #0071e2;
   border-radius: 0.5rem;
   cursor: pointer;
 `;
