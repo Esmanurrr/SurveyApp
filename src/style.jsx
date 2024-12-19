@@ -125,7 +125,7 @@ export const Card = styled.div`
     text-decoration: none;
   }
   h2 {
-    color: #18395d;
+    color:rgb(0, 0, 0);
   }
   span {
     color: #8d9cad;
@@ -188,7 +188,7 @@ export const DropdownWrapper = styled.div`
 export const Dropdown = styled.select`
   padding: 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #d2d2d2;
+  border: 1px solid rgb(212, 230, 248);
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   outline: none;
   width: 100%;
@@ -245,7 +245,7 @@ export const SurveyDef = styled.div`
   display: flex;
   align-items: center;
   background-color: white;
-  border-right: 1px solid #ececf4;
+  border-right: 1px solid rgb(212, 230, 248);
   box-shadow: 0px 7px 12px rgb(0 0 0 / 3%);
   padding-inline: 3rem;
   flex-direction: column;
@@ -263,7 +263,7 @@ export const Question = styled.div`
 `;
 
 export const BaseWrapper = styled.div`
-  background-color: #f6f5f5;
+  background-color: #f0f4f8;
   width: 100%;
   min-height: 100vh;
   height: cover;
@@ -290,7 +290,7 @@ export const NavbarWrapper = styled.div`
   padding-block: 2rem;
   padding-inline: 5rem;
   gap: 10px;
-  border-bottom: 1px solid #d2d2d2;
+  border-bottom: 1px solid rgb(212, 230, 248);
   background-color: #fff;
   z-index: 11;
   position: relative;
@@ -316,7 +316,7 @@ export const NavbarWrapper = styled.div`
 
 
 export const BaseBackground = styled.div`
-  background-color: #f6f5f5;
+  background-color: #f0f4f8;
   min-height: 90vh;
   height: cover;
 `;
@@ -353,5 +353,95 @@ export const Loader = styled.div`
     height: 100%;
     border-radius: 30px;
     animation: ${moving} 1s ease-in-out infinite;
+  }
+`;
+
+export const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f4f8; 
+  padding: 1rem;
+`;
+
+export const LoginDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  background-color: #ffffff; 
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+  border-radius: 10px; 
+  text-align: center;
+
+  h1 {
+    margin-bottom: 1.5rem;
+    color: #333333;
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666666;
+
+    a {
+      color: #0071e2;
+      font-weight: bold;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  button {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    background-color: #4a9dec;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #3a8cc3;
+    }
+  }
+`;
+
+export const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+`
+
+export const Input = styled.input`
+  border: 2px solid transparent;
+  width: 15em;
+  height: 2.5em;
+  padding-left: 0.8em;
+  outline: none;
+  overflow: hidden;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  transition: all 0.5s;
+
+  &:hover,
+  &:focus {
+    border: 2px solid #0071e2;
+    box-shadow: 0px 0px 0px 7px rgba(74, 157, 236, 0.2);
+    background-color: white;
   }
 `;

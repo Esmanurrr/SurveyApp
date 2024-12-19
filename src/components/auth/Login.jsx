@@ -2,13 +2,21 @@ import React, { useState } from "react";
 import { doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useAuth } from "../../contexts/authContext";
 import { Link, Navigate } from "react-router-dom";
+import {
+  BaseBackground,
+  BaseWrapper,
+  Container,
+  FormWrapper,
+  Input,
+  InputWrapper,
+  LoginDiv,
+} from "../../style";
 
 function Login() {
   const { userLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,31 +27,36 @@ function Login() {
     }
   };
 
-
   if (userLoggedIn) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" replace={true} />;
   }
 
   return (
-    <>
-      {userLoggedIn && <Navigate to={"/"} replace={true} />}
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
-        <p>Dont u have an account? <Link to={'/register'}>Register</Link></p>
-      </form>
-    </>
+    <FormWrapper>
+      <LoginDiv>
+        <h1>Welcome Back!</h1>
+        <form onSubmit={handleLogin}>
+          <InputWrapper>
+            <Input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </InputWrapper>
+          <button type="submit">Login</button>
+        </form>
+        <p>
+          Don't have an account? <Link to={"/register"}>Register</Link>
+        </p>
+      </LoginDiv>
+    </FormWrapper>
   );
 }
 
