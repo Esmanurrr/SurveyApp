@@ -9,37 +9,33 @@ const Navbar = () => {
   const { userLoggedIn } = useAuth();
   return (
     <NavbarWrapper>
-      <ul>
-        <li>
-          <Link to="/">Surveys</Link>
-        </li>
-        <li>
-          <Link to="/responses">Responses</Link>
-        </li>
-        {userLoggedIn ? (
-          <>
-            <button
+        <ul>
+          <li>
+            <Link to="/">Surveys</Link>
+          </li>
+          <li>
+            <Link to="/responses">Responses</Link>
+          </li>
+        </ul>
+        <>
+          {userLoggedIn ? (
+            <div
+            style={{cursor:"pointer"}}
               onClick={() => {
                 doSignOut().then(() => {
                   navigate("/login");
                 });
               }}
-              className="text-sm text-blue-600 underline"
             >
               Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to={"/login"}>
-              Login
-            </Link>
-            <Link to={"/register"}>
-              Register New Account
-            </Link>
-          </>
-        )}
-      </ul>
+            </div>
+          ) : (
+            <div>
+              <Link to={"/login"}>Login</Link>
+              <Link to={"/register"}>Register New Account</Link>
+            </div>
+          )}
+        </>
     </NavbarWrapper>
   );
 };

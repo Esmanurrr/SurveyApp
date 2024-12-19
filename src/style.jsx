@@ -32,11 +32,11 @@ export const SurveyModal = styled.div`
   padding: 2rem 2rem;
   text-align: center;
 
-    @media (max-width: 1020px) {
-      width: 40%;
-      left: 20%;
-      padding: 1.5rem;
-    }
+  @media (max-width: 1020px) {
+    width: 40%;
+    left: 20%;
+    padding: 1.5rem;
+  }
 `;
 
 export const ModalContent = styled.div`
@@ -101,7 +101,6 @@ export const Header = styled.div`
   background-color: white;
 `;
 
-
 export const Span = styled.span`
   color: #686d76;
 `;
@@ -115,38 +114,37 @@ export const TextCenter = styled.div`
 
 export const Card = styled.div`
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
   border: 1px solid #ddd;
   padding: 1rem 2rem;
-  margin: .5rem;
-  border-radius: .5rem;
+  margin: 0.5rem;
+  border-radius: 0.5rem;
   background-color: #fff;
   height: cover;
-  a{
+  a {
     text-decoration: none;
   }
-  h2{
+  h2 {
     color: #18395d;
   }
-  span{
+  span {
     color: #8d9cad;
     font-size: 14px;
     font-weight: 500;
   }
-  @media (min-width: 920px){
+  @media (min-width: 920px) {
     width: 80%;
   }
-  @media (max-width: 920px){
+  @media (max-width: 920px) {
     width: 100%;
   }
 `;
-
 
 export const FlexContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  @media(max-width: 920px){
+  @media (max-width: 920px) {
     flex-direction: column;
   }
 `;
@@ -160,15 +158,14 @@ export const CardContainer = styled.div`
   border: 1px solid #ddd;
   border-radius: 0.5rem;
   padding: 2rem;
-
 `;
 
 export const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items:center;
-`
+  align-items: center;
+`;
 
 export const LabelDiv = styled.div`
   display: block;
@@ -251,8 +248,8 @@ export const SurveyDef = styled.div`
   border-right: 1px solid #ececf4;
   box-shadow: 0px 7px 12px rgb(0 0 0 / 3%);
   padding-inline: 3rem;
-  flex-direction: column; 
-  justify-content: center; 
+  flex-direction: column;
+  justify-content: center;
   z-index: 10;
 `;
 
@@ -291,11 +288,15 @@ export const ShortDropdown = styled(Dropdown)`
 
 export const NavbarWrapper = styled.div`
   padding-block: 2rem;
-  padding-inline: 3rem;
+  padding-inline: 5rem;
+  gap: 10px;
   border-bottom: 1px solid #d2d2d2;
-  background-color : #fff;
+  background-color: #fff;
   z-index: 11;
   position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   a {
     text-decoration: none;
     color: #8285a5;
@@ -313,11 +314,12 @@ export const NavbarWrapper = styled.div`
   }
 `;
 
+
 export const BaseBackground = styled.div`
   background-color: #f6f5f5;
   min-height: 90vh;
   height: cover;
-`
+`;
 
 export const moving = keyframes`
   50% {
