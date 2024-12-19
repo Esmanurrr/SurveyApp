@@ -6,15 +6,15 @@ import Navbar from "../../components/navbar/Navbar";
 const ProtectedRoute = () => {
   const { userLoggedIn } = useAuth();
 
-  console.log("ProtectedRoute - userLoggedIn:", userLoggedIn);
-
   if (!userLoggedIn) {
     return <Navigate to="/login" replace />;
   }
 
+  const hideNavbar = location.pathname.startsWith("/survey/fill-survey");
+
   return (
     <>
-        <Navbar/>
+        {!hideNavbar && <Navbar/>}
         <Outlet/>
     </>
   );
