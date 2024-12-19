@@ -9,7 +9,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import LoadingPage from "../infos/LoadingPage";
 
 function ResponseDetail() {
@@ -69,7 +69,7 @@ function ResponseDetail() {
               <hr style={{border: "1px solid #ddd"}} />
               <div style={{padding: "1.5rem"}}>
                 <p>
-                  {question.answer.join(", ")}
+                  {Array.isArray(question.answer) ? question.answer.join(" , ") : question.answer}
                 </p>
               </div>
             </Card>

@@ -1,31 +1,33 @@
 import { useEffect, useState } from "react";
 import SurveyCard from "./SurveyCard";
-import { db } from "../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { auth, db } from "../../firebase/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
 
 function SurveyList() {
 
     const [surveys, setSurveys] = useState([]);
 
-    const fetchSurveys = async () => {
+    const fetchUserSurveys = async () => {
       try {
-        const surveysCollection = collection(db, "surveys");
-        const surveySnapshot = await getDocs(surveysCollection);
+        const userId = auth.currentUser.uid;
+        const surveysRef = collection(db, "surveys");
+        const q = query(surveysRef, where("userId", "==", userId)); // Sadece bu kullanıcıya ait anketler
+        const querySnapshot = await getDocs(q);
         
-        const surveyList = surveySnapshot.docs.map((doc) => ({
+        const userSurveys = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data()
         }));
     
-        setSurveys(surveyList);
+        setSurveys(userSurveys);
       } catch (err) {
         console.log("Anketler çekilirken hata oluştu:", err);
       }
     };
   
     useEffect(() => {
-      fetchSurveys();
+      fetchUserSurveys();
     }, []);
   
     return (

@@ -9,7 +9,6 @@ import CreateSurvey from "../dashboard/CreateSurvey";
 import CreateSurveyModal from "../dashboard/CreateSurveyModal";
 import { createPortal } from "react-dom";
 import ResponseList from "./ResponseList";
-// import { useNavigate } from 'react-router-dom'
 
 function Responses() {
   const [portal, setPortal] = useState(false);

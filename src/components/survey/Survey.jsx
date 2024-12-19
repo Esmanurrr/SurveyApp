@@ -2,7 +2,7 @@ import { useLocation, useParams } from "react-router-dom";
 import QuestionList from "../question/QuestionList";
 import SurveyHeader from "./SurveyHeader";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import { collection, doc, getDoc } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
 import NotFound from "../infos/NotFound";

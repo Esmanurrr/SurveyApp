@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -13,13 +14,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 // İhtiyacınıza göre Firestore veya Realtime Database'i burada da başlatabilirsiniz
 // Örneğin Firestore kullanıyorsanız:
 import { getFirestore } from "firebase/firestore";
 const db = getFirestore(app);
 
-// İsterseniz bu db'yi de export edebilirsiniz
-export { db };
 
-export default app; // Uygulama örneğini dışarı aktar
+export {app, db, auth}; // Uygulama örneğini dışarı aktar

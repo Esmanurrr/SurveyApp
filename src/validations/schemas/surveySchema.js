@@ -33,6 +33,7 @@ export const questionSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
   responseType: yup.string().nullable(),
+  canBeSkipped: yup.boolean()
 });
 
 
