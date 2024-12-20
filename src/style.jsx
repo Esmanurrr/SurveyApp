@@ -445,3 +445,39 @@ export const Input = styled.input`
     background-color: white;
   }
 `;
+
+export const StyledButton = styled.button`
+  background-color: ${(props) => props.primary ? "#4A9DEC" : "transparent"};
+  color: ${(props) => (props.primary ? "white" : "#4A9DEC")};
+  padding: 0.8rem 1.5rem;
+  margin: 0.5rem;
+  border: ${(props) => (props.primary ? "none" : "2px solid #4A9DEC")};
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.primary ? "#3A8CC3" : "#4A9DEC")};
+    color: white;
+  }
+`;
+
+export const LinkButton = styled.a`
+  display: inline-block;
+  margin: 0.5rem 0;
+  padding: 0.8rem 1.5rem;
+  background-color: #f3f3f3;
+  color: #4A9DEC;
+  text-decoration: none;
+  border: 2px solid #4A9DEC;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #4A9DEC;
+    color: white;
+  }
+`;

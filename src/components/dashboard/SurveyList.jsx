@@ -5,7 +5,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
 
 function SurveyList() {
-
+    const [loading, setLoading] = useState(true); 
     const [surveys, setSurveys] = useState([]);
 
     const fetchUserSurveys = async () => {
@@ -23,6 +23,8 @@ function SurveyList() {
         setSurveys(userSurveys);
       } catch (err) {
         console.log("Anketler çekilirken hata oluştu:", err);
+      } finally {
+        setLoading(false);
       }
     };
   
@@ -30,13 +32,19 @@ function SurveyList() {
       fetchUserSurveys();
     }, []);
   
+    if (loading) {
+      return <LoadingPage />; 
+    }
+
+    if (surveys.length === 0) {
+      return <p>No surveys found. Create your first survey!</p>;
+    }
+
     return (
       <>
-        {surveys.length > 0 ? (
+        {
           surveys.map((survey) => <SurveyCard key={survey.id} survey={survey} />)
-        ) : (
-          <LoadingPage/>
-        )}
+        }
       </>
     );
 }
