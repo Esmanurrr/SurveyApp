@@ -15,7 +15,7 @@ import Choices from "../options/Choices";
 import InputResponse from "../options/InputResponse";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import LoadingPage from "../infos/LoadingPage";
 import {
   questionSchema,

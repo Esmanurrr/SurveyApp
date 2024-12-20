@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardWrapper, DeleteButton, EditButton } from "../../style";
-import { db } from "../../firebase";
+import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 function QuestionCard({ question, surveyId, onQuestionDelete, index }) {

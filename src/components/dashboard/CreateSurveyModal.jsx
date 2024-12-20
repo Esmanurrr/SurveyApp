@@ -8,7 +8,7 @@ import {
   Textarea,
 } from "../../style";
 import { useState } from "react";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { surveySchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup"; 
@@ -28,11 +28,13 @@ function CreateSurveyModal({ closePortal }) {
       title: title,
       description: description,
       questions: [], 
+      userId: auth.currentUser?.uid || null,
     };
     
     try {
       await surveySchema.validate({title, description}, {abortEarly: false})
-      const docRef = await addDoc(collection(db, "surveys"), newSurvey);
+      const userId = auth.currentUser.uid;
+      const docRef = await addDoc(collection(db, "surveys"), newSurvey, userId);
       console.log("Survey succesfully added, ID: ", docRef.id);
   
       navigate(`/survey/${docRef.id}`, {
