@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Dropdown } from '../../style'
 
-function InputType({inputType, setInputType}) {
+function InputType({inputType = "Text", setInputType}) {
 
   const handleInputType = (e) => {
     setInputType(e.target.value);

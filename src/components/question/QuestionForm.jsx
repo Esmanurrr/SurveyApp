@@ -31,7 +31,7 @@ function QuestionForm({ isEdit, surveyId }) {
     name: "",
     type: "",
     options: [],
-    responseType: "",
+    responseType: "Text",
   });
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
@@ -85,14 +85,14 @@ function QuestionForm({ isEdit, surveyId }) {
       .then(() => {
         setErrors((prevErrors) => {
           const updatedErrors = { ...prevErrors };
-          delete updatedErrors[name]; // Hata varsa temizle
+          delete updatedErrors[name]; 
           return updatedErrors;
         });
       })
       .catch((err) => {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          [name]: err.message, // Yeni hata mesajını ekle
+          [name]: err.message, 
         }));
       });
   };
@@ -100,10 +100,23 @@ function QuestionForm({ isEdit, surveyId }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuestionData((prevData) => ({
-      ...prevData,
-      [name]: name === "canBeSkipped" ? value === "true" : value,
-    }));
+    setQuestionData((prevData) => {
+      if (name === "type") {
+        return {
+          ...prevData,
+          type: value,
+          responseType: value === "Text Response" ? "Text" : prevData.responseType, 
+          options:
+            value === "Single Choice" || value === "Multiple Choice"
+              ? prevData.options 
+              : [], 
+        };
+      }
+      return {
+        ...prevData,
+        [name]: name === "canBeSkipped" ? value === "true" : value,
+      };
+    });
 
     validateField(name, value);
 
@@ -145,7 +158,7 @@ function QuestionForm({ isEdit, surveyId }) {
           questionData.type === "Multiple Choice"
             ? filteredOptions
             : [],
-        responseType: questionData.responseType,
+        responseType: questionData.responseType || "",
         canBeSkipped:
           questionData.canBeSkipped !== undefined
             ? questionData.canBeSkipped
@@ -178,7 +191,7 @@ function QuestionForm({ isEdit, surveyId }) {
       }
 
       await updateDoc(surveyRef, { questions: updatedSurvey.questions });
-      console.log("Soru başarıyla eklendi");
+      console.log("Soru başarıyla eklendi", updatedSurvey);
       navigate(-1);
     } catch (validationError) {
       if (validationError.inner) {

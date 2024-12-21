@@ -3,7 +3,7 @@ import Input from './Input'
 import InputType from './InputType'
 import { Flex } from '../../style'
 
-const InputResponse = ({inputType, setInputType}) => {
+const InputResponse = ({inputType = "Text", setInputType}) => {
 
   return (
     <Flex>

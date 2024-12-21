@@ -9,32 +9,29 @@ export const surveySchema = yup.object().shape({
 });
 
 export const questionSchema = yup.object().shape({
-  name: yup
-    .string()
-    .required("Question name is required"),
+  name: yup.string().required("Question name is required"),
   type: yup
     .string()
     .required("Question type is required")
-    .oneOf(["Single Choice", "Multiple Choice", "Text Response", "Long Text Response"], "Select a valid question type"),
-  options: yup.array().of(
-    yup
-      .string()
-      .trim()
-      .required("Option can not be empty")
-  )
-  .test(
-    "at-least-one-filled",
-    "At least one option must be filled in",
-    (options) => options.some((option) => option && option.trim().length > 0)
-  )
-  .when("type", {
-    is: (type) => type === "Single Choice" || type === "Multiple Choice",
-    then: (schema) => schema.required("Options are required"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  responseType: yup.string().nullable(),
-  canBeSkipped: yup.boolean()
+    .oneOf(
+      ["Single Choice", "Multiple Choice", "Text Response", "Long Text Response"],
+      "Select a valid question type"
+    ),
+  options: yup
+    .array()
+    .of(yup.string().trim().required("Option can not be empty"))
+    .when("type", {
+      is: (type) => type === "Single Choice" || type === "Multiple Choice",
+      then: (schema) =>
+        schema
+          .min(1, "At least one option must be filled in")
+          .required("Options are required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  responseType: yup.string().nullable().required("Please select a response type"),
+  canBeSkipped: yup.boolean(),
 });
+
 
 
 
