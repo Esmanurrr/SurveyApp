@@ -78,8 +78,8 @@ export const Textarea = styled.textarea`
 `;
 
 export const Button = styled.button`
-  background-color: #1964ff;
-  border: 1px solid #1964ff;
+  background-color: #4A9DEC;
+  border: 1px solid #4A9DEC;
   padding: 1rem 2rem;
   border-radius: 1rem;
   font-size: 1rem;
@@ -413,7 +413,7 @@ export const LoginDiv = styled.div`
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: #3a8cc3;
+      background-color: #1964ff;
     }
   }
 `;
@@ -447,37 +447,34 @@ export const Input = styled.input`
 `;
 
 export const StyledButton = styled.button`
-  background-color: ${(props) => props.primary ? "#4A9DEC" : "transparent"};
-  color: ${(props) => (props.primary ? "white" : "#4A9DEC")};
-  padding: 0.8rem 1.5rem;
-  margin: 0.5rem;
-  border: ${(props) => (props.primary ? "none" : "2px solid #4A9DEC")};
-  border-radius: 5px;
-  cursor: pointer;
+  background-color: #4A9DEC;
+  border: 1px solid #4A9DEC;
+  padding: .5rem 1rem;
+  margin: .5rem;
+  border-radius: 1rem;
   font-size: 1rem;
-  transition: all 0.3s ease;
-
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
   &:hover {
-    background-color: ${(props) => (props.primary ? "#3A8CC3" : "#4A9DEC")};
-    color: white;
+    background-color: #1964ff;
+    color: #fff;
   }
 `;
 
 export const LinkButton = styled.a`
-  display: inline-block;
-  margin: 0.5rem 0;
-  padding: 0.8rem 1.5rem;
-  background-color: #f3f3f3;
-  color: #4A9DEC;
-  text-decoration: none;
-  border: 2px solid #4A9DEC;
-  border-radius: 5px;
+  background-color: #4A9DEC;
+  border: 1px solid #4A9DEC;
+  padding: .5rem 1rem;
+  border-radius: 1rem;
   font-size: 1rem;
+  text-decoration: none;
+  color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease;
-
+  transition: 0.3s ease-in-out;
   &:hover {
-    background-color: #4A9DEC;
-    color: white;
+    background-color: #1964ff;
+    color: #fff;
   }
 `;
