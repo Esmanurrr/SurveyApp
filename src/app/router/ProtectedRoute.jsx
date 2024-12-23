@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import Navbar from "../../components/navbar/Navbar";
+import Footer from "../../components/footer/Footer";
 
 const ProtectedRoute = () => {
   const { userLoggedIn } = useAuth();
@@ -10,12 +11,14 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  const hideNavbar = location.pathname.startsWith("/survey/fill-survey");
+  const hide = location.pathname.startsWith("/survey/fill-survey");
 
   return (
     <>
-        {!hideNavbar && <Navbar/>}
+        {!hide && <Navbar/>}
         <Outlet/>
+        {!hide && <Footer/>}
+
     </>
   );
 };

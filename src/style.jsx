@@ -317,8 +317,8 @@ export const NavbarWrapper = styled.div`
 
 export const BaseBackground = styled.div`
   background-color: #f0f4f8;
-  min-height: 90vh;
-  height: cover;
+  min-height: 80vh;
+  height: auto;
 `;
 
 export const moving = keyframes`
@@ -478,3 +478,16 @@ export const LinkButton = styled.a`
     color: #fff;
   }
 `;
+
+export const FooterWrapper = styled.div`
+ padding-block: 2rem;
+  padding-inline: 5rem;
+  gap: 10px;
+  border-top: 1px solid rgb(212, 230, 248);
+  background-color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+`
