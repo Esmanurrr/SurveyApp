@@ -186,6 +186,7 @@ const FillSurvey = () => {
                             checked={
                               responses[question.id]?.includes(option) || false
                             }
+                            style={{margin:"5px"}}
                             onChange={(e) => {
                               const selectedOptions =
                                 responses[question.id] || [];
