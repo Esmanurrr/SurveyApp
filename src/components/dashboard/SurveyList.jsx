@@ -3,6 +3,7 @@ import SurveyCard from "./SurveyCard";
 import { auth, db } from "../../firebase/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
+import { TextCenter } from "../../style";
 
 function SurveyList() {
     const [loading, setLoading] = useState(true); 
@@ -37,7 +38,7 @@ function SurveyList() {
     }
 
     if (surveys.length === 0) {
-      return <p>No surveys found. Create your first survey!</p>;
+      return <TextCenter>No surveys found. Create your first survey!</TextCenter>;
     }
 
     return (

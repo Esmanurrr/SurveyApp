@@ -4,10 +4,10 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase";
 import ResponseSurveyCard from "./ResponseSurveyCard";
 import LoadingPage from "../infos/LoadingPage";
+import { TextCenter } from "../../style";
 
 function ResponseList() {
-  const location = useLocation();
-  const [responsesList, setResponsesList] = useState([]);
+const [responsesList, setResponsesList] = useState([]);
 
   useEffect(() => {
     const fetchResponses = async () => {
@@ -28,6 +28,10 @@ function ResponseList() {
 
     fetchResponses();
   }, []);
+
+   if (responsesList.length === 0) {
+        return <TextCenter>No response found. Create your first survey and share to get response!</TextCenter>;
+      }
 
   return (
     <>
