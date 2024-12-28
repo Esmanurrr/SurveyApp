@@ -3,16 +3,8 @@ import { doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useAuth } from "../../contexts/authContext";
 import { Link, Navigate } from "react-router-dom";
 import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
-import { loginValidationSchema } from "../../validations/schemas/userSchema";
+import { loginErrorMessages, loginValidationSchema } from "../../validations/schemas/userSchema";
 
-const firebaseErrorMessages = {
-  "auth/invalid-credential": "The email address or password is incorrect. Please try again.",
-  "auth/too-many-requests": "Too many login attempts. Please try again later.",
-  "auth/network-request-failed": "Network error. Please check your internet connection.",
-  "auth/internal-error": "An internal server error occurred. Please try again later.",
-  "auth/user-not-found": "No user found with this email address.",
-  default: "An error occured. Please try again later.",
-};
 
 function Login() {
   const { userLoggedIn } = useAuth();
@@ -41,7 +33,7 @@ function Login() {
         setErrors(formattedErrors);
       } else if (error.code) {
         console.log(error, error.code);
-        setErrors({ general: firebaseErrorMessages[error.code] || firebaseErrorMessages.default });
+        setErrors({ general: loginErrorMessages[error.code] || loginErrorMessages.default });
       }
       setIsSigningIn(false);
     }

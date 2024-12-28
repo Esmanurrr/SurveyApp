@@ -3,17 +3,9 @@ import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
-import { registerValidationSchema } from "../../validations/schemas/userSchema";
+import { registerErrorMessages, registerValidationSchema } from "../../validations/schemas/userSchema";
 
-const firebaseErrorMessages = {
-  "auth/email-already-in-use": "This email is already registered.",
-  "auth/invalid-email": "The email address is not valid.",
-  "auth/network-request-failed":
-    "Network error. Please check your internet connection.",
-  "auth/internal-error":
-    "An internal server error occurred. Please try again later.",
-  default: "An error occurred. Please try again later.",
-};
+
 
 function Register() {
   const { userLoggedIn } = useAuth();
@@ -48,7 +40,7 @@ function Register() {
       } else if (error.code) {
         setErrors({
           general:
-            firebaseErrorMessages[error.code] || firebaseErrorMessages.default,
+            registerErrorMessages[error.code] || registerErrorMessages.default,
         });
       }
       setIsRegistering(false);
