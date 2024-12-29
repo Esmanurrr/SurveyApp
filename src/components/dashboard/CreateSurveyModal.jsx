@@ -12,6 +12,7 @@ import { auth, db } from "../../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { surveySchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup"; 
+import { toast } from "react-toastify";
 
 function CreateSurveyModal({ closePortal }) {
   const [title, setTitle] = useState("");
@@ -35,8 +36,8 @@ function CreateSurveyModal({ closePortal }) {
       await surveySchema.validate({title, description}, {abortEarly: false})
       const userId = auth.currentUser.uid;
       const docRef = await addDoc(collection(db, "surveys"), newSurvey, userId);
-      console.log("Survey succesfully added, ID: ", docRef.id);
-  
+      toast.success("Survey added", { position: "top-right"});
+      
       navigate(`/survey/${docRef.id}`, {
         state: { title: title, description: description },
       });
@@ -45,7 +46,8 @@ function CreateSurveyModal({ closePortal }) {
       if(validationError instanceof yup.ValidationError){
         setError(validationError.errors[0])
       } else
-        console.error("There is an error", validationError);
+        toast.error("Survey could not be added.", { position: "top-right"});
+
     }
   };
 

@@ -5,6 +5,7 @@ import QuestionCard from "./QuestionCard";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
+import { toast } from "react-toastify";
 
 function QuestionList({ surveyId }) {
   const [questions, setQuestions] = useState([]);
@@ -21,15 +22,12 @@ function QuestionList({ surveyId }) {
           setLoading(false);
           if (surveyData.questions) {
             setQuestions(surveyData.questions); 
-          } else {
-            console.log("Questions alanı bulunamadı.");
-          }
+          } 
         } else {
-          console.log("Belge bulunamadı!");
           setLoading(true);
         }
       } catch (err) {
-        console.error("Veri çekme hatası: ", err);
+        toast.error(err, { position: "top-right"});
       } finally {
         setLoading(false);
       }
@@ -42,6 +40,7 @@ function QuestionList({ surveyId }) {
     setQuestions((prevQuestions) =>
       prevQuestions.filter((q) => q.id !== questionId)
     );
+    toast.success("Question deleted", { position: "top-right"});
   };
 
   if(loading) return <LoadingPage/>;

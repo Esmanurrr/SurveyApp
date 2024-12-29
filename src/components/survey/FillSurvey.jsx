@@ -17,6 +17,7 @@ import { createValidationSchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";
 import SurveyComplete from "../infos/SurveyComplete";
 import LoadingPage from "../infos/LoadingPage";
+import { toast } from "react-toastify";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
@@ -46,10 +47,10 @@ const FillSurvey = () => {
           });
           setResponses(initialResponses); 
         } else {
-          console.log("Anket bulunamadı!");
+          toast.error("Survey cannot found.", { position: "top-right"});
         }
       } catch (error) {
-        console.error("Anket verisi çekilemedi:", error);
+        toast.error("Failed to fetch survey data::", { position: "top-right"});
       } finally {
         setLoading(false);
       }
@@ -63,11 +64,8 @@ const FillSurvey = () => {
   }
 
   if (!survey || !survey.questions) {
-    return <p>Survey data is missing or corrupted.</p>;
+    return toast.error("Survey data is missing or corrupted.", { position: "top-right"});
   }
-
-  // if(isSubmitted) return <SurveyComplete/>;
-
 
   const handleResponseChange = (questionId, value) => {
     setResponses({
@@ -121,7 +119,8 @@ const FillSurvey = () => {
         surveyOwnerId: survey.userId,
         ...formattedResponses,
       });
-      console.log("Yanıtlar başarıyla kaydedildi:", formattedResponses);
+      toast.success("Responses saved", { position: "top-right"});
+      
       setIsSubmitted(true);
     } catch (error) {
       if (error instanceof yup.ValidationError) {
@@ -131,7 +130,8 @@ const FillSurvey = () => {
         });
         setError(newErrors);
       } else {
-        console.log("Yanıtlar kaydedilemedi:", error);
+        toast.error("Responses could not be added.", { position: "top-right"});
+        
       }
     }
   };

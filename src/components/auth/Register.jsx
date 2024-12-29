@@ -4,6 +4,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
 import { registerErrorMessages, registerValidationSchema } from "../../validations/schemas/userSchema";
+import { toast } from "react-toastify";
 
 
 
@@ -28,6 +29,7 @@ function Register() {
       if (!isRegistering) {
         setIsRegistering(true);
         await doCreateUserWithEmailAndPassword(email, password);
+        toast.success("Signed up!", { position: "top-right"});
         setIsRegistering(false);
       }
     } catch (error) {
@@ -42,6 +44,7 @@ function Register() {
           general:
             registerErrorMessages[error.code] || registerErrorMessages.default,
         });
+        toast.error("Cannot signing up.", { position: "top-right"});
       }
       setIsRegistering(false);
     }

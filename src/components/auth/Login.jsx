@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/authContext";
 import { Link, Navigate } from "react-router-dom";
 import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
 import { loginErrorMessages, loginValidationSchema } from "../../validations/schemas/userSchema";
+import { toast } from "react-toastify";
 
 
 function Login() {
@@ -23,6 +24,8 @@ function Login() {
 
       setIsSigningIn(true);
       await doSignInWithEmailAndPassword(email, password);
+      toast.success("Logged in!", { position: "top-right"});
+      
       setIsSigningIn(false);
     } catch (error) {
       if (error.name === "ValidationError") {
@@ -33,6 +36,7 @@ function Login() {
         setErrors(formattedErrors);
       } else if (error.code) {
         console.log(error, error.code);
+        toast.error("Unable to log in. Please check your username and password.", { position: "top-right"});
         setErrors({ general: loginErrorMessages[error.code] || loginErrorMessages.default });
       }
       setIsSigningIn(false);

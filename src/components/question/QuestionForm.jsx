@@ -11,6 +11,7 @@ import {
   InputRes,
   LabelDiv,
 } from "../../style";
+import { toast } from "react-toastify";
 import Choices from "../options/Choices";
 import InputResponse from "../options/InputResponse";
 import { useNavigate, useParams } from "react-router-dom";
@@ -179,19 +180,27 @@ function QuestionForm({ isEdit, surveyId }) {
 
         try {
           await updateDoc(surveyRef, { questions: updatedQuestions });
-          console.log("Soru başarıyla güncellendi");
+          toast.success("Question upadated", {
+            position: "top-right",
+          });
         } catch (err) {
-          console.log("Güncelleme hatası: ", err);
+          toast.error("Question cannot update.", {
+            position: "top-right",
+          });
         }
       } else {
         updatedSurvey = {
           ...survey,
           questions: [...survey.questions, newQuestion],
         };
+
+        await updateDoc(surveyRef, { questions: updatedSurvey.questions });
+        toast.success("Question added", {
+          position: "top-right",
+        });
       }
 
-      await updateDoc(surveyRef, { questions: updatedSurvey.questions });
-      console.log("Soru başarıyla eklendi", updatedSurvey);
+    
       navigate(-1);
     } catch (validationError) {
       if (validationError.inner) {
@@ -199,6 +208,9 @@ function QuestionForm({ isEdit, surveyId }) {
           acc[error.path] = error.message;
           return acc;
         }, {});
+        toast.error("Validation failed. Please check inputs!", {
+          position: "top-right",
+        });
         setErrors(errorMessages);
       }
     }

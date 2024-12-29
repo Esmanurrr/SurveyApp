@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { NavbarWrapper } from "../../style";
 import { useAuth } from "../../contexts/authContext";
 import { doSignOut } from "../../firebase/auth";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Navbar = () => {
               onClick={() => {
                 doSignOut().then(() => {
                   navigate("/login");
+                  toast.success("Logged Out! See you soon!", {position: "top-right"})
                 });
               }}
             >
