@@ -1,4 +1,5 @@
 import styled, { keyframes } from "styled-components";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Container = styled.div`
   padding: 90px 0;
