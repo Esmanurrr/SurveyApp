@@ -1,41 +1,37 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { deleteQuestionAsync } from "../../redux/question/questionSlice";
 import { Card, CardWrapper, DeleteButton, EditButton } from "../../style";
-import { db } from "../../firebase/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
-function QuestionCard({ question, surveyId, onQuestionDelete, index }) {
+function QuestionCard({ question, surveyId, index }) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleEdit = () => {
-    navigate(`/survey/edit-question/${question.id}`, {
-      state: { surveyId },
-    });
+    if (question.id) {
+      navigate(`/survey/edit-question/${question.id}`, {
+        state: { surveyId },
+      });
+    } else {
+      console.error("Question ID is undefined", question.id);
+    }
   };
 
-  const handleDelete = async (questionId) => {
-    try {
-      const surveyRef = doc(db, "surveys", surveyId);
-      const surveyDoc = await getDoc(surveyRef);
-  
-      if (surveyDoc.exists()) {
-        const surveyData = surveyDoc.data();
-        
-        const updatedQuestions = surveyData.questions.filter(
-          (q) => q.id !== questionId
-        );
-  
-        await updateDoc(surveyRef, { questions: updatedQuestions });
-  
-        if (onQuestionDelete) {
-          onQuestionDelete(questionId);
-        }
-  
-        console.log("Soru başarıyla silindi");
-      } else {
-        console.log("Anket bulunamadı!");
-      }
-    } catch (err) {
-      console.error("Soru silinirken hata oluştu:", err);
+  const handleDelete = () => {
+    if (question.id) {
+      dispatch(deleteQuestionAsync({ surveyId, questionId: question.id }))
+        .unwrap()
+        .then(() => {
+          toast.success("Question deleted successfully", {
+            position: "top-right",
+          });
+        })
+        .catch((error) => {
+          toast.error("Failed to delete question", { position: "top-right" });
+        });
+    } else {
+      console.error("Question ID is undefined");
     }
   };
 
@@ -50,7 +46,7 @@ function QuestionCard({ question, surveyId, onQuestionDelete, index }) {
         </div>
         <div>
           <EditButton onClick={handleEdit}>Edit</EditButton>
-          <DeleteButton onClick={() => handleDelete(question.id)}>
+          <DeleteButton onClick={handleDelete}>
             <i className="fa-solid fa-trash"></i>
           </DeleteButton>
         </div>

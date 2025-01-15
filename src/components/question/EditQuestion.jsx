@@ -1,9 +1,9 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import QuestionForm from "./QuestionForm";
 
 function EditQuestion() {
   const location = useLocation();
-  const {surveyId} = location.state || {};
+  const { surveyId } = location.state || {};
 
   return <QuestionForm isEdit={true} surveyId={surveyId} />;
 }
