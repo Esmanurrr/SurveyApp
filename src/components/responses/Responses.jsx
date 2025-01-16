@@ -16,7 +16,9 @@ import { Navigate } from "react-router-dom";
 
 function Responses() {
   const [portal, setPortal] = useState(false);
-  const { loading: responseLoading } = useSelector((state) => state.response);
+  const { loading: responseLoading, initialized } = useSelector(
+    (state) => state.response
+  );
   const { userLoggedIn, loading: authLoading } = useAuth();
 
   const handlePortal = () => {
@@ -40,7 +42,7 @@ function Responses() {
       <Container>
         <h1>Responses</h1>
         <RelativeDiv>
-          {responseLoading ? (
+          {responseLoading && !initialized ? (
             <LoadingPage />
           ) : (
             <FlexContainer>

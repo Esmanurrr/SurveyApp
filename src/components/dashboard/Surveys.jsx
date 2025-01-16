@@ -22,21 +22,18 @@ function Surveys() {
   const [portal, setPortal] = useState(false);
   const dispatch = useDispatch();
   const { userLoggedIn, loading: authLoading, currentUser } = useAuth();
-  const {
-    surveys,
-    loading: surveysLoading,
-    initialized,
-  } = useSelector((state) => state.survey);
+  const { surveys, loading: surveysLoading } = useSelector(
+    (state) => state.survey
+  );
 
   useEffect(() => {
-    if (userLoggedIn && currentUser) {
-      if (!initialized) {
-        dispatch(fetchSurveysAsync());
-      }
-    } else {
+    if (!userLoggedIn || !currentUser) {
       dispatch(clearSurveys());
+      return;
     }
-  }, [dispatch, userLoggedIn, currentUser, initialized]);
+
+    dispatch(fetchSurveysAsync());
+  }, [dispatch, userLoggedIn, currentUser]);
 
   const handlePortal = () => {
     setPortal(true);
@@ -46,7 +43,7 @@ function Surveys() {
     setPortal(false);
   };
 
-  if (authLoading) {
+  if (authLoading || surveysLoading) {
     return <LoadingPage />;
   }
 
@@ -59,23 +56,19 @@ function Surveys() {
       <Container>
         <h1>Recent Surveys</h1>
         <RelativeDiv>
-          {surveysLoading ? (
-            <LoadingPage />
-          ) : (
-            <FlexContainer>
-              <div style={{ flexGrow: 1 }}>
-                <SurveyList surveys={surveys} />
-              </div>
-              <div style={{ flexShrink: 0, marginTop: "1rem" }}>
-                <CreateSurvey handlePortal={handlePortal} />
-                {portal &&
-                  createPortal(
-                    <CreateSurveyModal closePortal={closePortal} />,
-                    document.body
-                  )}
-              </div>
-            </FlexContainer>
-          )}
+          <FlexContainer>
+            <div style={{ flexGrow: 1 }}>
+              <SurveyList surveys={surveys} />
+            </div>
+            <div style={{ flexShrink: 0, marginTop: "1rem" }}>
+              <CreateSurvey handlePortal={handlePortal} />
+              {portal &&
+                createPortal(
+                  <CreateSurveyModal closePortal={closePortal} />,
+                  document.body
+                )}
+            </div>
+          </FlexContainer>
         </RelativeDiv>
       </Container>
     </BaseBackground>

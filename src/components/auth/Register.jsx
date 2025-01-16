@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
-import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
-import { registerErrorMessages, registerValidationSchema } from "../../validations/schemas/userSchema";
+import {
+  FormWrapper,
+  LoginDiv,
+  InputWrapper,
+  Input,
+  AuthSubmitButton,
+} from "../../style.jsx";
+import {
+  registerErrorMessages,
+  registerValidationSchema,
+} from "../../validations/schemas/userSchema";
 import { toast } from "react-toastify";
-
-
 
 function Register() {
   const { userLoggedIn } = useAuth();
@@ -29,7 +36,7 @@ function Register() {
       if (!isRegistering) {
         setIsRegistering(true);
         await doCreateUserWithEmailAndPassword(email, password);
-        toast.success("Signed up!", { position: "top-right"});
+        toast.success("Signed up!", { position: "top-right" });
         setIsRegistering(false);
       }
     } catch (error) {
@@ -44,7 +51,7 @@ function Register() {
           general:
             registerErrorMessages[error.code] || registerErrorMessages.default,
         });
-        toast.error("Cannot signing up.", { position: "top-right"});
+        toast.error("Cannot signing up.", { position: "top-right" });
       }
       setIsRegistering(false);
     }
@@ -87,14 +94,16 @@ function Register() {
                 setconfirmPassword(e.target.value);
               }}
             />
-            {errors.confirmPassword && <p style={{ color: "red" }}>{errors.confirmPassword}</p>}
+            {errors.confirmPassword && (
+              <p style={{ color: "red" }}>{errors.confirmPassword}</p>
+            )}
           </InputWrapper>
           {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
-          <button type="submit" disabled={isRegistering}>
+          <AuthSubmitButton type="submit" disabled={isRegistering}>
             {isRegistering ? "Signing Up..." : "Sign Up"}
-          </button>
+          </AuthSubmitButton>
           <p>
-            Do you have an account? <Link to={"/login"}>Login</Link>
+            Do you have an account? <Link to="/login">Login</Link>
           </p>
         </form>
       </LoginDiv>

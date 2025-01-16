@@ -15,7 +15,7 @@ import { auth } from "../../firebase/firebase";
 
 // Tüm anketleri getirme
 export const fetchSurveysAsync = createAsyncThunk(
-  "survey/fetchSurveysAsync",
+  "surveys/fetchSurveys",
   async (_, { rejectWithValue }) => {
     try {
       if (!auth.currentUser) {
@@ -69,22 +69,19 @@ export const updateSurveyAsync = createAsyncThunk(
   async ({ id, updatedSurvey }, { rejectWithValue }) => {
     try {
       const surveyRef = doc(db, "surveys", id);
+      const surveyDoc = await getDoc(surveyRef);
+
+      if (!surveyDoc.exists()) {
+        return rejectWithValue("Survey not found");
+      }
+
+      // Kullanıcının kendi anketini güncellemesini kontrol et
+      if (surveyDoc.data().userId !== auth.currentUser?.uid) {
+        return rejectWithValue("Not authorized to update this survey");
+      }
+
       await updateDoc(surveyRef, updatedSurvey);
       return { id, ...updatedSurvey };
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-// Anket silme
-export const deleteSurveyAsync = createAsyncThunk(
-  "survey/deleteSurveyAsync",
-  async (id, { rejectWithValue }) => {
-    try {
-      const surveyRef = doc(db, "surveys", id);
-      await deleteDoc(surveyRef);
-      return id;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -189,22 +186,9 @@ const surveySlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(deleteSurveyAsync.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(deleteSurveyAsync.fulfilled, (state, action) => {
-        state.surveys = state.surveys.filter(
-          (survey) => survey.id !== action.payload
-        );
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(deleteSurveyAsync.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
       .addCase(fetchSurveyByIdAsync.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchSurveyByIdAsync.fulfilled, (state, action) => {
         state.currentSurvey = action.payload;
@@ -214,11 +198,10 @@ const surveySlice = createSlice({
       .addCase(fetchSurveyByIdAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.currentSurvey = null;
       });
   },
 });
 
-export const { setCurrentSurvey, setLoading, setError, clearSurveys } =
+export const { clearSurveys, setCurrentSurvey, setLoading, setError } =
   surveySlice.actions;
 export default surveySlice.reducer;

@@ -11,60 +11,54 @@ import {
   SurveyDef,
   SurveyWrapper,
 } from "../../style";
-import { db } from "../../firebase/firebase";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { createValidationSchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";
 import SurveyComplete from "../infos/SurveyComplete";
 import LoadingPage from "../infos/LoadingPage";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { createResponseAsync } from "../../redux/response/responseSlice";
+import { fetchSurveyByIdAsync } from "../../redux/survey/surveySlice";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
-  const [survey, setSurvey] = useState(null);
   const [responses, setResponses] = useState({});
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const dispatch = useDispatch();
+  const { currentSurvey: survey, loading } = useSelector(
+    (state) => state.survey
+  );
 
   useEffect(() => {
-    const fetchSurveyData = async () => {
-      try {
-        const surveyRef = doc(db, "surveys", surveyId);
-        const surveyDoc = await getDoc(surveyRef);
-
-        if (surveyDoc.exists()) {
-          const surveyData = surveyDoc.data();
-          setSurvey(surveyData);
-
+    if (surveyId) {
+      dispatch(fetchSurveyByIdAsync(surveyId))
+        .unwrap()
+        .then((surveyData) => {
           const initialResponses = {};
           surveyData.questions.forEach((question) => {
             if (question.type === "Multiple Choice") {
-              initialResponses[question.id] = []; 
+              initialResponses[question.id] = [];
             } else {
-              initialResponses[question.id] = ""; 
+              initialResponses[question.id] = "";
             }
           });
-          setResponses(initialResponses); 
-        } else {
-          toast.error("Survey cannot found.", { position: "top-right"});
-        }
-      } catch (error) {
-        toast.error("Failed to fetch survey data::", { position: "top-right"});
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSurveyData();
-  }, [surveyId]);
+          setResponses(initialResponses);
+        })
+        .catch((error) => {
+          toast.error(error || "Failed to fetch survey data", {
+            position: "top-right",
+          });
+        });
+    }
+  }, [dispatch, surveyId]);
 
   if (loading) {
-    return <LoadingPage/>;
+    return <LoadingPage />;
   }
 
   if (!survey || !survey.questions) {
-    return toast.error("Survey data is missing or corrupted.", { position: "top-right"});
+    return <div>Survey not found or has no questions.</div>;
   }
 
   const handleResponseChange = (questionId, value) => {
@@ -76,22 +70,22 @@ const FillSurvey = () => {
 
   const getAnswer = (question, responses) => {
     const response = responses[question.id];
-  
+
     if (Array.isArray(response)) {
       if (response.length === 0 && !question.canBeSkipped) {
-        throw new Error(`${question.name} requires at least one option to be selected.`);
+        throw new Error(
+          `${question.name} requires at least one option to be selected.`
+        );
       }
-      return response; 
+      return response;
     }
-  
+
     if (response !== undefined && response !== null) {
       return response;
     }
-  
-    return question.canBeSkipped ? "Unanswered" : null; 
+
+    return question.canBeSkipped ? "Unanswered" : null;
   };
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,7 +94,6 @@ const FillSurvey = () => {
 
     try {
       await validationSchema.validate(responses, { abortEarly: false });
-
       setError({});
 
       const formattedResponses = {
@@ -113,14 +106,14 @@ const FillSurvey = () => {
         })),
       };
 
-      const responsesRef = collection(db, "responses");
-      await addDoc(responsesRef, {
+      const responseData = {
         surveyId: surveyId,
         surveyOwnerId: survey.userId,
         ...formattedResponses,
-      });
-      toast.success("Responses saved", { position: "top-right"});
-      
+      };
+
+      await dispatch(createResponseAsync(responseData)).unwrap();
+      toast.success("Responses saved", { position: "top-right" });
       setIsSubmitted(true);
     } catch (error) {
       if (error instanceof yup.ValidationError) {
@@ -130,8 +123,7 @@ const FillSurvey = () => {
         });
         setError(newErrors);
       } else {
-        toast.error("Responses could not be added.", { position: "top-right"});
-        
+        toast.error("Responses could not be added.", { position: "top-right" });
       }
     }
   };
@@ -144,99 +136,101 @@ const FillSurvey = () => {
       </SurveyDef>
       <BaseWrapper>
         <Container>
-          { isSubmitted ? <SurveyComplete /> : 
+          {isSubmitted ? (
+            <SurveyComplete />
+          ) : (
             <form onSubmit={handleSubmit}>
-            {survey.questions.map((question, index) => (
-              <div key={question.id}>
-                <Question>
-                  {index + 1}. {question.name}
-                  {error[question.id] && (
-                    <div style={{ color: "red", fontSize: "12px" }}>
-                      {error[question.id]}
+              {survey.questions.map((question, index) => (
+                <div key={question.id}>
+                  <Question>
+                    {index + 1}. {question.name}
+                    {error[question.id] && (
+                      <div style={{ color: "red", fontSize: "12px" }}>
+                        {error[question.id]}
+                      </div>
+                    )}
+                  </Question>
+                  {question.type === "Single Choice" && (
+                    <ShortDropdown
+                      value={responses[question.id] || ""}
+                      onChange={(e) =>
+                        handleResponseChange(question.id, e.target.value)
+                      }
+                    >
+                      <option value="">Select an option</option>
+                      {question.options
+                        .filter((option) => option !== "")
+                        .map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                    </ShortDropdown>
+                  )}
+
+                  {question.type === "Multiple Choice" && (
+                    <div>
+                      {question.options
+                        .filter((option) => option !== "")
+                        .map((option) => (
+                          <label key={option}>
+                            <input
+                              type="checkbox"
+                              value={option}
+                              checked={
+                                responses[question.id]?.includes(option) ||
+                                false
+                              }
+                              style={{ margin: "5px" }}
+                              onChange={(e) => {
+                                const selectedOptions =
+                                  responses[question.id] || [];
+                                if (e.target.checked) {
+                                  handleResponseChange(question.id, [
+                                    ...selectedOptions,
+                                    option,
+                                  ]);
+                                } else {
+                                  handleResponseChange(
+                                    question.id,
+                                    selectedOptions.filter((v) => v !== option)
+                                  );
+                                }
+                              }}
+                            />
+                            <span>{option}</span>
+                          </label>
+                        ))}
                     </div>
                   )}
-                </Question>
-                {question.type === "Single Choice" && (
-                  <ShortDropdown
-                    value={responses[question.id] || ""}
-                    onChange={(e) =>
-                      handleResponseChange(question.id, e.target.value)
-                    }
-                  >
-                    <option value="">Select an option</option>
-                    {question.options
-                      .filter((option) => option !== "")
-                      .map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                  </ShortDropdown>
-                )}
 
-                {question.type === "Multiple Choice" && (
-                  <div>
-                    {question.options
-                      .filter((option) => option !== "")
-                      .map((option) => (
-                        <label key={option}>
-                          <input
-                            type="checkbox"
-                            value={option}
-                            checked={
-                              responses[question.id]?.includes(option) || false
-                            }
-                            style={{margin:"5px"}}
-                            onChange={(e) => {
-                              const selectedOptions =
-                                responses[question.id] || [];
-                              if (e.target.checked) {
-                                handleResponseChange(question.id, [
-                                  ...selectedOptions,
-                                  option,
-                                ]);
-                              } else {
-                                handleResponseChange(
-                                  question.id,
-                                  selectedOptions.filter((v) => v !== option)
-                                );
-                              }
-                            }}
-                          />
-                          <span>{option}</span>
-                        </label>
-                      ))}
-                  </div>
-                )}
+                  {question.type === "Text Response" && (
+                    <ShortInput
+                      type="text"
+                      placeholder="Cevabınızı girin"
+                      value={responses[question.id] || ""}
+                      onChange={(e) =>
+                        handleResponseChange(question.id, e.target.value)
+                      }
+                    />
+                  )}
 
-                {question.type === "Text Response" && (
-                  <ShortInput
-                    type="text"
-                    placeholder="Cevabınızı girin"
-                    value={responses[question.id] || ""}
-                    onChange={(e) =>
-                      handleResponseChange(question.id, e.target.value)
-                    }
-                  />
-                )}
+                  {question.type === "Long Text Response" && (
+                    <ShortTextarea
+                      rows={4}
+                      placeholder="Cevabınızı yazın"
+                      value={responses[question.id] || ""}
+                      onChange={(e) =>
+                        handleResponseChange(question.id, e.target.value)
+                      }
+                    />
+                  )}
+                </div>
+              ))}
 
-                {question.type === "Long Text Response" && (
-                  <ShortTextarea
-                    rows={4}
-                    placeholder="Cevabınızı yazın"
-                    value={responses[question.id] || ""}
-                    onChange={(e) =>
-                      handleResponseChange(question.id, e.target.value)
-                    }
-                  />
-                )}
-              </div>
-            ))}
-
-            <SubmitButton type="submit">
-              Submit
-            </SubmitButton>
-          </form>}
+              <SubmitButton type="submit">Submit</SubmitButton>
+            </form>
+          )}
         </Container>
       </BaseWrapper>
     </SurveyWrapper>
