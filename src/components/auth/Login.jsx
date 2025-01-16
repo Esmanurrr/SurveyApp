@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { doSignInWithEmailAndPassword } from "../../firebase/auth";
 import { useAuth } from "../../contexts/authContext";
 import { Link, Navigate } from "react-router-dom";
-import { FormWrapper, Input, InputWrapper, LoginDiv } from "../../style";
-import { loginErrorMessages, loginValidationSchema } from "../../validations/schemas/userSchema";
+import {
+  FormWrapper,
+  LoginDiv,
+  InputWrapper,
+  Input,
+  AuthSubmitButton,
+} from "../../style.jsx";
+import {
+  loginErrorMessages,
+  loginValidationSchema,
+} from "../../validations/schemas/userSchema";
 import { toast } from "react-toastify";
-
 
 function Login() {
   const { userLoggedIn } = useAuth();
@@ -14,18 +22,19 @@ function Login() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [errors, setErrors] = useState({});
 
-  
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrors({});
     try {
-      await loginValidationSchema.validate({ email, password }, { abortEarly: false });
+      await loginValidationSchema.validate(
+        { email, password },
+        { abortEarly: false }
+      );
 
       setIsSigningIn(true);
       await doSignInWithEmailAndPassword(email, password);
-      toast.success("Logged in!", { position: "top-right"});
-      
+      toast.success("Logged in!", { position: "top-right" });
+
       setIsSigningIn(false);
     } catch (error) {
       if (error.name === "ValidationError") {
@@ -36,8 +45,13 @@ function Login() {
         setErrors(formattedErrors);
       } else if (error.code) {
         console.log(error, error.code);
-        toast.error("Unable to log in. Please check your username and password.", { position: "top-right"});
-        setErrors({ general: loginErrorMessages[error.code] || loginErrorMessages.default });
+        toast.error(
+          "Unable to log in. Please check your username and password.",
+          { position: "top-right" }
+        );
+        setErrors({
+          general: loginErrorMessages[error.code] || loginErrorMessages.default,
+        });
       }
       setIsSigningIn(false);
     }
@@ -66,16 +80,18 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+            {errors.password && (
+              <p style={{ color: "red" }}>{errors.password}</p>
+            )}
           </InputWrapper>
           {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
-          <button type="submit" disabled={isSigningIn}>
+          <AuthSubmitButton type="submit" disabled={isSigningIn}>
             {isSigningIn ? "Logging in..." : "Login"}
-          </button>
+          </AuthSubmitButton>
+          <p>
+            Don&apos;t have an account? <Link to="/register">Register</Link>
+          </p>
         </form>
-        <p>
-          Don't have an account? <Link to={"/register"}>Register</Link>
-        </p>
       </LoginDiv>
     </FormWrapper>
   );
