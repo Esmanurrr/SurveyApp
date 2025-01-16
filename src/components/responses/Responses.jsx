@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   BaseBackground,
   Container,
@@ -9,32 +10,39 @@ import CreateSurvey from "../dashboard/CreateSurvey";
 import CreateSurveyModal from "../dashboard/CreateSurveyModal";
 import { createPortal } from "react-dom";
 import ResponseList from "./ResponseList";
+import LoadingPage from "../infos/LoadingPage";
+import { useAuth } from "../../contexts/authContext";
+import { Navigate } from "react-router-dom";
 
 function Responses() {
   const [portal, setPortal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { loading: responseLoading } = useSelector((state) => state.response);
+  const { userLoggedIn, loading: authLoading } = useAuth();
 
-  const handlePortal = async () => {
-    setLoading(true);
-    try {
-      setPortal(true);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  const handlePortal = () => {
+    setPortal(true);
   };
 
   const closePortal = () => {
     setPortal(false);
   };
 
+  if (authLoading) {
+    return <LoadingPage />;
+  }
+
+  if (!userLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <BaseBackground>
       <Container>
         <h1>Responses</h1>
         <RelativeDiv>
-          {!loading && (
+          {responseLoading ? (
+            <LoadingPage />
+          ) : (
             <FlexContainer>
               <div style={{ flexGrow: 1 }}>
                 <ResponseList />
