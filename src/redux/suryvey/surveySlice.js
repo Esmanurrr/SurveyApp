@@ -5,6 +5,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 
@@ -43,6 +44,25 @@ export const deleteSurveyAsync = createAsyncThunk(
       const surveyRef = doc(db, "surveys", id);
       await deleteDoc(surveyRef);
       return id;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Tekil anket getirme
+export const fetchSurveyByIdAsync = createAsyncThunk(
+  "survey/fetchSurveyByIdAsync",
+  async (id, { rejectWithValue }) => {
+    try {
+      const surveyRef = doc(db, "surveys", id);
+      const surveyDoc = await getDoc(surveyRef);
+
+      if (surveyDoc.exists()) {
+        return { id: surveyDoc.id, ...surveyDoc.data() };
+      } else {
+        return rejectWithValue("Survey not found");
+      }
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -115,6 +135,19 @@ const surveySlice = createSlice({
       .addCase(deleteSurveyAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchSurveyByIdAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSurveyByIdAsync.fulfilled, (state, action) => {
+        state.currentSurvey = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchSurveyByIdAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.currentSurvey = null;
       });
   },
 });
