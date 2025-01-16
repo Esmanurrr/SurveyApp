@@ -14,7 +14,7 @@ import { surveySchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { addSurveyAsync } from "../../redux/suryvey/surveySlice";
+import { addSurveyAsync } from "../../redux/survey/surveySlice";
 
 function CreateSurveyModal({ closePortal }) {
   const [title, setTitle] = useState("");

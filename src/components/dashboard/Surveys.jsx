@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSurveysAsync,
   clearSurveys,
-} from "../../redux/suryvey/surveySlice";
+} from "../../redux/survey/surveySlice";
 import { useAuth } from "../../contexts/authContext";
 import LoadingPage from "../infos/LoadingPage";
 import { Navigate } from "react-router-dom";

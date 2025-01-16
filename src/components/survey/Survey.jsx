@@ -6,7 +6,7 @@ import LoadingPage from "../infos/LoadingPage";
 import NotFound from "../infos/NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchQuestionsAsync } from "../../redux/question/questionSlice";
-import { fetchSurveyByIdAsync } from "../../redux/suryvey/surveySlice";
+import { fetchSurveyByIdAsync } from "../../redux/survey/surveySlice";
 import { useAuth } from "../../contexts/authContext";
 import { Navigate } from "react-router-dom";
 
