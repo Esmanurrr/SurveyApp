@@ -1,48 +1,56 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import QuestionList from "../question/QuestionList";
 import SurveyHeader from "./SurveyHeader";
-import { useEffect, useState } from "react";
-import { db } from "../../firebase/firebase";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { useEffect } from "react";
 import LoadingPage from "../infos/LoadingPage";
 import NotFound from "../infos/NotFound";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchQuestionsAsync } from "../../redux/question/questionSlice";
+import { fetchSurveyByIdAsync } from "../../redux/survey/surveySlice";
+import { useAuth } from "../../contexts/authContext";
+import { Navigate } from "react-router-dom";
 
 const Survey = () => {
-  const location = useLocation();
-  const [questions, setQuestions] = useState([]);
-  const { title, description } = location.state || {};
+  const dispatch = useDispatch();
   const { id } = useParams();
+  const { userLoggedIn, loading: authLoading } = useAuth();
+  const {
+    currentSurvey,
+    loading: surveyLoading,
+    error,
+  } = useSelector((state) => state.survey);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      if (!id) {
-        console.log("ID tanımlı değil.");
-        return; 
-      }
+    if (userLoggedIn && id) {
+      dispatch(fetchSurveyByIdAsync(id));
+      dispatch(fetchQuestionsAsync(id));
+    }
+  }, [dispatch, id, userLoggedIn]);
 
-      try {
-        const surveyRef = doc(collection(db, "surveys"), id); 
-        const surveyDoc = await getDoc(surveyRef); 
+  if (authLoading) {
+    return <LoadingPage />;
+  }
 
-        if (surveyDoc.exists()) {
-          const surveyData = surveyDoc.data();
-          setQuestions(surveyData.questions); 
-        } else {
-          console.log("Survey not found");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  if (!userLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
 
-    fetchQuestions();
-  }, [id]);
+  if (surveyLoading) {
+    return <LoadingPage />;
+  }
 
+  if (error || !currentSurvey) {
+    return <NotFound />;
+  }
 
   return (
     <div>
       <div>
-        <SurveyHeader title={title} description={description} id={id} />
+        <SurveyHeader
+          title={currentSurvey.title}
+          description={currentSurvey.description}
+          id={id}
+        />
         <QuestionList surveyId={id} />
       </div>
     </div>

@@ -1,4 +1,11 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addQuestionAsync,
+  fetchQuestionsAsync,
+  updateQuestionAsync,
+} from "../../redux/question/questionSlice";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   BaseBackground,
   Button,
@@ -14,122 +21,120 @@ import {
 import { toast } from "react-toastify";
 import Choices from "../options/Choices";
 import InputResponse from "../options/InputResponse";
-import { useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
 import LoadingPage from "../infos/LoadingPage";
-import {
-  questionSchema,
-} from "../../validations/schemas/surveySchema";
+import { questionSchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";
 
-
 function QuestionForm({ isEdit, surveyId }) {
-  const navigate = useNavigate();
-  const { questionId } = useParams();
-  const [survey, setSurvey] = useState(null);
   const [questionData, setQuestionData] = useState({
     name: "",
     type: "",
     options: [],
     responseType: "Text",
+    canBeSkipped: false,
   });
-  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { questionId } = useParams();
+  const { questions, loading } = useSelector((state) => state.question);
 
   useEffect(() => {
-    const fetchSurvey = async () => {
-      try {
-        const surveyRef = doc(db, "surveys", surveyId);
-        const surveyDoc = await getDoc(surveyRef);
-        if (surveyDoc.exists()) {
-          const surveyData = surveyDoc.data();
-          setSurvey(surveyData);
-          setLoading(false);
-          if (isEdit) {
-            const question = surveyData.questions.find(
-              (q) => q.id === questionId
-            );
-            if (question) {
-              setQuestionData({
-                name: question.name,
-                type: question.type,
-                options: question.options || [],
-                responseType: question.responseType || "",
-                canBeSkipped:
-                  question.canBeSkipped !== undefined
-                    ? question.canBeSkipped
-                    : true,
-              });
-            } else {
-              console.log("Question not found");
-            }
+    const fetchQuestionData = async () => {
+      if (isEdit && questionId) {
+        try {
+          const result = await dispatch(fetchQuestionsAsync(surveyId)).unwrap();
+          const question = result.find((q) => q.id === questionId);
+          if (question) {
+            setQuestionData({
+              name: question.name || "",
+              type: question.type || "",
+              options: question.options || [],
+              responseType: question.responseType || "Text",
+              canBeSkipped:
+                question.canBeSkipped !== undefined
+                  ? question.canBeSkipped
+                  : true,
+            });
           }
-        } else {
-          console.log("Survey not found");
+        } catch (error) {
+          toast.error("Failed to fetch question data", {
+            position: "top-right",
+          });
         }
-      } catch (err) {
-        console.log(err);
-        console.log("survey id:", surveyId);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchSurvey();
-  }, [surveyId, questionId, isEdit]);
+    fetchQuestionData();
+  }, [isEdit, questionId, surveyId, dispatch]);
 
   const validateField = (name, value) => {
-    yup
-      .reach(questionSchema, name)
-      .validate(value)
-      .then(() => {
-        setErrors((prevErrors) => {
-          const updatedErrors = { ...prevErrors };
-          delete updatedErrors[name]; 
-          return updatedErrors;
-        });
-      })
-      .catch((err) => {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [name]: err.message, 
-        }));
+    try {
+      const schema = yup.reach(questionSchema, name);
+      schema.validateSync(value);
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name];
+        return updatedErrors;
       });
+    } catch (err) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: err.message,
+      }));
+    }
   };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuestionData((prevData) => {
-      if (name === "type") {
-        return {
-          ...prevData,
-          type: value,
-          responseType: value === "Text Response" ? "Text" : prevData.responseType, 
-          options:
-            value === "Single Choice" || value === "Multiple Choice"
-              ? prevData.options 
-              : [], 
-        };
-      }
-      return {
-        ...prevData,
-        [name]: name === "canBeSkipped" ? value === "true" : value,
+
+    if (name === "type") {
+      const newData = {
+        ...questionData,
+        type: value,
+        responseType:
+          value === "Text Response" ? "Text" : questionData.responseType,
+        options:
+          value === "Single Choice" || value === "Multiple Choice"
+            ? questionData.options
+            : [],
       };
-    });
+      setQuestionData(newData);
 
-    validateField(name, value);
-
+      // Soru tipi değiştiğinde validasyon yap
+      try {
+        const schema = yup.reach(questionSchema, "type");
+        schema.validateSync(value);
+        setErrors((prev) => {
+          const { type, ...rest } = prev;
+          // Eğer Single/Multiple Choice değilse options hatalarını temizle
+          if (!(value === "Single Choice" || value === "Multiple Choice")) {
+            const { options, ...remaining } = rest;
+            return remaining;
+          }
+          return rest;
+        });
+      } catch (err) {
+        setErrors((prev) => ({
+          ...prev,
+          type: err.message,
+        }));
+      }
+    } else {
+      const newValue = name === "canBeSkipped" ? value === "true" : value;
+      setQuestionData((prev) => ({
+        ...prev,
+        [name]: newValue,
+      }));
+      validateField(name, newValue);
+    }
   };
 
   const handleOptionsChange = (newOptions) => {
-    setQuestionData((prevData) => ({
-      ...prevData,
+    setQuestionData((prev) => ({
+      ...prev,
       options: newOptions,
     }));
-
-    
   };
 
   const setInputType = (inputType) => {
@@ -139,79 +144,64 @@ function QuestionForm({ isEdit, surveyId }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
 
     const filteredOptions = questionData.options.filter(
       (option) => option && option.trim().length > 0
     );
-  
+
+    const dataToValidate = {
+      ...questionData,
+      options: filteredOptions,
+    };
 
     try {
-      await questionSchema.validate({...questionData, options: filteredOptions}, { abortEarly: false });
-
-      const newQuestion = {
-        id: isEdit ? questionId : crypto.randomUUID(),
-        name: questionData.name,
-        type: questionData.type,
-        options:
-          questionData.type === "Single Choice" ||
-          questionData.type === "Multiple Choice"
-            ? filteredOptions
-            : [],
-        responseType: questionData.responseType || "",
-        canBeSkipped:
-          questionData.canBeSkipped !== undefined
-            ? questionData.canBeSkipped
-            : "true",
-      };
-
-      const surveyRef = doc(db, "surveys", surveyId);
-      let updatedSurvey;
+      await questionSchema.validate(dataToValidate, { abortEarly: false });
 
       if (isEdit) {
-        const updatedQuestions = survey.questions.map((question) =>
-          question.id === questionId
-            ? { ...question, ...questionData }
-            : question
-        );
-        console.log("edit butonuna tıklanıldı");
-        updatedSurvey = { ...survey, questions: updatedQuestions };
+        await dispatch(
+          updateQuestionAsync({
+            surveyId,
+            updatedQuestion: {
+              ...questionData,
+              id: questionId,
+              options: filteredOptions,
+            },
+          })
+        ).unwrap();
 
-        try {
-          await updateDoc(surveyRef, { questions: updatedQuestions });
-          toast.success("Question upadated", {
-            position: "top-right",
-          });
-        } catch (err) {
-          toast.error("Question cannot update.", {
-            position: "top-right",
-          });
-        }
+        toast.success("Question updated successfully", {
+          position: "top-right",
+        });
+        navigate(`/survey/${surveyId}`);
       } else {
-        updatedSurvey = {
-          ...survey,
-          questions: [...survey.questions, newQuestion],
-        };
+        await dispatch(
+          addQuestionAsync({
+            surveyId,
+            newQuestion: { ...questionData, options: filteredOptions },
+          })
+        ).unwrap();
 
-        await updateDoc(surveyRef, { questions: updatedSurvey.questions });
-        toast.success("Question added", {
+        toast.success("Question added successfully", {
           position: "top-right",
         });
+        navigate(`/survey/${surveyId}`);
       }
-
-    
-      navigate(-1);
     } catch (validationError) {
-      if (validationError.inner) {
-        const errorMessages = validationError.inner.reduce((acc, error) => {
-          acc[error.path] = error.message;
-          return acc;
-        }, {});
-        toast.error("Validation failed. Please check inputs!", {
+      if (validationError instanceof yup.ValidationError) {
+        const newErrors = {};
+        validationError.inner.forEach((error) => {
+          newErrors[error.path] = error.message;
+        });
+        setErrors(newErrors);
+        toast.error("Please check all required fields!", {
           position: "top-right",
         });
-        setErrors(errorMessages);
+      } else {
+        toast.error("An error occurred while saving", {
+          position: "top-right",
+        });
       }
     }
   };
@@ -227,7 +217,9 @@ function QuestionForm({ isEdit, surveyId }) {
               options={questionData.options}
               setOptions={handleOptionsChange}
             />
-            {errors.options && <p style={{ color: "red" }}>{errors.options}</p>}
+            {errors.options && (
+              <p style={{ color: "red", margin: "5px 0" }}>{errors.options}</p>
+            )}
           </>
         );
       case "Text Response":
@@ -237,10 +229,24 @@ function QuestionForm({ isEdit, surveyId }) {
               inputType={questionData.responseType}
               setInputType={setInputType}
             />
+            {errors.responseType && (
+              <p style={{ color: "red", margin: "5px 0" }}>
+                {errors.responseType}
+              </p>
+            )}
           </>
         );
       case "Long Text Response":
-        return <InputRes type="text" placeholder="Enter your response" />;
+        return (
+          <>
+            <InputRes type="text" placeholder="Enter your response" />
+            {errors.responseType && (
+              <p style={{ color: "red", margin: "5px 0" }}>
+                {errors.responseType}
+              </p>
+            )}
+          </>
+        );
       default:
         return null;
     }
@@ -253,28 +259,26 @@ function QuestionForm({ isEdit, surveyId }) {
       <Container>
         <CardWrapper>
           <CardContainer>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSave}>
               <div>
-                <LabelDiv>Question</LabelDiv>
+                <LabelDiv>Question Name</LabelDiv>
                 <InputRes
                   type="text"
                   name="name"
                   value={questionData.name}
                   onChange={handleChange}
                 />
+                {errors.name && (
+                  <p style={{ color: "red", margin: "5px 0" }}>{errors.name}</p>
+                )}
               </div>
-              {errors.name && (
-                <p style={{ color: "red" }} className="error-message">
-                  {errors.name}
-                </p>
-              )}
               <Flex>
                 <DropdownWrapper>
-                  <LabelDiv>Question type</LabelDiv>
+                  <LabelDiv>Question Type</LabelDiv>
                   <Dropdown
                     name="type"
-                    onChange={handleChange}
                     value={questionData.type}
+                    onChange={handleChange}
                     disabled={isEdit}
                   >
                     <option value="">Choose a question type</option>
@@ -285,10 +289,14 @@ function QuestionForm({ isEdit, surveyId }) {
                       Long Text Response
                     </option>
                   </Dropdown>
-                  {errors.type && <p style={{ color: "red" }}>{errors.type}</p>}
+                  {errors.type && (
+                    <p style={{ color: "red", margin: "5px 0" }}>
+                      {errors.type}
+                    </p>
+                  )}
                 </DropdownWrapper>
                 <DropdownWrapper>
-                  <LabelDiv>Can this question be skipped?</LabelDiv>
+                  <LabelDiv>Can be skipped?</LabelDiv>
                   <Dropdown
                     name="canBeSkipped"
                     value={String(questionData.canBeSkipped)}
@@ -297,6 +305,11 @@ function QuestionForm({ isEdit, surveyId }) {
                     <option value="true">Yes</option>
                     <option value="false">No</option>
                   </Dropdown>
+                  {errors.canBeSkipped && (
+                    <p style={{ color: "red", margin: "5px 0" }}>
+                      {errors.canBeSkipped}
+                    </p>
+                  )}
                 </DropdownWrapper>
               </Flex>
               {renderQuestionInput()}
