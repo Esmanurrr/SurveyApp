@@ -6,16 +6,57 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
+import { auth } from "../../firebase/firebase";
+
+// Tüm anketleri getirme
+export const fetchSurveysAsync = createAsyncThunk(
+  "survey/fetchSurveysAsync",
+  async (_, { rejectWithValue }) => {
+    try {
+      if (!auth.currentUser) {
+        return rejectWithValue("User not authenticated");
+      }
+
+      const surveysRef = collection(db, "surveys");
+      const q = query(surveysRef, where("userId", "==", auth.currentUser.uid));
+      const querySnapshot = await getDocs(q);
+
+      const surveys = [];
+      querySnapshot.forEach((doc) => {
+        if (doc.exists()) {
+          surveys.push({ id: doc.id, ...doc.data() });
+        }
+      });
+      return surveys;
+    } catch (error) {
+      console.error("Error fetching surveys:", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 // Anket ekleme
 export const addSurveyAsync = createAsyncThunk(
   "survey/addSurveyAsync",
   async (newSurvey, { rejectWithValue }) => {
     try {
-      const docRef = await addDoc(collection(db, "surveys"), newSurvey);
-      return { id: docRef.id, ...newSurvey };
+      if (!auth.currentUser) {
+        return rejectWithValue("User not authenticated");
+      }
+
+      const surveyWithUser = {
+        ...newSurvey,
+        userId: auth.currentUser.uid,
+        createdAt: new Date().toISOString(),
+      };
+
+      const docRef = await addDoc(collection(db, "surveys"), surveyWithUser);
+      return { id: docRef.id, ...surveyWithUser };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -76,8 +117,15 @@ const surveySlice = createSlice({
     currentSurvey: null,
     loading: false,
     error: null,
+    initialized: false,
   },
   reducers: {
+    clearSurveys: (state) => {
+      state.surveys = [];
+      state.currentSurvey = null;
+      state.error = null;
+      state.initialized = false;
+    },
     setCurrentSurvey: (state, action) => {
       state.currentSurvey = action.payload;
       state.loading = false;
@@ -93,6 +141,25 @@ const surveySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchSurveysAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSurveysAsync.fulfilled, (state, action) => {
+        state.surveys = action.payload;
+        state.loading = false;
+        state.error = null;
+        state.initialized = true;
+      })
+      .addCase(fetchSurveysAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        if (action.payload === "User not authenticated") {
+          state.surveys = [];
+          state.currentSurvey = null;
+          state.initialized = false;
+        }
+      })
       .addCase(addSurveyAsync.pending, (state) => {
         state.loading = true;
       })
@@ -152,5 +219,6 @@ const surveySlice = createSlice({
   },
 });
 
-export const { setCurrentSurvey, setLoading, setError } = surveySlice.actions;
+export const { setCurrentSurvey, setLoading, setError, clearSurveys } =
+  surveySlice.actions;
 export default surveySlice.reducer;

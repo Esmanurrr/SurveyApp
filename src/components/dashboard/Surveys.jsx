@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BaseBackground,
   Container,
@@ -9,34 +9,59 @@ import CreateSurveyModal from "./CreateSurveyModal";
 import { createPortal } from "react-dom";
 import CreateSurvey from "./CreateSurvey";
 import SurveyList from "./SurveyList";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchSurveysAsync,
+  clearSurveys,
+} from "../../redux/suryvey/surveySlice";
+import { useAuth } from "../../contexts/authContext";
+import LoadingPage from "../infos/LoadingPage";
+import { Navigate } from "react-router-dom";
 
 function Surveys() {
   const [portal, setPortal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const surveys = useSelector((state) => state.survey.surveys);
+  const dispatch = useDispatch();
+  const { userLoggedIn, loading: authLoading, currentUser } = useAuth();
+  const {
+    surveys,
+    loading: surveysLoading,
+    initialized,
+  } = useSelector((state) => state.survey);
 
-  const handlePortal = async () => {
-    setLoading(true);
-    try {
-      setPortal(true);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (userLoggedIn && currentUser) {
+      if (!initialized) {
+        dispatch(fetchSurveysAsync());
+      }
+    } else {
+      dispatch(clearSurveys());
     }
+  }, [dispatch, userLoggedIn, currentUser, initialized]);
+
+  const handlePortal = () => {
+    setPortal(true);
   };
 
   const closePortal = () => {
     setPortal(false);
   };
 
+  if (authLoading) {
+    return <LoadingPage />;
+  }
+
+  if (!userLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <BaseBackground>
       <Container>
         <h1>Recent Surveys</h1>
         <RelativeDiv>
-          {!loading && (
+          {surveysLoading ? (
+            <LoadingPage />
+          ) : (
             <FlexContainer>
               <div style={{ flexGrow: 1 }}>
                 <SurveyList surveys={surveys} />
