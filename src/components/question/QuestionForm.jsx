@@ -40,21 +40,33 @@ function QuestionForm({ isEdit, surveyId }) {
   const { questions, loading } = useSelector((state) => state.question);
 
   useEffect(() => {
-    if (isEdit && questionId) {
-      const question = questions.find((q) => q.id === questionId);
-      if (question) {
-        setQuestionData({
-          ...question,
-          name: question.name || "",
-          type: question.type || "",
-          options: question.options || [],
-          responseType: question.responseType || "Text",
-          canBeSkipped:
-            question.canBeSkipped !== undefined ? question.canBeSkipped : true,
-        });
+    const fetchQuestionData = async () => {
+      if (isEdit && questionId) {
+        try {
+          const result = await dispatch(fetchQuestionsAsync(surveyId)).unwrap();
+          const question = result.find((q) => q.id === questionId);
+          if (question) {
+            setQuestionData({
+              name: question.name || "",
+              type: question.type || "",
+              options: question.options || [],
+              responseType: question.responseType || "Text",
+              canBeSkipped:
+                question.canBeSkipped !== undefined
+                  ? question.canBeSkipped
+                  : true,
+            });
+          }
+        } catch (error) {
+          toast.error("Failed to fetch question data", {
+            position: "top-right",
+          });
+        }
       }
-    }
-  }, [isEdit, questionId, questions]);
+    };
+
+    fetchQuestionData();
+  }, [isEdit, questionId, surveyId, dispatch]);
 
   const validateField = (name, value) => {
     try {
@@ -89,14 +101,24 @@ function QuestionForm({ isEdit, surveyId }) {
       };
       setQuestionData(newData);
 
-      // Soru tipi değiştiğinde options validasyonunu temizle
-      if (!(value === "Single Choice" || value === "Multiple Choice")) {
+      // Soru tipi değiştiğinde validasyon yap
+      try {
+        const schema = yup.reach(questionSchema, "type");
+        schema.validateSync(value);
         setErrors((prev) => {
-          const { options, ...rest } = prev;
+          const { type, ...rest } = prev;
+          // Eğer Single/Multiple Choice değilse options hatalarını temizle
+          if (!(value === "Single Choice" || value === "Multiple Choice")) {
+            const { options, ...remaining } = rest;
+            return remaining;
+          }
           return rest;
         });
-      } else {
-        validateField("options", newData.options);
+      } catch (err) {
+        setErrors((prev) => ({
+          ...prev,
+          type: err.message,
+        }));
       }
     } else {
       const newValue = name === "canBeSkipped" ? value === "true" : value;
@@ -113,13 +135,6 @@ function QuestionForm({ isEdit, surveyId }) {
       ...prev,
       options: newOptions,
     }));
-
-    if (
-      questionData.type === "Single Choice" ||
-      questionData.type === "Multiple Choice"
-    ) {
-      validateField("options", newOptions);
-    }
   };
 
   const setInputType = (inputType) => {
@@ -131,42 +146,47 @@ function QuestionForm({ isEdit, surveyId }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    const filteredOptions = questionData.options.filter(
+      (option) => option && option.trim().length > 0
+    );
+
+    const dataToValidate = {
+      ...questionData,
+      options: filteredOptions,
+    };
+
     try {
-      await questionSchema.validate(questionData, { abortEarly: false });
+      await questionSchema.validate(dataToValidate, { abortEarly: false });
+
       if (isEdit) {
-        dispatch(
+        await dispatch(
           updateQuestionAsync({
             surveyId,
             updatedQuestion: {
               ...questionData,
               id: questionId,
+              options: filteredOptions,
             },
           })
-        )
-          .unwrap()
-          .then(() => {
-            toast.success("Question updated successfully", {
-              position: "top-right",
-            });
-            navigate(`/survey/${surveyId}`);
-          })
-          .catch((error) => {
-            toast.error("Failed to update question: " + error, {
-              position: "top-right",
-            });
-          });
+        ).unwrap();
+
+        toast.success("Question updated successfully", {
+          position: "top-right",
+        });
+        navigate(`/survey/${surveyId}`);
       } else {
-        dispatch(addQuestionAsync({ surveyId, newQuestion: questionData }))
-          .unwrap()
-          .then(() => {
-            toast.success("Question added successfully", {
-              position: "top-right",
-            });
-            navigate(`/survey/${surveyId}`);
+        await dispatch(
+          addQuestionAsync({
+            surveyId,
+            newQuestion: { ...questionData, options: filteredOptions },
           })
-          .catch((error) => {
-            toast.error("Failed to add question", { position: "top-right" });
-          });
+        ).unwrap();
+
+        toast.success("Question added successfully", {
+          position: "top-right",
+        });
+        navigate(`/survey/${surveyId}`);
       }
     } catch (validationError) {
       if (validationError instanceof yup.ValidationError) {
@@ -175,6 +195,13 @@ function QuestionForm({ isEdit, surveyId }) {
           newErrors[error.path] = error.message;
         });
         setErrors(newErrors);
+        toast.error("Please check all required fields!", {
+          position: "top-right",
+        });
+      } else {
+        toast.error("An error occurred while saving", {
+          position: "top-right",
+        });
       }
     }
   };
@@ -240,7 +267,6 @@ function QuestionForm({ isEdit, surveyId }) {
                   name="name"
                   value={questionData.name}
                   onChange={handleChange}
-                  required
                 />
                 {errors.name && (
                   <p style={{ color: "red", margin: "5px 0" }}>{errors.name}</p>
