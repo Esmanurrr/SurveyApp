@@ -253,6 +253,7 @@ function QuestionForm({ isEdit, surveyId }) {
                     name="type"
                     value={questionData.type}
                     onChange={handleChange}
+                    disabled={isEdit}
                   >
                     <option value="">Choose a question type</option>
                     <option value="Single Choice">Single Choice</option>
