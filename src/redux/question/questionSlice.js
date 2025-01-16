@@ -61,13 +61,27 @@ export const updateQuestionAsync = createAsyncThunk(
     try {
       const surveyRef = doc(db, "surveys", surveyId);
       const surveyDoc = await getDoc(surveyRef);
+
       if (surveyDoc.exists()) {
         const surveyData = surveyDoc.data();
-        const updatedQuestions = surveyData.questions.map((question) =>
-          question.id === updatedQuestion.id ? updatedQuestion : question
+        const currentQuestions = surveyData.questions || [];
+
+        const questionIndex = currentQuestions.findIndex(
+          (q) => q.id === updatedQuestion.id
         );
+        if (questionIndex === -1) {
+          return rejectWithValue("Question not found");
+        }
+
+        const updatedQuestions = [...currentQuestions];
+        updatedQuestions[questionIndex] = {
+          ...updatedQuestions[questionIndex],
+          ...updatedQuestion,
+          id: updatedQuestion.id, // Ensure ID is preserved
+        };
+
         await updateDoc(surveyRef, { questions: updatedQuestions });
-        return updatedQuestion;
+        return updatedQuestions[questionIndex];
       } else {
         return rejectWithValue("Survey not found");
       }
@@ -142,6 +156,8 @@ const questionSlice = createSlice({
         if (index !== -1) {
           state.questions[index] = action.payload;
         }
+        state.loading = false;
+        state.error = null;
       })
       .addCase(deleteQuestionAsync.fulfilled, (state, action) => {
         state.questions = state.questions.filter(

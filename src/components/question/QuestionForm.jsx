@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addQuestionAsync,
+  fetchQuestionsAsync,
   updateQuestionAsync,
 } from "../../redux/question/questionSlice";
 import { useNavigate, useParams } from "react-router-dom";
@@ -43,64 +44,82 @@ function QuestionForm({ isEdit, surveyId }) {
       const question = questions.find((q) => q.id === questionId);
       if (question) {
         setQuestionData({
+          ...question,
           name: question.name || "",
           type: question.type || "",
           options: question.options || [],
           responseType: question.responseType || "Text",
-          canBeSkipped: question.canBeSkipped || false,
+          canBeSkipped:
+            question.canBeSkipped !== undefined ? question.canBeSkipped : true,
         });
       }
     }
   }, [isEdit, questionId, questions]);
 
   const validateField = (name, value) => {
-    yup
-      .reach(questionSchema, name)
-      .validate(value)
-      .then(() => {
-        setErrors((prevErrors) => {
-          const updatedErrors = { ...prevErrors };
-          delete updatedErrors[name];
-          return updatedErrors;
-        });
-      })
-      .catch((err) => {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [name]: err.message,
-        }));
+    try {
+      const schema = yup.reach(questionSchema, name);
+      schema.validateSync(value);
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name];
+        return updatedErrors;
       });
+    } catch (err) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: err.message,
+      }));
+    }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuestionData((prevData) => {
-      if (name === "type") {
-        return {
-          ...prevData,
-          type: value,
-          responseType:
-            value === "Text Response" ? "Text" : prevData.responseType,
-          options:
-            value === "Single Choice" || value === "Multiple Choice"
-              ? prevData.options
-              : [],
-        };
-      }
-      return {
-        ...prevData,
-        [name]: name === "canBeSkipped" ? value === "true" : value,
-      };
-    });
 
-    validateField(name, value);
+    if (name === "type") {
+      const newData = {
+        ...questionData,
+        type: value,
+        responseType:
+          value === "Text Response" ? "Text" : questionData.responseType,
+        options:
+          value === "Single Choice" || value === "Multiple Choice"
+            ? questionData.options
+            : [],
+      };
+      setQuestionData(newData);
+
+      // Soru tipi değiştiğinde options validasyonunu temizle
+      if (!(value === "Single Choice" || value === "Multiple Choice")) {
+        setErrors((prev) => {
+          const { options, ...rest } = prev;
+          return rest;
+        });
+      } else {
+        validateField("options", newData.options);
+      }
+    } else {
+      const newValue = name === "canBeSkipped" ? value === "true" : value;
+      setQuestionData((prev) => ({
+        ...prev,
+        [name]: newValue,
+      }));
+      validateField(name, newValue);
+    }
   };
 
   const handleOptionsChange = (newOptions) => {
-    setQuestionData((prevData) => ({
-      ...prevData,
+    setQuestionData((prev) => ({
+      ...prev,
       options: newOptions,
     }));
+
+    if (
+      questionData.type === "Single Choice" ||
+      questionData.type === "Multiple Choice"
+    ) {
+      validateField("options", newOptions);
+    }
   };
 
   const setInputType = (inputType) => {
@@ -116,7 +135,13 @@ function QuestionForm({ isEdit, surveyId }) {
       await questionSchema.validate(questionData, { abortEarly: false });
       if (isEdit) {
         dispatch(
-          updateQuestionAsync({ surveyId, updatedQuestion: questionData })
+          updateQuestionAsync({
+            surveyId,
+            updatedQuestion: {
+              ...questionData,
+              id: questionId,
+            },
+          })
         )
           .unwrap()
           .then(() => {
@@ -126,7 +151,9 @@ function QuestionForm({ isEdit, surveyId }) {
             navigate(`/survey/${surveyId}`);
           })
           .catch((error) => {
-            toast.error("Failed to update question", { position: "top-right" });
+            toast.error("Failed to update question: " + error, {
+              position: "top-right",
+            });
           });
       } else {
         dispatch(addQuestionAsync({ surveyId, newQuestion: questionData }))
@@ -143,9 +170,11 @@ function QuestionForm({ isEdit, surveyId }) {
       }
     } catch (validationError) {
       if (validationError instanceof yup.ValidationError) {
-        toast.error(validationError.errors[0], { position: "top-right" });
-      } else {
-        toast.error("Failed to save question", { position: "top-right" });
+        const newErrors = {};
+        validationError.inner.forEach((error) => {
+          newErrors[error.path] = error.message;
+        });
+        setErrors(newErrors);
       }
     }
   };
@@ -161,7 +190,9 @@ function QuestionForm({ isEdit, surveyId }) {
               options={questionData.options}
               setOptions={handleOptionsChange}
             />
-            {errors.options && <p style={{ color: "red" }}>{errors.options}</p>}
+            {errors.options && (
+              <p style={{ color: "red", margin: "5px 0" }}>{errors.options}</p>
+            )}
           </>
         );
       case "Text Response":
@@ -171,10 +202,24 @@ function QuestionForm({ isEdit, surveyId }) {
               inputType={questionData.responseType}
               setInputType={setInputType}
             />
+            {errors.responseType && (
+              <p style={{ color: "red", margin: "5px 0" }}>
+                {errors.responseType}
+              </p>
+            )}
           </>
         );
       case "Long Text Response":
-        return <InputRes type="text" placeholder="Enter your response" />;
+        return (
+          <>
+            <InputRes type="text" placeholder="Enter your response" />
+            {errors.responseType && (
+              <p style={{ color: "red", margin: "5px 0" }}>
+                {errors.responseType}
+              </p>
+            )}
+          </>
+        );
       default:
         return null;
     }
@@ -188,8 +233,8 @@ function QuestionForm({ isEdit, surveyId }) {
         <CardWrapper>
           <CardContainer>
             <form onSubmit={handleSave}>
-              <LabelDiv>
-                <label>Question Name</label>
+              <div>
+                <LabelDiv>Question Name</LabelDiv>
                 <InputRes
                   type="text"
                   name="name"
@@ -197,33 +242,50 @@ function QuestionForm({ isEdit, surveyId }) {
                   onChange={handleChange}
                   required
                 />
-              </LabelDiv>
-              <DropdownWrapper>
-                <label>Question Type</label>
-                <Dropdown
-                  name="type"
-                  value={questionData.type}
-                  onChange={handleChange}
-                >
-                  <option value="">Choose a question type</option>
-                  <option value="Single Choice">Single Choice</option>
-                  <option value="Multiple Choice">Multiple Choice</option>
-                  <option value="Text Response">Text Response</option>
-                  <option value="Long Text Response">Long Text Response</option>
-                </Dropdown>
-              </DropdownWrapper>
-              {renderQuestionInput()}
+                {errors.name && (
+                  <p style={{ color: "red", margin: "5px 0" }}>{errors.name}</p>
+                )}
+              </div>
               <Flex>
-                <label>Can be skipped?</label>
-                <Dropdown
-                  name="canBeSkipped"
-                  value={String(questionData.canBeSkipped)}
-                  onChange={handleChange}
-                >
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </Dropdown>
+                <DropdownWrapper>
+                  <LabelDiv>Question Type</LabelDiv>
+                  <Dropdown
+                    name="type"
+                    value={questionData.type}
+                    onChange={handleChange}
+                  >
+                    <option value="">Choose a question type</option>
+                    <option value="Single Choice">Single Choice</option>
+                    <option value="Multiple Choice">Multiple Choice</option>
+                    <option value="Text Response">Text Response</option>
+                    <option value="Long Text Response">
+                      Long Text Response
+                    </option>
+                  </Dropdown>
+                  {errors.type && (
+                    <p style={{ color: "red", margin: "5px 0" }}>
+                      {errors.type}
+                    </p>
+                  )}
+                </DropdownWrapper>
+                <DropdownWrapper>
+                  <LabelDiv>Can be skipped?</LabelDiv>
+                  <Dropdown
+                    name="canBeSkipped"
+                    value={String(questionData.canBeSkipped)}
+                    onChange={handleChange}
+                  >
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </Dropdown>
+                  {errors.canBeSkipped && (
+                    <p style={{ color: "red", margin: "5px 0" }}>
+                      {errors.canBeSkipped}
+                    </p>
+                  )}
+                </DropdownWrapper>
               </Flex>
+              {renderQuestionInput()}
               <Button
                 style={{ marginTop: "20px", display: "block", float: "right" }}
                 type="submit"

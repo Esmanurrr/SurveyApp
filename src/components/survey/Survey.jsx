@@ -6,38 +6,18 @@ import { db } from "../../firebase/firebase";
 import { collection, doc, getDoc } from "firebase/firestore";
 import LoadingPage from "../infos/LoadingPage";
 import NotFound from "../infos/NotFound";
+import { useDispatch } from "react-redux";
+import { fetchQuestionsAsync } from "../../redux/question/questionSlice";
 
 const Survey = () => {
   const location = useLocation();
-  const [questions, setQuestions] = useState([]);
+  const dispatch = useDispatch();
   const { title, description } = location.state || {};
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      if (!id) {
-        console.log("ID tanımlı değil.");
-        return; 
-      }
-
-      try {
-        const surveyRef = doc(collection(db, "surveys"), id); 
-        const surveyDoc = await getDoc(surveyRef); 
-
-        if (surveyDoc.exists()) {
-          const surveyData = surveyDoc.data();
-          setQuestions(surveyData.questions); 
-        } else {
-          console.log("Survey not found");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchQuestions();
-  }, [id]);
-
+    dispatch(fetchQuestionsAsync(id));
+  }, [dispatch, id]);
 
   return (
     <div>

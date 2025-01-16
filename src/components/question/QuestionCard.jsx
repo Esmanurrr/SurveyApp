@@ -14,7 +14,7 @@ function QuestionCard({ question, surveyId, index }) {
         state: { surveyId },
       });
     } else {
-      console.error("Question ID is undefined", question.id);
+      console.error("Question ID is undefined");
     }
   };
 
