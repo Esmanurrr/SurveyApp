@@ -9,7 +9,6 @@ import {
 import { toast } from "react-toastify";
 
 const SurveyHeader = ({ title, description, id }) => {
-  // Vercel'deki domain adresini kullan
   const shareableLink = `${window.location.origin}/survey/fill-survey/${id}`;
 
   const handleCopyLink = () => {
@@ -28,7 +27,7 @@ const SurveyHeader = ({ title, description, id }) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Preview Survey
+          Open Survey
         </LinkButton>
 
         <StyledButton onClick={handleCopyLink}>

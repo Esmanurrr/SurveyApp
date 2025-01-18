@@ -312,7 +312,19 @@ function QuestionForm({ isEdit, surveyId }) {
                   )}
                 </DropdownWrapper>
               </Flex>
-              {renderQuestionInput()}
+              <LabelDiv>Preview</LabelDiv>
+              <div
+                style={{
+                  border: "1px solid #ddd",
+                  boxShadow: "0 10px 10px 0 rgba(0, 0, 0, 0.1)",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  marginTop: "10px",
+                  backgroundColor: "#F5F5F7",
+                }}
+              >
+                {renderQuestionInput()}
+              </div>
               <Button
                 style={{ marginTop: "20px", display: "block", float: "right" }}
                 type="submit"
