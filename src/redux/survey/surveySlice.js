@@ -97,12 +97,14 @@ export const fetchSurveyByIdAsync = createAsyncThunk(
       const surveyDoc = await getDoc(surveyRef);
 
       if (surveyDoc.exists()) {
-        return { id: surveyDoc.id, ...surveyDoc.data() };
+        const surveyData = surveyDoc.data();
+        return { id: surveyDoc.id, ...surveyData };
       } else {
         return rejectWithValue("Survey not found");
       }
     } catch (error) {
-      return rejectWithValue(error.message);
+      console.error("Error fetching survey:", error);
+      return rejectWithValue("Failed to fetch survey. Please try again later.");
     }
   }
 );

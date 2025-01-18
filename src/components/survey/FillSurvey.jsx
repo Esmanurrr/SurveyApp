@@ -58,7 +58,16 @@ const FillSurvey = () => {
   }
 
   if (!survey || !survey.questions) {
-    return <div>Survey not found or has no questions.</div>;
+    return (
+      <Container>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          <h2>Survey not found or has no questions.</h2>
+          <p>
+            The survey might have been deleted or the link might be invalid.
+          </p>
+        </div>
+      </Container>
+    );
   }
 
   const handleResponseChange = (questionId, value) => {
@@ -113,7 +122,9 @@ const FillSurvey = () => {
       };
 
       await dispatch(createResponseAsync(responseData)).unwrap();
-      toast.success("Responses saved", { position: "top-right" });
+      toast.success("Thank you for completing the survey!", {
+        position: "top-right",
+      });
       setIsSubmitted(true);
     } catch (error) {
       if (error instanceof yup.ValidationError) {
@@ -123,7 +134,9 @@ const FillSurvey = () => {
         });
         setError(newErrors);
       } else {
-        toast.error("Responses could not be added.", { position: "top-right" });
+        toast.error("Failed to submit responses. Please try again.", {
+          position: "top-right",
+        });
       }
     }
   };
@@ -207,7 +220,7 @@ const FillSurvey = () => {
                   {question.type === "Text Response" && (
                     <ShortInput
                       type="text"
-                      placeholder="Cevabınızı girin"
+                      placeholder="Enter your answer"
                       value={responses[question.id] || ""}
                       onChange={(e) =>
                         handleResponseChange(question.id, e.target.value)
@@ -218,7 +231,7 @@ const FillSurvey = () => {
                   {question.type === "Long Text Response" && (
                     <ShortTextarea
                       rows={4}
-                      placeholder="Cevabınızı yazın"
+                      placeholder="Write your answer"
                       value={responses[question.id] || ""}
                       onChange={(e) =>
                         handleResponseChange(question.id, e.target.value)
