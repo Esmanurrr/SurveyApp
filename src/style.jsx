@@ -1,5 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 export const Container = styled.div`
   padding: 90px 0;
@@ -79,8 +80,8 @@ export const Textarea = styled.textarea`
 `;
 
 export const Button = styled.button`
-  background-color: #4A9DEC;
-  border: 1px solid #4A9DEC;
+  background-color: #4a9dec;
+  border: 1px solid #4a9dec;
   padding: 1rem 2rem;
   border-radius: 1rem;
   font-size: 1rem;
@@ -126,7 +127,7 @@ export const Card = styled.div`
     text-decoration: none;
   }
   h2 {
-    color:rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
   }
   span {
     color: #8d9cad;
@@ -315,7 +316,6 @@ export const NavbarWrapper = styled.div`
   }
 `;
 
-
 export const BaseBackground = styled.div`
   background-color: #f0f4f8;
   min-height: 80vh;
@@ -363,7 +363,7 @@ export const FormWrapper = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f0f4f8; 
+  background-color: #f0f4f8;
   padding: 1rem;
 `;
 
@@ -374,9 +374,9 @@ export const LoginDiv = styled.div`
   padding: 2rem;
   max-width: 400px;
   width: 100%;
-  background-color: #ffffff; 
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
-  border-radius: 10px; 
+  background-color: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   text-align: center;
 
   h1 {
@@ -425,8 +425,7 @@ export const InputWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-
-`
+`;
 
 export const Input = styled.input`
   border: 2px solid transparent;
@@ -448,10 +447,10 @@ export const Input = styled.input`
 `;
 
 export const StyledButton = styled.button`
-  background-color: #4A9DEC;
-  border: 1px solid #4A9DEC;
-  padding: .5rem 1rem;
-  margin: .5rem;
+  background-color: #4a9dec;
+  border: 1px solid #4a9dec;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
   border-radius: 1rem;
   font-size: 1rem;
   text-decoration: none;
@@ -465,9 +464,9 @@ export const StyledButton = styled.button`
 `;
 
 export const LinkButton = styled.a`
-  background-color: #4A9DEC;
-  border: 1px solid #4A9DEC;
-  padding: .5rem 1rem;
+  background-color: #4a9dec;
+  border: 1px solid #4a9dec;
+  padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-size: 1rem;
   text-decoration: none;
@@ -481,7 +480,7 @@ export const LinkButton = styled.a`
 `;
 
 export const FooterWrapper = styled.div`
- padding-block: 2rem;
+  padding-block: 2rem;
   padding-inline: 5rem;
   gap: 10px;
   border-top: 1px solid rgb(212, 230, 248);
@@ -490,5 +489,43 @@ export const FooterWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
+`;
 
-`
+export const AuthSubmitButton = styled.button`
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  background-color: #4a9dec;
+  color: white;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #1964ff;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+export const AuthLink = styled(Link)`
+  color: #4a9dec;
+  text-decoration: none;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const AuthText = styled.p`
+  text-align: center;
+  margin-top: 1rem;
+  color: #666666;
+  font-size: 0.9rem;
+`;
