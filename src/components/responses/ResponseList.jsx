@@ -91,7 +91,7 @@ const ResponseList = () => {
     return (
       <EmptyState>
         <h3>No Responses Yet</h3>
-        <p>Share your survey to start collecting responses!</p>
+        <p>Share your surveys to start collecting responses!</p>
       </EmptyState>
     );
   }
