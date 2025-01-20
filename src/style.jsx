@@ -317,7 +317,7 @@ export const NavbarWrapper = styled.div`
 `;
 
 export const BaseBackground = styled.div`
-  background-color: #f0f4f8;
+  background-color: #f6f6f6;
   min-height: 80vh;
   height: auto;
 `;
@@ -528,4 +528,220 @@ export const AuthText = styled.p`
   margin-top: 1rem;
   color: #666666;
   font-size: 0.9rem;
+`;
+
+export const HorizontalListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
+`;
+
+export const HorizontalCard = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  border: 1px solid #eef2f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+export const CardContent = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+export const CardTitle = styled.h3`
+  color: #2d3748;
+  font-size: 1.25rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+`;
+
+export const CardDescription = styled.p`
+  color: #718096;
+  font-size: 0.875rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+`;
+
+export const CardMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+  }
+`;
+
+export const CardMetaItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #718096;
+  font-size: 0.875rem;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #4a9dec;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    gap: 0.35rem;
+  }
+`;
+
+export const CardActions = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: flex-end;
+  }
+`;
+
+export const ActionButton = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 120px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  ${(props) =>
+    props.primary &&
+    `
+    background-color: #4a9dec;
+    color: white;
+    border: none;
+    
+    &:hover {
+      background-color: #1964ff;
+    }
+  `}
+
+  ${(props) =>
+    props.secondary &&
+    `
+    background-color: white;
+    color: #4a9dec;
+    border: 1px solid #4a9dec;
+    
+    &:hover {
+      background-color: #f8fafc;
+    }
+  `}
+  
+  ${(props) =>
+    props.danger &&
+    `
+    background-color: white;
+    color: #e53e3e;
+    border: 1px solid #e53e3e;
+    
+    &:hover {
+      background-color: #fff5f5;
+    }
+  `}
+`;
+
+export const EmptyState = styled.div`
+  text-align: center;
+  padding: 2rem 1rem;
+  background: white;
+  border-radius: 12px;
+  margin: 1rem auto;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+
+  @media (min-width: 768px) {
+    padding: 3rem;
+    margin: 2rem auto;
+  }
+
+  h3 {
+    color: #2d3748;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+
+    @media (min-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    color: #718096;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    @media (min-width: 768px) {
+      font-size: 1rem;
+    }
+  }
+
+  img {
+    width: 150px;
+    height: auto;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 768px) {
+      width: 200px;
+      margin-bottom: 2rem;
+    }
+  }
 `;
