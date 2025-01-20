@@ -12,17 +12,22 @@ import { db } from "../../firebase/firebase";
 
 export const fetchResponsesAsync = createAsyncThunk(
   "responses/fetchResponses",
-  async (userId) => {
-    const q = query(
-      collection(db, "responses"),
-      where("surveyOwnerId", "==", userId)
-    );
-    const querySnapshot = await getDocs(q);
-    const responses = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return responses;
+  async (userId, { rejectWithValue }) => {
+    try {
+      const q = query(
+        collection(db, "responses"),
+        where("surveyOwnerId", "==", userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const responses = [];
+      querySnapshot.forEach((doc) => {
+        responses.push({ id: doc.id, ...doc.data() });
+      });
+      return responses;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );
 
@@ -42,6 +47,28 @@ export const deleteResponseAsync = createAsyncThunk(
       const responseRef = doc(db, "responses", responseId);
       await deleteDoc(responseRef);
       return responseId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchSurveyResponsesAsync = createAsyncThunk(
+  "responses/fetchSurveyResponses",
+  async ({ userId, surveyId }, { rejectWithValue }) => {
+    try {
+      const q = query(
+        collection(db, "responses"),
+        where("surveyOwnerId", "==", userId),
+        where("surveyId", "==", surveyId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const responses = [];
+      querySnapshot.forEach((doc) => {
+        responses.push({ id: doc.id, ...doc.data() });
+      });
+      return responses;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -106,6 +133,20 @@ const responseSlice = createSlice({
         state.error = null;
       })
       .addCase(deleteResponseAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchSurveyResponsesAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSurveyResponsesAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.responses = action.payload;
+        state.error = null;
+        state.initialized = true;
+      })
+      .addCase(fetchSurveyResponsesAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
