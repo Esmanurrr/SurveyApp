@@ -1,5 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 
 export const fetchResponsesAsync = createAsyncThunk(
@@ -24,6 +32,19 @@ export const createResponseAsync = createAsyncThunk(
     const responsesRef = collection(db, "responses");
     const docRef = await addDoc(responsesRef, responseData);
     return { id: docRef.id, ...responseData };
+  }
+);
+
+export const deleteResponseAsync = createAsyncThunk(
+  "responses/deleteResponse",
+  async (responseId, { rejectWithValue }) => {
+    try {
+      const responseRef = doc(db, "responses", responseId);
+      await deleteDoc(responseRef);
+      return responseId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );
 
@@ -72,6 +93,21 @@ const responseSlice = createSlice({
       .addCase(createResponseAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(deleteResponseAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteResponseAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.responses = state.responses.filter(
+          (response) => response.id !== action.payload
+        );
+        state.error = null;
+      })
+      .addCase(deleteResponseAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
