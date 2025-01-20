@@ -133,7 +133,10 @@ const ResponseList = () => {
             <ActionButton as={Link} to={`/response/${response.id}`} primary>
               View Details
             </ActionButton>
-            <ActionButton danger onClick={() => handleDelete(response.id)}>
+            <ActionButton
+              danger="true"
+              onClick={() => handleDelete(response.id)}
+            >
               Delete
             </ActionButton>
           </CardActions>
