@@ -11,6 +11,7 @@ import { useAuth } from "../../contexts/authContext";
 import { Navigate } from "react-router-dom";
 import SurveyResponses from "./SurveyResponses";
 import styled from "styled-components";
+import SurveyOverview from "./SurveyOverview";
 
 const NavMenu = styled.div`
   display: flex;
@@ -92,7 +93,7 @@ const Survey = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <div>Overview Content Coming Soon...</div>;
+        return <SurveyOverview surveyId={id} />;
       case "responses":
         return <SurveyResponses surveyId={id} />;
       case "questions":
