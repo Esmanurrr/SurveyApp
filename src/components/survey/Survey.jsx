@@ -7,11 +7,13 @@ import NotFound from "../infos/NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchQuestionsAsync } from "../../redux/question/questionSlice";
 import { fetchSurveyByIdAsync } from "../../redux/survey/surveySlice";
+import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import { useAuth } from "../../contexts/authContext";
 import { Navigate } from "react-router-dom";
 import SurveyResponses from "./SurveyResponses";
 import styled from "styled-components";
 import SurveyOverview from "./SurveyOverview";
+import { auth } from "../../firebase/firebase";
 
 const NavMenu = styled.div`
   display: flex;
@@ -68,9 +70,14 @@ const Survey = () => {
   const [activeTab, setActiveTab] = useState("questions");
 
   useEffect(() => {
-    if (userLoggedIn && id) {
+    const user = auth.currentUser;
+    console.log("Current user:", user); // Debug için
+
+    if (userLoggedIn && id && user) {
+      // Fetch survey details, questions and responses
       dispatch(fetchSurveyByIdAsync(id));
       dispatch(fetchQuestionsAsync(id));
+      dispatch(fetchSurveyResponsesAsync({ surveyId: id, userId: user.uid }));
     }
   }, [dispatch, id, userLoggedIn]);
 

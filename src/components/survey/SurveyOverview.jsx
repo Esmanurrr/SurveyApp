@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import styled from "styled-components";
 import { CardContent, CardTitle } from "../../style";
 import PropTypes from "prop-types";
+import { useAuth } from "../../contexts/authContext";
 
 const HorizontalCard = styled.div`
   background-color: white;
@@ -77,71 +79,91 @@ const TextResponseNote = styled.div`
 
 const SurveyOverview = ({ surveyId }) => {
   const [questionStats, setQuestionStats] = useState([]);
-  const { responses } = useSelector((state) => state.response);
+  const dispatch = useDispatch();
+  const { user } = useAuth();
+  const { responses, loading } = useSelector((state) => state.response);
   const { currentSurvey } = useSelector((state) => state.survey);
 
+  // Fetch responses when component mounts
   useEffect(() => {
-    if (responses && currentSurvey) {
-      // Tüm soruları işle
-      const stats = currentSurvey.questions?.map((question, index) => {
-        const isChoiceQuestion =
-          question.type === "Single Choice" ||
-          question.type === "Multiple Choice";
+    console.log("First useEffect - Conditions:", { surveyId, user });
+    if (surveyId && user) {
+      console.log("Fetching responses...");
+      dispatch(fetchSurveyResponsesAsync({ surveyId, userId: user.uid }));
+    }
+  }, [surveyId, user, dispatch]);
 
-        const optionCounts = {};
-        let totalResponses = 0;
+  useEffect(() => {
+    // Only calculate stats when both responses and questions are available
+    if (responses?.length > 0 && currentSurvey?.questions?.length > 0) {
+      console.log("Calculating statistics with:", {
+        responsesCount: responses.length,
+        questionsCount: currentSurvey.questions.length,
+      });
 
-        if (isChoiceQuestion) {
-          // Her seçenek için başlangıç değeri
-          question.options.forEach((option) => {
-            optionCounts[option] = 0;
-          });
-
-          // Yanıtları say
-          responses.forEach((response) => {
-            const questionResponse = response.questions.find(
-              (q) => q.id === question.id
-            );
-            if (questionResponse) {
-              if (Array.isArray(questionResponse.answer)) {
-                // Multiple Choice için
-                questionResponse.answer.forEach((answer) => {
-                  optionCounts[answer] = (optionCounts[answer] || 0) + 1;
-                  totalResponses++;
-                });
-              } else {
-                // Single Choice için
-                optionCounts[questionResponse.answer] =
-                  (optionCounts[questionResponse.answer] || 0) + 1;
-                totalResponses++;
-              }
-            }
-          });
+      const stats = currentSurvey.questions.map((question, index) => {
+        // Skip calculation for text responses
+        if (
+          question.type === "Text Response" ||
+          question.type === "Long Text Response"
+        ) {
+          return {
+            ...question,
+            questionNumber: index + 1,
+            isTextResponse: true,
+          };
         }
 
-        // Yüzdeleri hesapla
-        const optionStats = Object.entries(optionCounts).map(
-          ([option, count]) => ({
-            option,
-            count,
-            percentage: totalResponses ? (count / totalResponses) * 100 : 0,
-          })
-        );
+        // Calculate option selection rates for multiple choice questions
+        const optionCounts = {};
+        responses.forEach((response) => {
+          // Response yapısını kontrol et ve log'la
+          console.log("Processing response:", response);
+
+          const answer = response.questions?.find(
+            (q) => q.id === question.id
+          )?.answer;
+
+          if (answer) {
+            // Eğer cevap bir array ise (Multiple Choice)
+            if (Array.isArray(answer)) {
+              answer.forEach((ans) => {
+                optionCounts[ans] = (optionCounts[ans] || 0) + 1;
+              });
+            } else {
+              // Tek cevap (Single Choice)
+              optionCounts[answer] = (optionCounts[answer] || 0) + 1;
+            }
+          }
+        });
+
+        const optionStats = question.options.map((option) => ({
+          option,
+          count: optionCounts[option] || 0,
+          percentage: ((optionCounts[option] || 0) / responses.length) * 100,
+        }));
 
         return {
-          questionId: question.id,
+          ...question,
           questionNumber: index + 1,
-          questionName: question.name,
-          type: question.type,
-          isChoiceQuestion,
-          options: optionStats,
-          totalResponses,
+          isTextResponse: false,
+          optionStats,
         };
       });
 
-      setQuestionStats(stats || []);
+      console.log("Setting statistics:", stats);
+      setQuestionStats(stats);
     }
-  }, [responses, currentSurvey]);
+  }, [responses, currentSurvey?.questions]);
+
+  if (loading) {
+    console.log("Component is in loading state");
+    return (
+      <div style={{ padding: "2rem", textAlign: "center", color: "#718096" }}>
+        Loading survey statistics...
+      </div>
+    );
+  }
 
   if (!questionStats.length) {
     return (
@@ -158,11 +180,16 @@ const SurveyOverview = ({ surveyId }) => {
           <CardContent>
             <CardTitle>
               <QuestionNumber>{question.questionNumber}.</QuestionNumber>
-              {question.questionName}
+              {question.name}
             </CardTitle>
-            {question.isChoiceQuestion ? (
+            {question.isTextResponse ? (
+              <TextResponseNote>
+                This is a text response question. Response statistics are not
+                available for this type of question.
+              </TextResponseNote>
+            ) : (
               <div style={{ marginTop: "1rem" }}>
-                {question.options.map((option) => (
+                {question.optionStats.map((option) => (
                   <OptionContainer key={option.option}>
                     <OptionLabel>
                       <span>{option.option}</span>
@@ -174,11 +201,6 @@ const SurveyOverview = ({ surveyId }) => {
                   </OptionContainer>
                 ))}
               </div>
-            ) : (
-              <TextResponseNote>
-                This is a text response question. Response statistics are not
-                available for this type of question.
-              </TextResponseNote>
             )}
           </CardContent>
         </HorizontalCard>
