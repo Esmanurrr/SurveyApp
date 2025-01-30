@@ -7,6 +7,7 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 
@@ -75,78 +76,64 @@ export const fetchSurveyResponsesAsync = createAsyncThunk(
   }
 );
 
-const initialState = {
-  responses: [],
-  loading: false,
-  error: null,
-  initialized: false,
-};
-
 const responseSlice = createSlice({
-  name: "responses",
-  initialState,
+  name: "response",
+  initialState: {
+    responses: [],
+    loading: false,
+    error: null,
+    initialized: false,
+  },
   reducers: {
     clearResponses: (state) => {
       state.responses = [];
-      state.error = null;
       state.initialized = false;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Fetch all responses
       .addCase(fetchResponsesAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchResponsesAsync.fulfilled, (state, action) => {
-        state.loading = false;
         state.responses = action.payload;
+        state.loading = false;
         state.error = null;
         state.initialized = true;
       })
       .addCase(fetchResponsesAsync.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
-      })
-      .addCase(createResponseAsync.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(createResponseAsync.fulfilled, (state, action) => {
-        state.loading = false;
-        state.responses.push(action.payload);
-        state.error = null;
-      })
-      .addCase(createResponseAsync.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-      .addCase(deleteResponseAsync.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deleteResponseAsync.fulfilled, (state, action) => {
-        state.loading = false;
-        state.responses = state.responses.filter(
-          (response) => response.id !== action.payload
-        );
-        state.error = null;
-      })
-      .addCase(deleteResponseAsync.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       })
+      // Fetch survey responses
       .addCase(fetchSurveyResponsesAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchSurveyResponsesAsync.fulfilled, (state, action) => {
-        state.loading = false;
         state.responses = action.payload;
+        state.loading = false;
         state.error = null;
-        state.initialized = true;
       })
       .addCase(fetchSurveyResponsesAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Delete response
+      .addCase(deleteResponseAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteResponseAsync.fulfilled, (state, action) => {
+        state.responses = state.responses.filter(
+          (response) => response.id !== action.payload
+        );
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(deleteResponseAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

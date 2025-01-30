@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import QuestionList from "../question/QuestionList";
 import SurveyHeader from "./SurveyHeader";
 import { useEffect, useState } from "react";
@@ -9,11 +9,11 @@ import { fetchQuestionsAsync } from "../../redux/question/questionSlice";
 import { fetchSurveyByIdAsync } from "../../redux/survey/surveySlice";
 import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import { useAuth } from "../../contexts/authContext";
-import { Navigate } from "react-router-dom";
 import SurveyResponses from "./SurveyResponses";
 import styled from "styled-components";
 import SurveyOverview from "./SurveyOverview";
 import { auth } from "../../firebase/firebase";
+import { clearResponses } from "../../redux/response/responseSlice";
 
 const NavMenu = styled.div`
   display: flex;
@@ -79,6 +79,11 @@ const Survey = () => {
       dispatch(fetchQuestionsAsync(id));
       dispatch(fetchSurveyResponsesAsync({ surveyId: id, userId: user.uid }));
     }
+
+    // Cleanup function
+    return () => {
+      dispatch(clearResponses());
+    };
   }, [dispatch, id, userLoggedIn]);
 
   if (authLoading) {
