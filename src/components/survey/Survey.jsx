@@ -18,40 +18,46 @@ import { clearResponses } from "../../redux/response/responseSlice";
 const NavMenu = styled.div`
   display: flex;
   gap: 2rem;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
+  background-color: #f8fafc;
   border-bottom: 1px solid #eef2f6;
-  background-color: white;
   font-size: 0.9rem;
 `;
 
 const NavItem = styled.button`
-  padding: 0.5rem;
+  padding: 0.75rem 1.25rem;
   border: none;
-  background: none;
-  color: ${(props) => (props.active ? "#4a9dec" : "#718096")};
-  font-weight: ${(props) => (props.active ? "600" : "400")};
+  background: ${(props) => (props.active ? "#4a9dec" : "#ffffff")};
+  color: ${(props) => (props.active ? "#ffffff" : "#64748b")};
+  font-weight: ${(props) => (props.active ? "600" : "500")};
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
-
-  &:after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: ${(props) => (props.active ? "#4a9dec" : "transparent")};
-    transition: all 0.2s ease;
-  }
+  border-radius: 8px;
+  box-shadow: ${(props) =>
+    props.active
+      ? "0 2px 4px rgba(74, 157, 236, 0.1)"
+      : "0 1px 2px rgba(0, 0, 0, 0.05)"};
 
   &:hover {
-    color: #4a9dec;
+    background: ${(props) => (props.active ? "#4a9dec" : "#edf2f7")};
+    color: ${(props) => (props.active ? "#ffffff" : "#4a9dec")};
+  }
+
+  span {
+    margin-left: 0.5rem;
+    background: ${(props) => (props.active ? "#ffffff" : "#edf2f7")};
+    color: ${(props) => (props.active ? "#4a9dec" : "#64748b")};
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
   }
 `;
 
 const ContentWrapper = styled.div`
   padding: 1rem;
+  background-color: #f8fafc;
 `;
 
 const TabContent = styled.div`
