@@ -67,20 +67,19 @@ const Survey = () => {
     loading: surveyLoading,
     error,
   } = useSelector((state) => state.survey);
+  const { responses } = useSelector((state) => state.response);
   const [activeTab, setActiveTab] = useState("questions");
 
   useEffect(() => {
     const user = auth.currentUser;
-    console.log("Current user:", user); // Debug için
+    console.log("Current user:", user);
 
     if (userLoggedIn && id && user) {
-      // Fetch survey details, questions and responses
       dispatch(fetchSurveyByIdAsync(id));
       dispatch(fetchQuestionsAsync(id));
       dispatch(fetchSurveyResponsesAsync({ surveyId: id, userId: user.uid }));
     }
 
-    // Cleanup function
     return () => {
       dispatch(clearResponses());
     };
@@ -134,7 +133,7 @@ const Survey = () => {
             active={activeTab === "responses"}
             onClick={() => setActiveTab("responses")}
           >
-            Responses ({currentSurvey?.responses?.length || 0})
+            Responses ({responses?.length || 0})
           </NavItem>
           <NavItem
             active={activeTab === "questions"}
