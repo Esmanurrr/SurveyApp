@@ -76,10 +76,43 @@ export const fetchSurveyResponsesAsync = createAsyncThunk(
   }
 );
 
+// Fetch single response
+export const fetchResponseByIdAsync = createAsyncThunk(
+  "response/fetchResponseByIdAsync",
+  async (responseId, { rejectWithValue }) => {
+    try {
+      const responseRef = doc(db, "responses", responseId);
+      const responseSnap = await getDoc(responseRef);
+
+      if (responseSnap.exists()) {
+        const responseData = { id: responseSnap.id, ...responseSnap.data() };
+
+        // Fetch survey title
+        const surveyRef = doc(db, "surveys", responseData.surveyId);
+        const surveySnap = await getDoc(surveyRef);
+
+        if (surveySnap.exists()) {
+          return {
+            ...responseData,
+            surveyTitle: surveySnap.data().title,
+          };
+        }
+        return responseData;
+      } else {
+        return rejectWithValue("Response not found");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const responseSlice = createSlice({
   name: "response",
   initialState: {
     responses: [],
+    currentResponse: null,
+    surveyTitle: "",
     loading: false,
     error: null,
     initialized: false,
@@ -88,6 +121,10 @@ const responseSlice = createSlice({
     clearResponses: (state) => {
       state.responses = [];
       state.initialized = false;
+    },
+    clearCurrentResponse: (state) => {
+      state.currentResponse = null;
+      state.surveyTitle = "";
     },
   },
   extraReducers: (builder) => {
@@ -136,9 +173,24 @@ const responseSlice = createSlice({
       .addCase(deleteResponseAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Fetch single response
+      .addCase(fetchResponseByIdAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchResponseByIdAsync.fulfilled, (state, action) => {
+        state.currentResponse = action.payload;
+        state.surveyTitle = action.payload.surveyTitle || "";
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchResponseByIdAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { clearResponses } = responseSlice.actions;
+export const { clearResponses, clearCurrentResponse } = responseSlice.actions;
 export default responseSlice.reducer;

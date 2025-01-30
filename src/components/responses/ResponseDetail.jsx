@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   BaseBackground,
   Card,
@@ -8,58 +8,49 @@ import {
   Header,
   TextCenter,
 } from "../../style";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "../../firebase/firebase";
+  fetchResponseByIdAsync,
+  clearCurrentResponse,
+} from "../../redux/response/responseSlice";
 import LoadingPage from "../infos/LoadingPage";
 
 function ResponseDetail() {
-  const location = useLocation();
-  const { title } = location.state || {};
-  const [response, setResponse] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
   const { responseId } = useParams();
+  const { currentResponse, surveyTitle, loading, error } = useSelector(
+    (state) => state.response
+  );
 
   useEffect(() => {
-    const fetchResponse = async () => {
-      setLoading(true);
-      try {
-        const docRef = doc(db, "responses", responseId);
-        const docSnap = await getDoc(docRef);
+    dispatch(fetchResponseByIdAsync(responseId));
 
-        if (docSnap.exists()) {
-          setResponse({ id: docSnap.id, ...docSnap.data() });
-        } else {
-          console.error("Belge bulunamadı!");
-        }
-      } catch (error) {
-        console.error("Yanıt alınırken hata oluştu:", error);
-      } finally {
-        setLoading(false);
-      }
+    // Cleanup on unmount
+    return () => {
+      dispatch(clearCurrentResponse());
     };
-
-    fetchResponse();
-  }, [responseId]);
+  }, [dispatch, responseId]);
 
   if (loading) return <LoadingPage />;
+
+  if (error || !currentResponse) {
+    return (
+      <TextCenter>
+        <h3>{error || "Response not found"}</h3>
+      </TextCenter>
+    );
+  }
 
   return (
     <BaseBackground>
       <Header>
         <Container>
-          <h1>{title}</h1>
+          <h1>{surveyTitle || "Survey Response"}</h1>
         </Container>
       </Header>
       <Container>
         <CardWrapper>
-          {response.questions.map((question, i) => (
+          {currentResponse.questions.map((question, i) => (
             <Card
               style={{
                 display: "flex",
@@ -78,11 +69,11 @@ function ResponseDetail() {
                 <p>
                   {Array.isArray(question.answer)
                     ? question.answer.length > 0
-                      ? question.answer.join(" , ") // Eğer array doluysa birleştir ve yazdır
-                      : "Unanswered" // Eğer array boşsa "Unanswered"
+                      ? question.answer.join(" , ")
+                      : "Unanswered"
                     : question.answer
-                    ? question.answer // Tekli cevap varsa yazdır
-                    : "Unanswered"}{" "}
+                    ? question.answer
+                    : "Unanswered"}
                 </p>
               </div>
             </Card>
