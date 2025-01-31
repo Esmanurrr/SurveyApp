@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { CardContent, CardTitle } from "../../style";
 import PropTypes from "prop-types";
 import { useAuth } from "../../contexts/authContext";
+import { createPortal } from "react-dom";
+import { Link } from "react-router-dom";
 
 const HorizontalCard = styled.div`
   background-color: white;
@@ -77,8 +79,151 @@ const TextResponseNote = styled.div`
   border-left: 3px solid #4a9dec;
 `;
 
+const SummaryButton = styled.button`
+  background: #4a9dec;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #3182ce;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.5rem;
+  }
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #4a5568;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const ResponseList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ResponseItem = styled.div`
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+
+  p {
+    margin: 0;
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .timestamp {
+    color: #718096;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+`;
+
+const SeeMoreLink = styled(Link)`
+  width: 100%;
+  padding: 0.75rem;
+  background: #4a9dec;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: #3182ce;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
 const SurveyOverview = ({ surveyId }) => {
   const [questionStats, setQuestionStats] = useState([]);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { user } = useAuth();
   const { responses, loading } = useSelector((state) => state.response);
@@ -156,6 +301,40 @@ const SurveyOverview = ({ surveyId }) => {
     }
   }, [responses, currentSurvey?.questions]);
 
+  const handleShowSummary = (question) => {
+    const textResponses = responses
+      .map((response) => {
+        const questionResponse = response.questions.find(
+          (q) => q.id === question.id
+        );
+        if (questionResponse?.answer) {
+          return {
+            answer: questionResponse.answer,
+            timestamp: formatDate(response.createdAt),
+          };
+        }
+        return null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    setSelectedQuestion({
+      ...question,
+      responses: textResponses,
+    });
+    setShowModal(true);
+  };
+
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   if (loading) {
     console.log("Component is in loading state");
     return (
@@ -178,14 +357,28 @@ const SurveyOverview = ({ surveyId }) => {
       {questionStats.map((question) => (
         <HorizontalCard key={question.questionId}>
           <CardContent>
-            <CardTitle>
-              <QuestionNumber>{question.questionNumber}.</QuestionNumber>
-              {question.name}
-            </CardTitle>
+            <CardHeader>
+              <CardTitle>
+                <QuestionNumber>{question.questionNumber}.</QuestionNumber>
+                {question.name}
+              </CardTitle>
+              {question.isTextResponse && (
+                <SummaryButton onClick={() => handleShowSummary(question)}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+                  </svg>
+                  View Responses
+                </SummaryButton>
+              )}
+            </CardHeader>
             {question.isTextResponse ? (
               <TextResponseNote>
-                This is a text response question. Response statistics are not
-                available for this type of question.
+                This is a text response question. Click "View Responses" to see
+                recent answers.
               </TextResponseNote>
             ) : (
               <div style={{ marginTop: "1rem" }}>
@@ -205,6 +398,55 @@ const SurveyOverview = ({ surveyId }) => {
           </CardContent>
         </HorizontalCard>
       ))}
+
+      {showModal &&
+        createPortal(
+          <ModalOverlay>
+            <ModalContent>
+              <ModalHeader>
+                <h2>{selectedQuestion?.name}</h2>
+                <CloseButton onClick={() => setShowModal(false)}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </CloseButton>
+              </ModalHeader>
+              <ResponseList>
+                {selectedQuestion?.responses
+                  ?.slice(0, 4)
+                  .map((response, index) => (
+                    <ResponseItem key={index}>
+                      <p>{response.answer}</p>
+                      <div className="timestamp">{response.timestamp}</div>
+                    </ResponseItem>
+                  ))}
+              </ResponseList>
+              <SeeMoreLink to={`/text-response/${selectedQuestion?.id}`}>
+                <span>See All Responses</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.72 7.72a.75.75 0 011.06 0l3.75 3.75a.75.75 0 010 1.06l-3.75 3.75a.75.75 0 11-1.06-1.06l2.47-2.47H3a.75.75 0 010-1.5h16.19l-2.47-2.47a.75.75 0 010-1.06z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </SeeMoreLink>
+            </ModalContent>
+          </ModalOverlay>,
+          document.body
+        )}
     </StatsContainer>
   );
 };
