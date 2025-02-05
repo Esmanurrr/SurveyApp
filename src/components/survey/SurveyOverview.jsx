@@ -178,10 +178,29 @@ const ResponseItem = styled.div`
     line-height: 1.5;
   }
 
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    color: #718096;
+    font-size: 0.8rem;
+
+    a {
+      color: #4a9dec;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #2c5282;
+        text-decoration: underline;
+      }
+    }
+  }
+
   .timestamp {
     color: #718096;
     font-size: 0.8rem;
-    margin-top: 0.5rem;
   }
 `;
 
@@ -309,8 +328,10 @@ const SurveyOverview = ({ surveyId }) => {
         );
         if (questionResponse?.answer) {
           return {
+            id: response.id,
             answer: questionResponse.answer,
-            timestamp: formatDate(response.createdAt),
+            timestamp: response.createdAt,
+            responderId: response.responderId,
           };
         }
         return null;
@@ -326,7 +347,11 @@ const SurveyOverview = ({ surveyId }) => {
   };
 
   const formatDate = (timestamp) => {
-    return new Date(timestamp).toLocaleDateString("en-US", {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      return "Date not available";
+    }
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -413,7 +438,7 @@ const SurveyOverview = ({ surveyId }) => {
                   >
                     <path
                       fillRule="evenodd"
-                      d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                      d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
                       clipRule="evenodd"
                     />
                   </svg>
@@ -425,11 +450,28 @@ const SurveyOverview = ({ surveyId }) => {
                   .map((response, index) => (
                     <ResponseItem key={index}>
                       <p>{response.answer}</p>
-                      <div className="timestamp">{response.timestamp}</div>
+                      <div className="meta">
+                        <Link to={`/response/${response.id}`}>
+                          Anonymous #{response.responderId}
+                        </Link>
+                        <div className="timestamp">
+                          {formatDate(response.timestamp)}
+                        </div>
+                      </div>
                     </ResponseItem>
                   ))}
               </ResponseList>
-              <SeeMoreLink to={`/text-response/${selectedQuestion?.id}`}>
+              <SeeMoreLink
+                to={`/text-response/${encodeURIComponent(
+                  selectedQuestion?.id
+                )}`}
+                state={{
+                  question: selectedQuestion,
+                  responses: responses,
+                  surveyId: currentSurvey?.id,
+                  currentSurvey: currentSurvey,
+                }}
+              >
                 <span>See All Responses</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

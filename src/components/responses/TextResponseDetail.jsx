@@ -7,6 +7,7 @@ import LoadingPage from "../infos/LoadingPage";
 import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import { fetchSurveyByQuestionIdAsync } from "../../redux/survey/surveySlice";
 import { useAuth } from "../../contexts/authContext";
+import { Link } from "react-router-dom";
 
 const ResponseCard = styled.div`
   background: #f8fafc;
@@ -57,6 +58,17 @@ const UserInfo = styled.div`
   svg {
     width: 16px;
     height: 16px;
+  }
+
+  a {
+    color: #4a9dec;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #2c5282;
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -128,9 +140,10 @@ function TextResponseDetail() {
           );
           if (questionResponse?.answer) {
             return {
+              id: response.id,
               answer: questionResponse.answer,
               timestamp: response.createdAt,
-              responderId: response.responderId, // Use the stored responderId
+              responderId: response.responderId,
             };
           }
           return null;
@@ -193,7 +206,9 @@ function TextResponseDetail() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Anonymous #{response.responderId}
+                  <Link to={`/response/${response.id}`}>
+                    Anonymous #{response.responderId}
+                  </Link>
                 </UserInfo>
                 <TimeStamp>
                   <svg

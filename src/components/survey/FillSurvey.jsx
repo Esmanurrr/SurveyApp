@@ -105,6 +105,16 @@ const FillSurvey = () => {
       await validationSchema.validate(responses, { abortEarly: false });
       setError({});
 
+      // Generate a unique responderId
+      const generateResponderId = () => {
+        const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+        for (let i = 0; i < 6; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+      };
+
       const formattedResponses = {
         title: survey.title,
         questions: survey.questions.map((question) => ({
@@ -118,6 +128,7 @@ const FillSurvey = () => {
       const responseData = {
         surveyId: surveyId,
         surveyOwnerId: survey.userId,
+        responderId: generateResponderId(),
         ...formattedResponses,
       };
 
