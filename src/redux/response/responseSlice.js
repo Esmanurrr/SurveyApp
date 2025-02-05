@@ -107,6 +107,41 @@ export const fetchResponseByIdAsync = createAsyncThunk(
   }
 );
 
+// Yeni thunk fonksiyonu ekliyoruz
+export const fetchQuestionResponsesAsync = createAsyncThunk(
+  "responses/fetchQuestionResponses",
+  async ({ questionId, surveyId }, { rejectWithValue }) => {
+    try {
+      const q = query(
+        collection(db, "responses"),
+        where("surveyId", "==", surveyId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const responses = [];
+
+      querySnapshot.forEach((doc) => {
+        const responseData = doc.data();
+        const questionResponse = responseData.questions.find(
+          (q) => q.id === questionId
+        );
+
+        if (questionResponse?.answer) {
+          responses.push({
+            id: doc.id,
+            answer: questionResponse.answer,
+            createdAt: responseData.createdAt,
+          });
+        }
+      });
+
+      return responses;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const responseSlice = createSlice({
   name: "response",
   initialState: {
@@ -116,6 +151,7 @@ const responseSlice = createSlice({
     loading: false,
     error: null,
     initialized: false,
+    questionResponses: [], // Yeni state ekliyoruz
   },
   reducers: {
     clearResponses: (state) => {
@@ -186,6 +222,20 @@ const responseSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchResponseByIdAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Yeni case'leri ekliyoruz
+      .addCase(fetchQuestionResponsesAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchQuestionResponsesAsync.fulfilled, (state, action) => {
+        state.questionResponses = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchQuestionResponsesAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

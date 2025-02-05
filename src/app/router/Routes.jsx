@@ -8,6 +8,7 @@ import FillSurvey from "../../components/survey/FillSurvey.jsx";
 import NotFound from "../../components/infos/NotFound.jsx";
 import Responses from "../../components/responses/Responses.jsx";
 import ResponseDetail from "../../components/responses/ResponseDetail.jsx";
+import TextResponseDetail from "../../components/responses/TextResponseDetail.jsx";
 import Login from "../../components/auth/Login.jsx";
 import Register from "../../components/auth/Register.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
           },
           { path: "responses", element: <Responses /> },
           { path: "response/:responseId", element: <ResponseDetail /> },
+          {
+            path: "text-response/:questionId",
+            element: <TextResponseDetail />,
+          },
         ],
       },
       { path: "survey/fill-survey/:surveyId", element: <FillSurvey /> },

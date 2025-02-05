@@ -138,6 +138,36 @@ export const deleteSurveyAsync = createAsyncThunk(
   }
 );
 
+// Soru ID'sine göre survey'i getirme
+export const fetchSurveyByQuestionIdAsync = createAsyncThunk(
+  "survey/fetchSurveyByQuestionIdAsync",
+  async (questionId, { rejectWithValue }) => {
+    try {
+      const surveysRef = collection(db, "surveys");
+      const querySnapshot = await getDocs(surveysRef);
+      let targetSurvey = null;
+
+      querySnapshot.forEach((doc) => {
+        const surveyData = doc.data();
+        const hasQuestion = surveyData.questions?.some(
+          (q) => q.id === questionId
+        );
+        if (hasQuestion) {
+          targetSurvey = { id: doc.id, ...surveyData };
+        }
+      });
+
+      if (targetSurvey) {
+        return targetSurvey;
+      } else {
+        return rejectWithValue("Survey not found for this question");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const surveySlice = createSlice({
   name: "survey",
   initialState: {
@@ -242,6 +272,19 @@ const surveySlice = createSlice({
         state.error = null;
       })
       .addCase(deleteSurveyAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchSurveyByQuestionIdAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSurveyByQuestionIdAsync.fulfilled, (state, action) => {
+        state.currentSurvey = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchSurveyByQuestionIdAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
