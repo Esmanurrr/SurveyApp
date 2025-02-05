@@ -129,6 +129,7 @@ const FillSurvey = () => {
         surveyId: surveyId,
         surveyOwnerId: survey.userId,
         responderId: generateResponderId(),
+        createdAt: new Date().toISOString(),
         ...formattedResponses,
       };
 
