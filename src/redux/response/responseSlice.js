@@ -10,6 +10,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
+import { auth } from "../../firebase/firebase";
 
 export const fetchResponsesAsync = createAsyncThunk(
   "responses/fetchResponses",
@@ -45,10 +46,49 @@ export const deleteResponseAsync = createAsyncThunk(
   "responses/deleteResponse",
   async (responseId, { rejectWithValue }) => {
     try {
+      console.log("Delete thunk started with responseId:", responseId);
+
+      if (!auth.currentUser) {
+        console.error("No authenticated user found");
+        return rejectWithValue("User not authenticated");
+      }
+
       const responseRef = doc(db, "responses", responseId);
-      await deleteDoc(responseRef);
-      return responseId;
+      console.log("Fetching response document...");
+      const responseDoc = await getDoc(responseRef);
+
+      if (!responseDoc.exists()) {
+        console.error("Response document not found");
+        return rejectWithValue("Response not found");
+      }
+
+      const responseData = responseDoc.data();
+      console.log("Response data:", responseData);
+      console.log("Current user ID:", auth.currentUser.uid);
+      console.log("Response owner ID:", responseData.surveyOwnerId);
+
+      // Kullanıcının kendi yanıtını silmesini kontrol et
+      if (responseData.surveyOwnerId !== auth.currentUser.uid) {
+        console.error("User not authorized to delete this response");
+        return rejectWithValue("Not authorized to delete this response");
+      }
+
+      try {
+        console.log("Deleting response document...");
+        await deleteDoc(responseRef);
+        console.log("Response deleted successfully");
+        return responseId;
+      } catch (deleteError) {
+        console.error("Error while deleting:", deleteError);
+        if (deleteError.code === "permission-denied") {
+          return rejectWithValue(
+            "You don't have permission to delete this response. Please check your permissions."
+          );
+        }
+        return rejectWithValue(deleteError.message);
+      }
     } catch (error) {
+      console.error("Error in deleteResponseAsync:", error);
       return rejectWithValue(error.message);
     }
   }
@@ -142,6 +182,40 @@ export const fetchQuestionResponsesAsync = createAsyncThunk(
   }
 );
 
+// Yeni thunk fonksiyonu ekliyoruz
+export const fetchResponsesByQuestionIdAsync = createAsyncThunk(
+  "responses/fetchResponsesByQuestionId",
+  async ({ questionId, surveyId }, { rejectWithValue }) => {
+    try {
+      const q = query(
+        collection(db, "responses"),
+        where("surveyId", "==", surveyId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const responses = [];
+
+      querySnapshot.forEach((doc) => {
+        const responseData = doc.data();
+        const questionResponse = responseData.questions.find(
+          (q) => q.id === questionId
+        );
+
+        if (questionResponse?.answer) {
+          responses.push({
+            id: doc.id,
+            ...responseData,
+          });
+        }
+      });
+
+      return responses;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const responseSlice = createSlice({
   name: "response",
   initialState: {
@@ -151,7 +225,7 @@ const responseSlice = createSlice({
     loading: false,
     error: null,
     initialized: false,
-    questionResponses: [], // Yeni state ekliyoruz
+    questionResponses: [],
   },
   reducers: {
     clearResponses: (state) => {
@@ -236,6 +310,19 @@ const responseSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchQuestionResponsesAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchResponsesByQuestionIdAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchResponsesByQuestionIdAsync.fulfilled, (state, action) => {
+        state.responses = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchResponsesByQuestionIdAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
