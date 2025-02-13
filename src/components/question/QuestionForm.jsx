@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addQuestionAsync,
   fetchQuestionsAsync,
   updateQuestionAsync,
+  setCurrentQuestion,
+  updateCurrentQuestion,
 } from "../../redux/question/questionSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -26,18 +29,11 @@ import { questionSchema } from "../../validations/schemas/surveySchema";
 import * as yup from "yup";
 
 function QuestionForm({ isEdit, surveyId }) {
-  const [questionData, setQuestionData] = useState({
-    name: "",
-    type: "",
-    options: [],
-    responseType: "Text",
-    canBeSkipped: false,
-  });
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { questionId } = useParams();
-  const { questions, loading } = useSelector((state) => state.question);
+  const { currentQuestion, loading } = useSelector((state) => state.question);
 
   useEffect(() => {
     const fetchQuestionData = async () => {
@@ -46,26 +42,44 @@ function QuestionForm({ isEdit, surveyId }) {
           const result = await dispatch(fetchQuestionsAsync(surveyId)).unwrap();
           const question = result.find((q) => q.id === questionId);
           if (question) {
-            setQuestionData({
-              name: question.name || "",
-              type: question.type || "",
-              options: question.options || [],
-              responseType: question.responseType || "Text",
-              canBeSkipped:
-                question.canBeSkipped !== undefined
-                  ? question.canBeSkipped
-                  : true,
-            });
+            dispatch(
+              setCurrentQuestion({
+                name: question.name || "",
+                type: question.type || "",
+                options: question.options || [],
+                responseType: question.responseType || "Text",
+                canBeSkipped:
+                  question.canBeSkipped !== undefined
+                    ? question.canBeSkipped
+                    : true,
+              })
+            );
           }
         } catch (error) {
           toast.error("Failed to fetch question data", {
             position: "top-right",
           });
         }
+      } else {
+        // Yeni soru oluşturma durumunda default değerleri set et
+        dispatch(
+          setCurrentQuestion({
+            name: "",
+            type: "",
+            options: [],
+            responseType: "Text",
+            canBeSkipped: false,
+          })
+        );
       }
     };
 
     fetchQuestionData();
+
+    // Component unmount olduğunda current question'ı temizle
+    return () => {
+      dispatch(setCurrentQuestion(null));
+    };
   }, [isEdit, questionId, surveyId, dispatch]);
 
   const validateField = (name, value) => {
@@ -89,30 +103,28 @@ function QuestionForm({ isEdit, surveyId }) {
     const { name, value } = e.target;
 
     if (name === "type") {
-      const newData = {
-        ...questionData,
+      const updatedQuestion = {
+        ...currentQuestion,
         type: value,
         responseType:
-          value === "Text Response" ? "Text" : questionData.responseType,
+          value === "Text Response" ? "Text" : currentQuestion.responseType,
         options:
           value === "Single Choice" || value === "Multiple Choice"
-            ? questionData.options
+            ? currentQuestion.options
             : [],
       };
-      setQuestionData(newData);
+      dispatch(updateCurrentQuestion(updatedQuestion));
 
-      // Soru tipi değiştiğinde validasyon yap
       try {
         const schema = yup.reach(questionSchema, "type");
         schema.validateSync(value);
         setErrors((prev) => {
-          const { type, ...rest } = prev;
-          // Eğer Single/Multiple Choice değilse options hatalarını temizle
+          const newErrors = { ...prev };
+          delete newErrors.type;
           if (!(value === "Single Choice" || value === "Multiple Choice")) {
-            const { options, ...remaining } = rest;
-            return remaining;
+            delete newErrors.options;
           }
-          return rest;
+          return newErrors;
         });
       } catch (err) {
         setErrors((prev) => ({
@@ -122,37 +134,43 @@ function QuestionForm({ isEdit, surveyId }) {
       }
     } else {
       const newValue = name === "canBeSkipped" ? value === "true" : value;
-      setQuestionData((prev) => ({
-        ...prev,
-        [name]: newValue,
-      }));
+      dispatch(
+        updateCurrentQuestion({
+          ...currentQuestion,
+          [name]: newValue,
+        })
+      );
       validateField(name, newValue);
     }
   };
 
   const handleOptionsChange = (newOptions) => {
-    setQuestionData((prev) => ({
-      ...prev,
-      options: newOptions,
-    }));
+    dispatch(
+      updateCurrentQuestion({
+        ...currentQuestion,
+        options: newOptions,
+      })
+    );
   };
 
   const setInputType = (inputType) => {
-    setQuestionData((prevData) => ({
-      ...prevData,
-      responseType: inputType,
-    }));
+    dispatch(
+      updateCurrentQuestion({
+        ...currentQuestion,
+        responseType: inputType,
+      })
+    );
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
 
-    const filteredOptions = questionData.options.filter(
+    const filteredOptions = currentQuestion.options.filter(
       (option) => option && option.trim().length > 0
     );
 
     const dataToValidate = {
-      ...questionData,
+      ...currentQuestion,
       options: filteredOptions,
     };
 
@@ -164,7 +182,7 @@ function QuestionForm({ isEdit, surveyId }) {
           updateQuestionAsync({
             surveyId,
             updatedQuestion: {
-              ...questionData,
+              ...currentQuestion,
               id: questionId,
               options: filteredOptions,
             },
@@ -179,7 +197,7 @@ function QuestionForm({ isEdit, surveyId }) {
         await dispatch(
           addQuestionAsync({
             surveyId,
-            newQuestion: { ...questionData, options: filteredOptions },
+            newQuestion: { ...currentQuestion, options: filteredOptions },
           })
         ).unwrap();
 
@@ -207,14 +225,16 @@ function QuestionForm({ isEdit, surveyId }) {
   };
 
   const renderQuestionInput = () => {
-    switch (questionData.type) {
+    if (!currentQuestion) return null;
+
+    switch (currentQuestion.type) {
       case "Single Choice":
       case "Multiple Choice":
         return (
           <>
             <LabelDiv>Options</LabelDiv>
             <Choices
-              options={questionData.options}
+              options={currentQuestion.options}
               setOptions={handleOptionsChange}
             />
             {errors.options && (
@@ -226,7 +246,7 @@ function QuestionForm({ isEdit, surveyId }) {
         return (
           <>
             <InputResponse
-              inputType={questionData.responseType}
+              inputType={currentQuestion.responseType}
               setInputType={setInputType}
             />
             {errors.responseType && (
@@ -252,7 +272,7 @@ function QuestionForm({ isEdit, surveyId }) {
     }
   };
 
-  if (loading) return <LoadingPage />;
+  if (loading || !currentQuestion) return <LoadingPage />;
 
   return (
     <BaseBackground>
@@ -265,7 +285,7 @@ function QuestionForm({ isEdit, surveyId }) {
                 <InputRes
                   type="text"
                   name="name"
-                  value={questionData.name}
+                  value={currentQuestion.name}
                   onChange={handleChange}
                 />
                 {errors.name && (
@@ -277,7 +297,7 @@ function QuestionForm({ isEdit, surveyId }) {
                   <LabelDiv>Question Type</LabelDiv>
                   <Dropdown
                     name="type"
-                    value={questionData.type}
+                    value={currentQuestion.type}
                     onChange={handleChange}
                     disabled={isEdit}
                   >
@@ -299,7 +319,7 @@ function QuestionForm({ isEdit, surveyId }) {
                   <LabelDiv>Can be skipped?</LabelDiv>
                   <Dropdown
                     name="canBeSkipped"
-                    value={String(questionData.canBeSkipped)}
+                    value={String(currentQuestion.canBeSkipped)}
                     onChange={handleChange}
                   >
                     <option value="true">Yes</option>
@@ -338,5 +358,10 @@ function QuestionForm({ isEdit, surveyId }) {
     </BaseBackground>
   );
 }
+
+QuestionForm.propTypes = {
+  isEdit: PropTypes.bool.isRequired,
+  surveyId: PropTypes.string.isRequired,
+};
 
 export default QuestionForm;

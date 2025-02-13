@@ -114,13 +114,16 @@ export const deleteQuestionAsync = createAsyncThunk(
   }
 );
 
+const initialState = {
+  questions: [],
+  currentQuestion: null,
+  loading: false,
+  error: null,
+};
+
 const questionSlice = createSlice({
   name: "question",
-  initialState: {
-    questions: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -128,6 +131,12 @@ const questionSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
       state.loading = false;
+    },
+    setCurrentQuestion: (state, action) => {
+      state.currentQuestion = action.payload;
+    },
+    updateCurrentQuestion: (state, action) => {
+      state.currentQuestion = { ...state.currentQuestion, ...action.payload };
     },
   },
   extraReducers: (builder) => {
@@ -169,5 +178,10 @@ const questionSlice = createSlice({
   },
 });
 
-export const { setLoading, setError } = questionSlice.actions;
+export const {
+  setLoading,
+  setError,
+  setCurrentQuestion,
+  updateCurrentQuestion,
+} = questionSlice.actions;
 export default questionSlice.reducer;
