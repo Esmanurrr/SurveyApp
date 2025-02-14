@@ -1,4 +1,4 @@
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useLocation } from "react-router-dom";
 import QuestionList from "../question/QuestionList";
 import SurveyHeader from "./SurveyHeader";
 import { useEffect, useState } from "react";
@@ -67,6 +67,7 @@ const TabContent = styled.div`
 const Survey = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const location = useLocation();
   const { userLoggedIn, loading: authLoading } = useAuth();
   const {
     currentSurvey,
@@ -74,7 +75,7 @@ const Survey = () => {
     error,
   } = useSelector((state) => state.survey);
   const { responses } = useSelector((state) => state.response);
-  const [activeTab, setActiveTab] = useState("questions");
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -90,6 +91,12 @@ const Survey = () => {
       dispatch(clearResponses());
     };
   }, [dispatch, id, userLoggedIn]);
+
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   if (authLoading) {
     return <LoadingPage />;

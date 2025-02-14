@@ -6,7 +6,7 @@ import { CardContent, CardTitle } from "../../style";
 import PropTypes from "prop-types";
 import { useAuth } from "../../contexts/authContext";
 import { createPortal } from "react-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const HorizontalCard = styled.div`
   background-color: white;
@@ -211,7 +211,7 @@ const CardHeader = styled.div`
   margin-bottom: 1rem;
 `;
 
-const SeeMoreLink = styled(Link)`
+const SeeMoreButton = styled.button`
   width: 100%;
   padding: 0.75rem;
   background: #4a9dec;
@@ -247,6 +247,7 @@ const SurveyOverview = ({ surveyId }) => {
   const { user } = useAuth();
   const { responses, loading } = useSelector((state) => state.response);
   const { currentSurvey } = useSelector((state) => state.survey);
+  const navigate = useNavigate();
 
   // Fetch responses when component mounts
   useEffect(() => {
@@ -321,7 +322,7 @@ const SurveyOverview = ({ surveyId }) => {
   }, [responses, currentSurvey?.questions]);
 
   const handleShowSummary = (question) => {
-    const textResponses = responses
+    const questionResponses = responses
       .map((response) => {
         const questionResponse = response.questions.find(
           (q) => q.id === question.id
@@ -329,7 +330,9 @@ const SurveyOverview = ({ surveyId }) => {
         if (questionResponse?.answer) {
           return {
             id: response.id,
-            answer: questionResponse.answer,
+            answer: Array.isArray(questionResponse.answer)
+              ? questionResponse.answer.join(", ")
+              : questionResponse.answer,
             timestamp: response.createdAt,
             responderId: response.responderId,
           };
@@ -341,7 +344,7 @@ const SurveyOverview = ({ surveyId }) => {
 
     setSelectedQuestion({
       ...question,
-      responses: textResponses,
+      responses: questionResponses,
     });
     setShowModal(true);
   };
@@ -358,6 +361,24 @@ const SurveyOverview = ({ surveyId }) => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleSeeMoreClick = () => {
+    setShowModal(false);
+    if (selectedQuestion?.isTextResponse) {
+      navigate(`/text-response/${selectedQuestion.id}`, {
+        state: {
+          question: selectedQuestion,
+          responses: responses,
+          surveyId: currentSurvey?.id,
+          currentSurvey: currentSurvey,
+        },
+      });
+    } else {
+      navigate(`/survey/${currentSurvey?.id}`, {
+        state: { activeTab: "responses" },
+      });
+    }
   };
 
   if (loading) {
@@ -387,23 +408,21 @@ const SurveyOverview = ({ surveyId }) => {
                 <QuestionNumber>{question.questionNumber}.</QuestionNumber>
                 {question.name}
               </CardTitle>
-              {question.isTextResponse && (
-                <SummaryButton onClick={() => handleShowSummary(question)}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
-                  </svg>
-                  View Responses
-                </SummaryButton>
-              )}
+              <SummaryButton onClick={() => handleShowSummary(question)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+                </svg>
+                View Responses
+              </SummaryButton>
             </CardHeader>
             {question.isTextResponse ? (
               <TextResponseNote>
-                This is a text response question. Click "View Responses" to see
-                recent answers.
+                This is a text response question. Click &quot;View
+                Responses&quot; to see recent answers.
               </TextResponseNote>
             ) : (
               <div style={{ marginTop: "1rem" }}>
@@ -461,17 +480,7 @@ const SurveyOverview = ({ surveyId }) => {
                     </ResponseItem>
                   ))}
               </ResponseList>
-              <SeeMoreLink
-                to={`/text-response/${encodeURIComponent(
-                  selectedQuestion?.id
-                )}`}
-                state={{
-                  question: selectedQuestion,
-                  responses: responses,
-                  surveyId: currentSurvey?.id,
-                  currentSurvey: currentSurvey,
-                }}
-              >
+              <SeeMoreButton onClick={handleSeeMoreClick}>
                 <span>See All Responses</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -484,7 +493,7 @@ const SurveyOverview = ({ surveyId }) => {
                     clipRule="evenodd"
                   />
                 </svg>
-              </SeeMoreLink>
+              </SeeMoreButton>
             </ModalContent>
           </ModalOverlay>,
           document.body
