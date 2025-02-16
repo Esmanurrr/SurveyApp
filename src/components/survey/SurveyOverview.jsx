@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import styled from "styled-components";
 import { CardContent, CardTitle } from "../../style";
-import PropTypes from "prop-types";
 import { useAuth } from "../../contexts/authContext";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
@@ -249,25 +248,15 @@ const SurveyOverview = ({ surveyId }) => {
   const { currentSurvey } = useSelector((state) => state.survey);
   const navigate = useNavigate();
 
-  // Fetch responses when component mounts
   useEffect(() => {
-    console.log("First useEffect - Conditions:", { surveyId, user });
     if (surveyId && user) {
-      console.log("Fetching responses...");
       dispatch(fetchSurveyResponsesAsync({ surveyId, userId: user.uid }));
     }
   }, [surveyId, user, dispatch]);
 
   useEffect(() => {
-    // Only calculate stats when both responses and questions are available
     if (responses?.length > 0 && currentSurvey?.questions?.length > 0) {
-      console.log("Calculating statistics with:", {
-        responsesCount: responses.length,
-        questionsCount: currentSurvey.questions.length,
-      });
-
       const stats = currentSurvey.questions.map((question, index) => {
-        // Skip calculation for text responses
         if (
           question.type === "Text Response" ||
           question.type === "Long Text Response"
@@ -279,24 +268,18 @@ const SurveyOverview = ({ surveyId }) => {
           };
         }
 
-        // Calculate option selection rates for multiple choice questions
         const optionCounts = {};
         responses.forEach((response) => {
-          // Response yapısını kontrol et ve log'la
-          console.log("Processing response:", response);
-
           const answer = response.questions?.find(
             (q) => q.id === question.id
           )?.answer;
 
           if (answer) {
-            // Eğer cevap bir array ise (Multiple Choice)
             if (Array.isArray(answer)) {
               answer.forEach((ans) => {
                 optionCounts[ans] = (optionCounts[ans] || 0) + 1;
               });
             } else {
-              // Tek cevap (Single Choice)
               optionCounts[answer] = (optionCounts[answer] || 0) + 1;
             }
           }
@@ -316,7 +299,6 @@ const SurveyOverview = ({ surveyId }) => {
         };
       });
 
-      console.log("Setting statistics:", stats);
       setQuestionStats(stats);
     }
   }, [responses, currentSurvey?.questions]);
@@ -382,7 +364,6 @@ const SurveyOverview = ({ surveyId }) => {
   };
 
   if (loading) {
-    console.log("Component is in loading state");
     return (
       <div style={{ padding: "2rem", textAlign: "center", color: "#718096" }}>
         Loading survey statistics...
@@ -401,7 +382,7 @@ const SurveyOverview = ({ surveyId }) => {
   return (
     <StatsContainer>
       {questionStats.map((question) => (
-        <HorizontalCard key={question.questionId}>
+        <HorizontalCard key={question.id}>
           <CardContent>
             <CardHeader>
               <CardTitle>
@@ -464,21 +445,19 @@ const SurveyOverview = ({ surveyId }) => {
                 </CloseButton>
               </ModalHeader>
               <ResponseList>
-                {selectedQuestion?.responses
-                  ?.slice(0, 4)
-                  .map((response, index) => (
-                    <ResponseItem key={index}>
-                      <p>{response.answer}</p>
-                      <div className="meta">
-                        <Link to={`/response/${response.id}`}>
-                          Anonymous #{response.responderId}
-                        </Link>
-                        <div className="timestamp">
-                          {formatDate(response.timestamp)}
-                        </div>
+                {selectedQuestion?.responses?.slice(0, 4).map((response) => (
+                  <ResponseItem key={response.id}>
+                    <p>{response.answer}</p>
+                    <div className="meta">
+                      <Link to={`/response/${response.id}`}>
+                        Anonymous #{response.responderId}
+                      </Link>
+                      <div className="timestamp">
+                        {formatDate(response.timestamp)}
                       </div>
-                    </ResponseItem>
-                  ))}
+                    </div>
+                  </ResponseItem>
+                ))}
               </ResponseList>
               <SeeMoreButton onClick={handleSeeMoreClick}>
                 <span>See All Responses</span>
@@ -500,10 +479,6 @@ const SurveyOverview = ({ surveyId }) => {
         )}
     </StatsContainer>
   );
-};
-
-SurveyOverview.propTypes = {
-  surveyId: PropTypes.string.isRequired,
 };
 
 export default SurveyOverview;

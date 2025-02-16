@@ -27,27 +27,27 @@ const NavMenu = styled.div`
 const NavItem = styled.button`
   padding: 0.75rem 1.25rem;
   border: none;
-  background: ${(props) => (props.active ? "#4a9dec" : "#ffffff")};
-  color: ${(props) => (props.active ? "#ffffff" : "#64748b")};
-  font-weight: ${(props) => (props.active ? "600" : "500")};
+  background: ${(props) => (props.$active ? "#4a9dec" : "#ffffff")};
+  color: ${(props) => (props.$active ? "#ffffff" : "#64748b")};
+  font-weight: ${(props) => (props.$active ? "600" : "500")};
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
   border-radius: 8px;
   box-shadow: ${(props) =>
-    props.active
+    props.$active
       ? "0 2px 4px rgba(74, 157, 236, 0.1)"
       : "0 1px 2px rgba(0, 0, 0, 0.05)"};
 
   &:hover {
-    background: ${(props) => (props.active ? "#4a9dec" : "#edf2f7")};
-    color: ${(props) => (props.active ? "#ffffff" : "#4a9dec")};
+    background: ${(props) => (props.$active ? "#4a9dec" : "#edf2f7")};
+    color: ${(props) => (props.$active ? "#ffffff" : "#4a9dec")};
   }
 
   span {
     margin-left: 0.5rem;
-    background: ${(props) => (props.active ? "#ffffff" : "#edf2f7")};
-    color: ${(props) => (props.active ? "#4a9dec" : "#64748b")};
+    background: ${(props) => (props.$active ? "#ffffff" : "#edf2f7")};
+    color: ${(props) => (props.$active ? "#4a9dec" : "#64748b")};
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -75,11 +75,10 @@ const Survey = () => {
     error,
   } = useSelector((state) => state.survey);
   const { responses } = useSelector((state) => state.response);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("questions");
 
   useEffect(() => {
     const user = auth.currentUser;
-    console.log("Current user:", user);
 
     if (userLoggedIn && id && user) {
       dispatch(fetchSurveyByIdAsync(id));
@@ -137,19 +136,19 @@ const Survey = () => {
       <ContentWrapper>
         <NavMenu>
           <NavItem
-            active={activeTab === "overview"}
+            $active={activeTab === "overview"}
             onClick={() => setActiveTab("overview")}
           >
             Overview
           </NavItem>
           <NavItem
-            active={activeTab === "responses"}
+            $active={activeTab === "responses"}
             onClick={() => setActiveTab("responses")}
           >
             Responses ({responses?.length || 0})
           </NavItem>
           <NavItem
-            active={activeTab === "questions"}
+            $active={activeTab === "questions"}
             onClick={() => setActiveTab("questions")}
           >
             Questions ({currentSurvey?.questions?.length || 0})

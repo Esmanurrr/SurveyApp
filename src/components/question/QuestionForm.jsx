@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addQuestionAsync,
@@ -61,7 +60,6 @@ function QuestionForm({ isEdit, surveyId }) {
           });
         }
       } else {
-        // Yeni soru oluşturma durumunda default değerleri set et
         dispatch(
           setCurrentQuestion({
             name: "",
@@ -76,7 +74,6 @@ function QuestionForm({ isEdit, surveyId }) {
 
     fetchQuestionData();
 
-    // Component unmount olduğunda current question'ı temizle
     return () => {
       dispatch(setCurrentQuestion(null));
     };
@@ -362,10 +359,5 @@ function QuestionForm({ isEdit, surveyId }) {
     </BaseBackground>
   );
 }
-
-QuestionForm.propTypes = {
-  isEdit: PropTypes.bool.isRequired,
-  surveyId: PropTypes.string.isRequired,
-};
 
 export default QuestionForm;

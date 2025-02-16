@@ -108,12 +108,10 @@ function TextResponseDetail() {
 
   const [textResponses, setTextResponses] = useState([]);
 
-  // 1. Önce survey'i fetch et
   useEffect(() => {
     dispatch(fetchSurveyByQuestionIdAsync(questionId));
   }, [questionId, dispatch]);
 
-  // 2. Survey geldiğinde responses'ları fetch et
   useEffect(() => {
     if (currentSurvey?.id && user) {
       console.log("Fetching responses for:", {
@@ -130,7 +128,6 @@ function TextResponseDetail() {
     }
   }, [currentSurvey?.id, user, dispatch]);
 
-  // 3. Responses geldiğinde işle
   useEffect(() => {
     if (responses?.length > 0) {
       const filteredResponses = responses

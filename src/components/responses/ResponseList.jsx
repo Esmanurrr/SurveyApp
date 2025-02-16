@@ -24,16 +24,11 @@ const ResponseList = () => {
 
   const handleDelete = async (responseId) => {
     try {
-      console.log("Attempting to delete response with ID:", responseId);
-      const resultAction = await dispatch(
-        deleteResponseAsync(responseId)
-      ).unwrap();
-      console.log("Delete response result:", resultAction);
+      await dispatch(deleteResponseAsync(responseId)).unwrap();
       toast.success("Response deleted successfully", {
         position: "top-right",
       });
     } catch (error) {
-      console.error("Error deleting response:", error);
       toast.error(error || "Failed to delete response", {
         position: "top-right",
       });
@@ -61,7 +56,6 @@ const ResponseList = () => {
   return (
     <HorizontalListContainer>
       {responses.map((response) => {
-        console.log("Rendering response:", response);
         return (
           <ResponseSurveyCard
             key={response.id}

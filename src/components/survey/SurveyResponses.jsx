@@ -19,7 +19,6 @@ import {
   EmptyState,
 } from "../../style";
 import { toast } from "react-toastify";
-import PropTypes from "prop-types";
 
 const formatTimeAgo = (date) => {
   const now = new Date();
@@ -68,7 +67,6 @@ const SurveyResponses = ({ surveyId }) => {
   const handleDelete = async (responseId) => {
     try {
       await dispatch(deleteResponseAsync(responseId)).unwrap();
-      // Yanıt silindikten sonra listeyi güncelle
       dispatch(
         fetchSurveyResponsesAsync({ userId: currentUser.uid, surveyId })
       );
@@ -154,10 +152,6 @@ const SurveyResponses = ({ surveyId }) => {
       ))}
     </HorizontalListContainer>
   );
-};
-
-SurveyResponses.propTypes = {
-  surveyId: PropTypes.string.isRequired,
 };
 
 export default SurveyResponses;

@@ -44,7 +44,6 @@ function Login() {
         });
         setErrors(formattedErrors);
       } else if (error.code) {
-        console.log(error, error.code);
         toast.error(
           "Unable to log in. Please check your username and password.",
           { position: "top-right" }

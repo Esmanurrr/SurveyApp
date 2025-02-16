@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
   HorizontalCard,
   CardContent,
@@ -85,13 +84,5 @@ function ResponseSurveyCard({ title, id, questions, createdAt, onDelete }) {
     </HorizontalCard>
   );
 }
-
-ResponseSurveyCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  questions: PropTypes.array,
-  createdAt: PropTypes.string,
-  onDelete: PropTypes.func,
-};
 
 export default ResponseSurveyCard;
