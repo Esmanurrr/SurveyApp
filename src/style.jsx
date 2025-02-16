@@ -654,15 +654,14 @@ export const ActionButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-width: 120px;
 
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 0.75rem;
+  svg {
+    width: 20px;
+    height: 20px;
   }
 
   ${(props) =>
-    props.primary &&
+    props.$primary &&
     `
     background-color: #4a9dec;
     color: white;
@@ -674,7 +673,7 @@ export const ActionButton = styled.button`
   `}
 
   ${(props) =>
-    props.secondary &&
+    props.$secondary &&
     `
     background-color: white;
     color: #4a9dec;
@@ -686,7 +685,7 @@ export const ActionButton = styled.button`
   `}
   
   ${(props) =>
-    props.danger &&
+    props.$danger &&
     `
     background-color: white;
     color: #e53e3e;
@@ -696,6 +695,11 @@ export const ActionButton = styled.button`
       background-color: #fff5f5;
     }
   `}
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0.75rem;
+  }
 `;
 
 export const EmptyState = styled.div`

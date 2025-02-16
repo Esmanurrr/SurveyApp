@@ -22,7 +22,7 @@ import { fetchSurveyByIdAsync } from "../../redux/survey/surveySlice";
 
 const FillSurvey = () => {
   const { surveyId } = useParams();
-  const [responses, setResponses] = useState({});
+  const [formData, setFormData] = useState({});
   const [error, setError] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const dispatch = useDispatch();
@@ -35,15 +35,15 @@ const FillSurvey = () => {
       dispatch(fetchSurveyByIdAsync(surveyId))
         .unwrap()
         .then((surveyData) => {
-          const initialResponses = {};
+          const initialFormData = {};
           surveyData.questions.forEach((question) => {
             if (question.type === "Multiple Choice") {
-              initialResponses[question.id] = [];
+              initialFormData[question.id] = [];
             } else {
-              initialResponses[question.id] = "";
+              initialFormData[question.id] = "";
             }
           });
-          setResponses(initialResponses);
+          setFormData(initialFormData);
         })
         .catch((error) => {
           toast.error(error || "Failed to fetch survey data", {
@@ -71,14 +71,14 @@ const FillSurvey = () => {
   }
 
   const handleResponseChange = (questionId, value) => {
-    setResponses({
-      ...responses,
+    setFormData({
+      ...formData,
       [questionId]: value,
     });
   };
 
-  const getAnswer = (question, responses) => {
-    const response = responses[question.id];
+  const getAnswer = (question, formData) => {
+    const response = formData[question.id];
 
     if (Array.isArray(response)) {
       if (response.length === 0 && !question.canBeSkipped) {
@@ -102,10 +102,9 @@ const FillSurvey = () => {
     const validationSchema = createValidationSchema(survey.questions);
 
     try {
-      await validationSchema.validate(responses, { abortEarly: false });
+      await validationSchema.validate(formData, { abortEarly: false });
       setError({});
 
-      // Generate a unique responderId
       const generateResponderId = () => {
         const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
         let result = "";
@@ -120,7 +119,7 @@ const FillSurvey = () => {
         questions: survey.questions.map((question) => ({
           id: question.id,
           name: question.name,
-          answer: getAnswer(question, responses),
+          answer: getAnswer(question, formData),
           canBeSkipped: question.canBeSkipped || false,
         })),
       };
@@ -177,7 +176,7 @@ const FillSurvey = () => {
                   </Question>
                   {question.type === "Single Choice" && (
                     <ShortDropdown
-                      value={responses[question.id] || ""}
+                      value={formData[question.id] || ""}
                       onChange={(e) =>
                         handleResponseChange(question.id, e.target.value)
                       }
@@ -203,13 +202,12 @@ const FillSurvey = () => {
                               type="checkbox"
                               value={option}
                               checked={
-                                responses[question.id]?.includes(option) ||
-                                false
+                                formData[question.id]?.includes(option) || false
                               }
                               style={{ margin: "5px" }}
                               onChange={(e) => {
                                 const selectedOptions =
-                                  responses[question.id] || [];
+                                  formData[question.id] || [];
                                 if (e.target.checked) {
                                   handleResponseChange(question.id, [
                                     ...selectedOptions,
@@ -233,7 +231,7 @@ const FillSurvey = () => {
                     <ShortInput
                       type="text"
                       placeholder="Enter your answer"
-                      value={responses[question.id] || ""}
+                      value={formData[question.id] || ""}
                       onChange={(e) =>
                         handleResponseChange(question.id, e.target.value)
                       }
@@ -244,7 +242,7 @@ const FillSurvey = () => {
                     <ShortTextarea
                       rows={4}
                       placeholder="Write your answer"
-                      value={responses[question.id] || ""}
+                      value={formData[question.id] || ""}
                       onChange={(e) =>
                         handleResponseChange(question.id, e.target.value)
                       }
