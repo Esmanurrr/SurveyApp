@@ -4,6 +4,7 @@ import {
   Container,
   FlexContainer,
   RelativeDiv,
+  EmptyState,
 } from "../../style";
 import CreateSurveyModal from "./CreateSurveyModal";
 import { createPortal } from "react-dom";
@@ -17,6 +18,60 @@ import {
 import { useAuth } from "../../contexts/authContext";
 import LoadingPage from "../infos/LoadingPage";
 import { Navigate } from "react-router-dom";
+import styled from "styled-components";
+
+const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eef2f6;
+
+  h1 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.8rem;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const EmptyStateWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  text-align: center;
+  margin-top: 2rem;
+
+  svg {
+    width: 120px;
+    height: 120px;
+    color: #4a9dec;
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 500px;
+  }
+`;
 
 function Surveys() {
   const [portal, setPortal] = useState(false);
@@ -54,23 +109,44 @@ function Surveys() {
   return (
     <BaseBackground>
       <Container>
-        <h1>Recent Surveys</h1>
-        <RelativeDiv>
-          <FlexContainer>
-            <div style={{ flexGrow: 1 }}>
-              <SurveyList surveys={surveys} />
-            </div>
-            <div style={{ flexShrink: 0, marginTop: "1rem" }}>
+        <ContentWrapper>
+          <PageHeader>
+            <h1>Recent Surveys</h1>
+            {surveys.length > 0 && <CreateSurvey handlePortal={handlePortal} />}
+          </PageHeader>
+
+          {surveys.length === 0 ? (
+            <EmptyStateWrapper>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V19.5a2.25 2.25 0 002.25 2.25h.75M6 16.5a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H6.75a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H6.75z"
+                />
+              </svg>
+              <h2>Create Your First Survey</h2>
+              <p>
+                Start collecting responses by creating your first survey. It's
+                easy and only takes a few minutes!
+              </p>
               <CreateSurvey handlePortal={handlePortal} />
-              {portal &&
-                createPortal(
-                  <CreateSurveyModal closePortal={closePortal} />,
-                  document.body
-                )}
-            </div>
-          </FlexContainer>
-        </RelativeDiv>
+            </EmptyStateWrapper>
+          ) : (
+            <SurveyList surveys={surveys} />
+          )}
+        </ContentWrapper>
       </Container>
+      {portal &&
+        createPortal(
+          <CreateSurveyModal closePortal={closePortal} />,
+          document.body
+        )}
     </BaseBackground>
   );
 }

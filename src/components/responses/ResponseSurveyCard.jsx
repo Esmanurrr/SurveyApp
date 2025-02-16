@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import {
   HorizontalCard,
   CardContent,
@@ -11,6 +12,8 @@ import {
 import { Link } from "react-router-dom";
 
 const formatTimeAgo = (date) => {
+  if (!date) return "Date not available";
+
   const now = new Date();
   const responseDate = new Date(date);
   const diffInSeconds = Math.floor((now - responseDate) / 1000);
@@ -41,7 +44,14 @@ const formatTimeAgo = (date) => {
   });
 };
 
-function ResponseSurveyCard({ title, id, questions, createdAt, onDelete }) {
+function ResponseSurveyCard({
+  title = "Untitled Survey",
+  id,
+  questions = [],
+  createdAt,
+  responderId = "Unknown",
+  onDelete,
+}) {
   return (
     <HorizontalCard>
       <CardContent>
@@ -68,7 +78,7 @@ function ResponseSurveyCard({ title, id, questions, createdAt, onDelete }) {
             >
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
             </svg>
-            Anonymous Response
+            Anonymous #{responderId}
           </CardMetaItem>
         </CardMeta>
       </CardContent>
@@ -77,12 +87,21 @@ function ResponseSurveyCard({ title, id, questions, createdAt, onDelete }) {
         <ActionButton as={Link} to={`/response/${id}`} $primary>
           View Details
         </ActionButton>
-        <ActionButton $danger onClick={() => onDelete()}>
+        <ActionButton $danger onClick={onDelete}>
           Delete
         </ActionButton>
       </CardActions>
     </HorizontalCard>
   );
 }
+
+ResponseSurveyCard.propTypes = {
+  title: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  questions: PropTypes.arrayOf(PropTypes.object),
+  createdAt: PropTypes.string,
+  responderId: PropTypes.string,
+  onDelete: PropTypes.func.isRequired,
+};
 
 export default ResponseSurveyCard;

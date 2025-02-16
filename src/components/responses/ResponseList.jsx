@@ -56,14 +56,17 @@ const ResponseList = () => {
   return (
     <HorizontalListContainer>
       {responses.map((response) => {
+        const { id, title, questions, createdAt, responderId } = response;
+
         return (
           <ResponseSurveyCard
-            key={response.id}
-            id={response.id}
-            title={response.title}
-            questions={response.questions}
-            createdAt={response.createdAt}
-            onDelete={() => handleDelete(response.id)}
+            key={id}
+            id={id}
+            title={title}
+            questions={questions}
+            createdAt={createdAt}
+            responderId={responderId}
+            onDelete={() => handleDelete(id)}
           />
         );
       })}
