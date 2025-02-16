@@ -5,6 +5,28 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 
+// ActionButton'ı style.jsx'den import etmek yerine burada tanımlıyoruz
+const ActionButton = styled.button`
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  color: ${(props) => (props.$danger ? "#E53E3E" : "#4a9dec")};
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
 const Card = styled.div`
   background: white;
   border-radius: 12px;
@@ -75,27 +97,6 @@ const ActionButtons = styled.div`
   gap: 0.5rem;
 `;
 
-const ActionButton = styled.button`
-  padding: 0.5rem;
-  border: none;
-  background: none;
-  color: ${(props) => (props.delete ? "#E53E3E" : "#4a9dec")};
-  cursor: pointer;
-  transition: opacity 0.2s;
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-
-  &:hover {
-    opacity: 0.7;
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
 const OptionsContainer = styled.div`
   margin-top: 1rem;
   display: flex;
@@ -152,7 +153,11 @@ const QuestionCard = ({ question, index, surveyId }) => {
                 <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
               </svg>
             </ActionButton>
-            <ActionButton onClick={handleDelete} title="Delete Question" delete>
+            <ActionButton
+              onClick={handleDelete}
+              title="Delete Question"
+              $danger
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

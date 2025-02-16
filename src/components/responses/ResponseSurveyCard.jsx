@@ -75,10 +75,10 @@ function ResponseSurveyCard({ title, id, questions, createdAt, onDelete }) {
       </CardContent>
 
       <CardActions>
-        <ActionButton as={Link} to={`/response/${id}`} primary>
+        <ActionButton as={Link} to={`/response/${id}`} $primary>
           View Details
         </ActionButton>
-        <ActionButton danger="true" onClick={() => onDelete()}>
+        <ActionButton $danger onClick={() => onDelete()}>
           Delete
         </ActionButton>
       </CardActions>
