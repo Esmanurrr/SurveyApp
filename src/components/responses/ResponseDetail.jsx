@@ -1,126 +1,28 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { BaseBackground, Container, Header } from "../../style";
+import {
+  Answer,
+  AnswerBadge,
+  AnswerSection,
+  BaseBackground,
+  Container,
+  ErrorMessage,
+  Header,
+  HeaderContent,
+  HeaderTitle,
+  MultipleAnswer,
+  QuestionNumber,
+  QuestionSection,
+  QuestionText,
+  ResponseCard,
+  TimeStamp,
+} from "../../style";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchResponseByIdAsync,
   clearCurrentResponse,
 } from "../../redux/response/responseSlice";
 import LoadingPage from "../infos/LoadingPage";
-import styled from "styled-components";
-
-const ResponseCard = styled.div`
-  background: #f8fafc;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    transform: translateY(-2px);
-  }
-`;
-
-const QuestionSection = styled.div`
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  background: white;
-  display: flex;
-  align-items: center;
-`;
-
-const QuestionNumber = styled.span`
-  color: #4a9dec;
-  font-weight: 600;
-  margin-right: 0.75rem;
-  background: #4a9dec0d;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 0.9rem;
-  border: 1px solid #e2e8f0;
-`;
-
-const QuestionText = styled.span`
-  color: #2d3748;
-  font-weight: 500;
-  font-size: 1.1rem;
-`;
-
-const AnswerSection = styled.div`
-  padding: 1.5rem;
-  background: #f8fafc;
-`;
-
-const Answer = styled.div`
-  color: #4a5568;
-  font-size: 1rem;
-  line-height: 1.5;
-
-  &.unanswered {
-    color: #a0aec0;
-    font-style: italic;
-  }
-`;
-
-const MultipleAnswer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-`;
-
-const AnswerBadge = styled.span`
-  background: white;
-  color: #4a5568;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  padding: 2rem;
-  color: #2d3748;
-
-  h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-`;
-
-const HeaderContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const HeaderTitle = styled.div`
-  h1 {
-    margin: 0;
-    margin-bottom: 0.25rem;
-  }
-`;
-
-const TimeStamp = styled.div`
-  color: #718096;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-`;
 
 const formatTimeAgo = (date) => {
   const now = new Date();

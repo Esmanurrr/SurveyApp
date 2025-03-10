@@ -571,6 +571,7 @@ export const HorizontalCard = styled.div`
 export const CardContent = styled.div`
   flex: 1;
   min-width: 0;
+  padding: 1.5rem;
 `;
 
 export const CardTitle = styled.h3`
@@ -655,6 +656,10 @@ export const ActionButton = styled.button`
   justify-content: center;
   gap: 0.5rem;
 
+  &:hover {
+    opacity: 0.7;
+  }
+
   svg {
     width: 20px;
     height: 20px;
@@ -702,14 +707,151 @@ export const ActionButton = styled.button`
   }
 `;
 
-export const EmptyState = styled.div`
-  text-align: center;
-  padding: 2rem 1rem;
+export const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eef2f6;
+
+  h1 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.8rem;
+  }
+`;
+
+export const ContentWrapper = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+export const EmptyStateWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
   background: white;
   border-radius: 12px;
-  margin: 1rem auto;
-  max-width: 500px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  text-align: center;
+  margin-top: 2rem;
+
+  svg {
+    width: 120px;
+    height: 120px;
+    color: #4a9dec;
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 500px;
+  }
+`;
+
+export const CardQuestion = styled.div`
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: #4a9dec;
+  }
+`;
+
+export const QuestionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+`;
+
+export const QuestionInfo = styled.div`
+  flex: 1;
+`;
+
+export const QuestionTitle = styled.h3`
+  color: #2d3748;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 500;
+`;
+
+export const QuestionType = styled.div`
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: inline-block;
+`;
+
+export const ActionButtons = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+export const OptionsContainer = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+export const OptionBadge = styled.span`
+  background: #f7fafc;
+  color: #4a5568;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+`;
+
+export const QuestionListContainer = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+`;
+
+export const EmptyState = styled.div`
+  text-align: center;
+  padding: 3rem 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+
+  h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 
   @media (min-width: 768px) {
     padding: 3rem;
@@ -747,5 +889,125 @@ export const EmptyState = styled.div`
       width: 200px;
       margin-bottom: 2rem;
     }
+  }
+`;
+
+export const QuestionGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
+export const ResponseCard = styled.div`
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+  }
+`;
+
+export const QuestionSection = styled.div`
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: white;
+  display: flex;
+  align-items: center;
+`;
+
+export const QuestionNumber = styled.span`
+  color: #4a9dec;
+  font-weight: 600;
+  margin-right: 0.75rem;
+  background: #4a9dec0d;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  border: 1px solid #e2e8f0;
+`;
+
+export const QuestionText = styled.span`
+  color: #2d3748;
+  font-weight: 500;
+  font-size: 1.1rem;
+`;
+
+export const AnswerSection = styled.div`
+  padding: 1.5rem;
+  background: #f8fafc;
+`;
+
+export const Answer = styled.div`
+  color: #4a5568;
+  font-size: 1rem;
+  line-height: 1.5;
+
+  &.unanswered {
+    color: #a0aec0;
+    font-style: italic;
+  }
+`;
+
+export const MultipleAnswer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+export const AnswerBadge = styled.span`
+  background: white;
+  color: #4a5568;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+export const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #2d3748;
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+`;
+
+export const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const HeaderTitle = styled.div`
+  h1 {
+    margin: 0;
+    margin-bottom: 0.25rem;
+  }
+`;
+
+export const TimeStamp = styled.div`
+  color: #718096;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  svg {
+    width: 16px;
+    height: 16px;
   }
 `;
