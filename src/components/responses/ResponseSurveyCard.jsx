@@ -95,13 +95,4 @@ function ResponseSurveyCard({
   );
 }
 
-ResponseSurveyCard.propTypes = {
-  title: PropTypes.string,
-  id: PropTypes.string.isRequired,
-  questions: PropTypes.arrayOf(PropTypes.object),
-  createdAt: PropTypes.string,
-  responderId: PropTypes.string,
-  onDelete: PropTypes.func.isRequired,
-};
-
 export default ResponseSurveyCard;

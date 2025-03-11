@@ -317,7 +317,7 @@ export const NavbarWrapper = styled.div`
 `;
 
 export const BaseBackground = styled.div`
-  background-color: #f6f6f6;
+  background-color: #f8fafc;
   min-height: 80vh;
   height: auto;
 `;

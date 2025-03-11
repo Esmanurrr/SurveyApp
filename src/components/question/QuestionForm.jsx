@@ -339,7 +339,7 @@ function QuestionForm({ isEdit, surveyId }) {
                       padding: "10px",
                       borderRadius: "10px",
                       marginTop: "10px",
-                      backgroundColor: "#F5F5F7",
+                      backgroundColor: "#F8FAFC",
                     }}
                   >
                     {renderQuestionInput()}
