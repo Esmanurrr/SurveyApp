@@ -2,10 +2,17 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import styled from "styled-components";
-import { CardContent, CardTitle } from "../../style";
+import {
+  CardContent,
+  CardTitle,
+  EmptyState,
+  QuestionListContainer,
+  ActionButton,
+} from "../../style";
 import { useAuth } from "../../contexts/authContext";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const HorizontalCard = styled.div`
   background-color: white;
@@ -365,17 +372,23 @@ const SurveyOverview = ({ surveyId }) => {
 
   if (loading) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center", color: "#718096" }}>
-        Loading survey statistics...
-      </div>
+      <QuestionListContainer>
+        <EmptyState>
+          <h2>Loading survey statistics...</h2>
+          <p>Please wait while we fetch the data.</p>
+        </EmptyState>
+      </QuestionListContainer>
     );
   }
 
   if (!questionStats.length) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center", color: "#718096" }}>
-        No questions found in this survey.
-      </div>
+      <QuestionListContainer>
+        <EmptyState>
+          <h2>No questions found</h2>
+          <p>Add some questions to your survey to see responses here.</p>
+        </EmptyState>
+      </QuestionListContainer>
     );
   }
 
@@ -479,6 +492,10 @@ const SurveyOverview = ({ surveyId }) => {
         )}
     </StatsContainer>
   );
+};
+
+SurveyOverview.propTypes = {
+  surveyId: PropTypes.string.isRequired,
 };
 
 export default SurveyOverview;

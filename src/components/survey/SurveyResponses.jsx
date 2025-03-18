@@ -17,8 +17,10 @@ import {
   CardActions,
   ActionButton,
   EmptyState,
+  QuestionListContainer,
 } from "../../style";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 
 const formatTimeAgo = (date) => {
   const now = new Date();
@@ -82,28 +84,34 @@ const SurveyResponses = ({ surveyId }) => {
 
   if (loading) {
     return (
-      <EmptyState>
-        <h3>Loading...</h3>
-        <p>Please wait while we fetch the responses.</p>
-      </EmptyState>
+      <QuestionListContainer>
+        <EmptyState>
+          <h2>Loading...</h2>
+          <p>Please wait while we fetch the responses.</p>
+        </EmptyState>
+      </QuestionListContainer>
     );
   }
 
   if (error) {
     return (
-      <EmptyState>
-        <h3>Error</h3>
-        <p>Error loading responses: {error}</p>
-      </EmptyState>
+      <QuestionListContainer>
+        <EmptyState>
+          <h2>Error</h2>
+          <p>Error loading responses: {error}</p>
+        </EmptyState>
+      </QuestionListContainer>
     );
   }
 
   if (!responses || responses.length === 0) {
     return (
-      <EmptyState>
-        <h3>No Responses Yet</h3>
-        <p>Share your survey to start collecting responses!</p>
-      </EmptyState>
+      <QuestionListContainer>
+        <EmptyState>
+          <h2>No Responses Yet</h2>
+          <p>Share your survey to start collecting responses!</p>
+        </EmptyState>
+      </QuestionListContainer>
     );
   }
 
@@ -152,6 +160,10 @@ const SurveyResponses = ({ surveyId }) => {
       ))}
     </HorizontalListContainer>
   );
+};
+
+SurveyResponses.propTypes = {
+  surveyId: PropTypes.string.isRequired,
 };
 
 export default SurveyResponses;
