@@ -2,12 +2,9 @@ import { useState, useEffect } from "react";
 import {
   BaseBackground,
   Container,
-  FlexContainer,
-  RelativeDiv,
-  EmptyState,
+  ContentWrapper,
   EmptyStateWrapper,
   PageHeader,
-  ContentWrapper,
 } from "../../style";
 import CreateSurveyModal from "./CreateSurveyModal";
 import { createPortal } from "react-dom";
@@ -21,7 +18,13 @@ import {
 import { useAuth } from "../../contexts/authContext";
 import LoadingPage from "../infos/LoadingPage";
 import { Navigate } from "react-router-dom";
-import styled from "styled-components";
+import Pagination from "../common/Pagination";
+import {
+  selectCurrentPage,
+  selectItemsPerPage,
+  selectPaginatedData,
+  setCurrentPage,
+} from "../../redux/pagination/paginationSlice";
 
 function Surveys() {
   const [portal, setPortal] = useState(false);
@@ -31,14 +34,31 @@ function Surveys() {
     (state) => state.survey
   );
 
+  // Pagination state
+  const currentPage = useSelector(selectCurrentPage);
+  const itemsPerPage = useSelector(selectItemsPerPage);
+
+  // Calculate paginated data and total pages
+  const paginatedSurveys = selectPaginatedData(
+    surveys,
+    currentPage,
+    itemsPerPage
+  );
+  const totalPages = Math.ceil(surveys.length / itemsPerPage);
+
   useEffect(() => {
     if (!userLoggedIn || !currentUser) {
       dispatch(clearSurveys());
       return;
     }
 
-    dispatch(fetchSurveysAsync());
+    dispatch(fetchSurveysAsync(currentUser.uid));
   }, [dispatch, userLoggedIn, currentUser]);
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    dispatch(setCurrentPage(page));
+  };
 
   const handlePortal = () => {
     setPortal(true);
@@ -82,13 +102,24 @@ function Surveys() {
               </svg>
               <h2>Create Your First Survey</h2>
               <p>
-                Start collecting responses by creating your first survey. It's
-                easy and only takes a few minutes!
+                Start collecting responses by creating your first survey.
+                It&apos;s easy and only takes a few minutes!
               </p>
               <CreateSurvey handlePortal={handlePortal} />
             </EmptyStateWrapper>
           ) : (
-            <SurveyList surveys={surveys} />
+            <>
+              <SurveyList surveys={paginatedSurveys} />
+
+              {/* Pagination component */}
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </>
           )}
         </ContentWrapper>
       </Container>

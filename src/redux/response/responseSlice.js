@@ -16,6 +16,14 @@ export const fetchResponsesAsync = createAsyncThunk(
   "responses/fetchResponses",
   async (userId, { rejectWithValue }) => {
     try {
+      if (!userId) {
+        console.log("fetchResponsesAsync: No userId provided");
+        return rejectWithValue("User not authenticated");
+      }
+
+      console.log("Fetching responses for user:", userId);
+
+      // orderBy kullanımını kaldırıp sadece filtreleme yapıyoruz
       const q = query(
         collection(db, "responses"),
         where("surveyOwnerId", "==", userId)
@@ -23,11 +31,25 @@ export const fetchResponsesAsync = createAsyncThunk(
 
       const querySnapshot = await getDocs(q);
       const responses = [];
+
       querySnapshot.forEach((doc) => {
-        responses.push({ id: doc.id, ...doc.data() });
+        responses.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.() || new Date(),
+        });
       });
+
+      // JavaScript ile sıralama yapıyoruz
+      responses.sort((a, b) => {
+        // createdAt'e göre azalan sıralama (en yeni en üstte)
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      console.log(`Fetched ${responses.length} responses`);
       return responses;
     } catch (error) {
+      console.error("Error fetching responses:", error);
       return rejectWithValue(error.message);
     }
   }
@@ -98,6 +120,14 @@ export const fetchSurveyResponsesAsync = createAsyncThunk(
   "responses/fetchSurveyResponses",
   async ({ userId, surveyId }, { rejectWithValue }) => {
     try {
+      if (!userId || !surveyId) {
+        console.log("fetchSurveyResponsesAsync: Missing userId or surveyId");
+        return rejectWithValue("Missing required parameters");
+      }
+
+      console.log(
+        `Fetching responses for survey: ${surveyId}, user: ${userId}`
+      );
       const q = query(
         collection(db, "responses"),
         where("surveyOwnerId", "==", userId),
@@ -106,11 +136,26 @@ export const fetchSurveyResponsesAsync = createAsyncThunk(
 
       const querySnapshot = await getDocs(q);
       const responses = [];
+
       querySnapshot.forEach((doc) => {
-        responses.push({ id: doc.id, ...doc.data() });
+        responses.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.() || new Date(),
+        });
       });
+
+      // JavaScript ile sıralama
+      responses.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      console.log(
+        `Fetched ${responses.length} responses for survey ${surveyId}`
+      );
       return responses;
     } catch (error) {
+      console.error("Error fetching survey responses:", error);
       return rejectWithValue(error.message);
     }
   }

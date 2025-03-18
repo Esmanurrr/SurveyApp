@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   BaseBackground,
   Container,
@@ -13,14 +13,28 @@ import ResponseList from "./ResponseList";
 import LoadingPage from "../infos/LoadingPage";
 import { useAuth } from "../../contexts/authContext";
 import { Navigate } from "react-router-dom";
-import styled from "styled-components";
+import { resetPagination } from "../../redux/pagination/paginationSlice";
+import { fetchResponsesAsync } from "../../redux/response/responseSlice";
 
 function Responses() {
   const [portal, setPortal] = useState(false);
+  const dispatch = useDispatch();
   const { loading: responseLoading, initialized } = useSelector(
     (state) => state.response
   );
-  const { userLoggedIn, loading: authLoading } = useAuth();
+  const { userLoggedIn, loading: authLoading, currentUser } = useAuth();
+
+  // Reset pagination when component mounts
+  useEffect(() => {
+    dispatch(resetPagination());
+  }, [dispatch]);
+
+  // Fetch responses when authenticated user is available
+  useEffect(() => {
+    if (userLoggedIn && currentUser?.uid && !initialized) {
+      dispatch(fetchResponsesAsync(currentUser.uid));
+    }
+  }, [dispatch, userLoggedIn, currentUser, initialized]);
 
   const handlePortal = () => {
     setPortal(true);
