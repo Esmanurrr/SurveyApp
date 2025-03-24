@@ -9,38 +9,43 @@ import {
   getDocs,
   query,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { auth } from "../../firebase/firebase";
 
-// Tüm anketleri getirme
 export const fetchSurveysAsync = createAsyncThunk(
   "surveys/fetchSurveys",
-  async (_, { rejectWithValue }) => {
+  async (userId, { rejectWithValue }) => {
     try {
-      if (!auth.currentUser) {
+      if (!userId) {
         return rejectWithValue("User not authenticated");
       }
 
-      const surveysRef = collection(db, "surveys");
-      const q = query(surveysRef, where("userId", "==", auth.currentUser.uid));
-      const querySnapshot = await getDocs(q);
+      const q = query(collection(db, "surveys"), where("userId", "==", userId));
 
+      const querySnapshot = await getDocs(q);
       const surveys = [];
+
       querySnapshot.forEach((doc) => {
-        if (doc.exists()) {
-          surveys.push({ id: doc.id, ...doc.data() });
-        }
+        surveys.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.() || new Date(),
+        });
       });
+
+      surveys.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
       return surveys;
     } catch (error) {
-      console.error("Error fetching surveys:", error);
       return rejectWithValue(error.message);
     }
   }
 );
 
-// Anket ekleme
 export const addSurveyAsync = createAsyncThunk(
   "survey/addSurveyAsync",
   async (newSurvey, { rejectWithValue }) => {
@@ -63,7 +68,6 @@ export const addSurveyAsync = createAsyncThunk(
   }
 );
 
-// Anket güncelleme
 export const updateSurveyAsync = createAsyncThunk(
   "survey/updateSurveyAsync",
   async ({ id, updatedSurvey }, { rejectWithValue }) => {
@@ -75,7 +79,6 @@ export const updateSurveyAsync = createAsyncThunk(
         return rejectWithValue("Survey not found");
       }
 
-      // Kullanıcının kendi anketini güncellemesini kontrol et
       if (surveyDoc.data().userId !== auth.currentUser?.uid) {
         return rejectWithValue("Not authorized to update this survey");
       }
@@ -88,7 +91,6 @@ export const updateSurveyAsync = createAsyncThunk(
   }
 );
 
-// Tekil anket getirme
 export const fetchSurveyByIdAsync = createAsyncThunk(
   "survey/fetchSurveyByIdAsync",
   async (id, { rejectWithValue }) => {
@@ -103,13 +105,11 @@ export const fetchSurveyByIdAsync = createAsyncThunk(
         return rejectWithValue("Survey not found");
       }
     } catch (error) {
-      console.error("Error fetching survey:", error);
       return rejectWithValue("Failed to fetch survey. Please try again later.");
     }
   }
 );
 
-// Anket silme
 export const deleteSurveyAsync = createAsyncThunk(
   "survey/deleteSurveyAsync",
   async (surveyId, { rejectWithValue }) => {
@@ -125,7 +125,6 @@ export const deleteSurveyAsync = createAsyncThunk(
         return rejectWithValue("Survey not found");
       }
 
-      // Kullanıcının kendi anketini silmesini kontrol et
       if (surveyDoc.data().userId !== auth.currentUser.uid) {
         return rejectWithValue("Not authorized to delete this survey");
       }
@@ -138,7 +137,6 @@ export const deleteSurveyAsync = createAsyncThunk(
   }
 );
 
-// Soru ID'sine göre survey'i getirme
 export const fetchSurveyByQuestionIdAsync = createAsyncThunk(
   "survey/fetchSurveyByQuestionIdAsync",
   async (questionId, { rejectWithValue }) => {

@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 
-// Soruları getirme
 export const fetchQuestionsAsync = createAsyncThunk(
   "question/fetchQuestionsAsync",
   async (surveyId, { rejectWithValue }) => {
@@ -20,7 +19,6 @@ export const fetchQuestionsAsync = createAsyncThunk(
   }
 );
 
-// Soru ekleme
 
 export const addQuestionAsync = createAsyncThunk(
   "question/addQuestionAsync",
@@ -32,7 +30,6 @@ export const addQuestionAsync = createAsyncThunk(
       if (surveyDoc.exists()) {
         const surveyData = surveyDoc.data();
 
-        // Burada benzersiz bir id ekleniyor
         const questionWithId = {
           ...newQuestion,
           id: crypto.randomUUID(),
@@ -54,7 +51,6 @@ export const addQuestionAsync = createAsyncThunk(
   }
 );
 
-// Soru güncelleme
 export const updateQuestionAsync = createAsyncThunk(
   "question/updateQuestionAsync",
   async ({ surveyId, updatedQuestion }, { rejectWithValue }) => {
@@ -77,7 +73,7 @@ export const updateQuestionAsync = createAsyncThunk(
         updatedQuestions[questionIndex] = {
           ...updatedQuestions[questionIndex],
           ...updatedQuestion,
-          id: updatedQuestion.id, // Ensure ID is preserved
+          id: updatedQuestion.id, 
         };
 
         await updateDoc(surveyRef, { questions: updatedQuestions });
@@ -91,7 +87,6 @@ export const updateQuestionAsync = createAsyncThunk(
   }
 );
 
-// Soru silme
 export const deleteQuestionAsync = createAsyncThunk(
   "question/deleteQuestionAsync",
   async ({ surveyId, questionId }, { rejectWithValue }) => {
