@@ -12,7 +12,13 @@ import {
 import { useAuth } from "../../contexts/authContext";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
+import Pagination from "../common/Pagination";
+import {
+  selectCurrentPage,
+  selectItemsPerPage,
+  selectPaginatedData,
+  setCurrentPage,
+} from "../../redux/pagination/paginationSlice";
 
 const HorizontalCard = styled.div`
   background-color: white;
@@ -255,6 +261,9 @@ const SurveyOverview = ({ surveyId }) => {
   const { currentSurvey } = useSelector((state) => state.survey);
   const navigate = useNavigate();
 
+  const currentPage = useSelector(selectCurrentPage);
+  const itemsPerPage = useSelector(selectItemsPerPage);
+
   useEffect(() => {
     if (surveyId && user) {
       dispatch(fetchSurveyResponsesAsync({ surveyId, userId: user.uid }));
@@ -309,6 +318,17 @@ const SurveyOverview = ({ surveyId }) => {
       setQuestionStats(stats);
     }
   }, [responses, currentSurvey?.questions]);
+
+  const paginatedQuestionStats = selectPaginatedData(
+    questionStats,
+    currentPage,
+    itemsPerPage
+  );
+  const totalPages = Math.ceil(questionStats.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    dispatch(setCurrentPage(page));
+  };
 
   const handleShowSummary = (question) => {
     const questionResponses = responses
@@ -387,6 +407,9 @@ const SurveyOverview = ({ surveyId }) => {
         <EmptyState>
           <h2>No questions found</h2>
           <p>Add some questions to your survey to see responses here.</p>
+          <ActionButton as={Link} to={`/survey/${surveyId}/edit`} $primary>
+            Add Questions
+          </ActionButton>
         </EmptyState>
       </QuestionListContainer>
     );
@@ -394,7 +417,7 @@ const SurveyOverview = ({ surveyId }) => {
 
   return (
     <StatsContainer>
-      {questionStats.map((question) => (
+      {paginatedQuestionStats.map((question) => (
         <HorizontalCard key={question.id}>
           <CardContent>
             <CardHeader>
@@ -436,6 +459,14 @@ const SurveyOverview = ({ surveyId }) => {
           </CardContent>
         </HorizontalCard>
       ))}
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       {showModal &&
         createPortal(
@@ -492,10 +523,6 @@ const SurveyOverview = ({ surveyId }) => {
         )}
     </StatsContainer>
   );
-};
-
-SurveyOverview.propTypes = {
-  surveyId: PropTypes.string.isRequired,
 };
 
 export default SurveyOverview;
