@@ -8,6 +8,13 @@ import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import { fetchSurveyByQuestionIdAsync } from "../../redux/survey/surveySlice";
 import { useAuth } from "../../contexts/authContext";
 import { Link } from "react-router-dom";
+import Pagination from "../common/Pagination";
+import {
+  selectCurrentPage,
+  selectItemsPerPage,
+  selectPaginatedData,
+  setCurrentPage,
+} from "../../redux/pagination/paginationSlice";
 
 const ResponseCard = styled.div`
   background: #f8fafc;
@@ -106,6 +113,9 @@ function TextResponseDetail() {
     (state) => state.survey
   );
 
+  const currentPage = useSelector(selectCurrentPage);
+  const itemsPerPage = useSelector(selectItemsPerPage);
+
   const [textResponses, setTextResponses] = useState([]);
 
   useEffect(() => {
@@ -152,6 +162,17 @@ function TextResponseDetail() {
     }
   }, [responses, questionId]);
 
+  const paginatedResponses = selectPaginatedData(
+    textResponses,
+    currentPage,
+    itemsPerPage
+  );
+  const totalPages = Math.ceil(textResponses.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    dispatch(setCurrentPage(page));
+  };
+
   const question = currentSurvey?.questions?.find((q) => q.id === questionId);
 
   const formatDate = (timestamp) => {
@@ -185,45 +206,58 @@ function TextResponseDetail() {
       </Header>
       <Container>
         {textResponses?.length > 0 ? (
-          textResponses.map((response, index) => (
-            <ResponseCard key={index}>
-              <ResponseContent>
-                <ResponseText>{response.answer}</ResponseText>
-              </ResponseContent>
-              <ResponseMeta>
-                <UserInfo>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <Link to={`/response/${response.id}`}>
-                    Anonymous #{response.responderId}
-                  </Link>
-                </UserInfo>
-                <TimeStamp>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {formatDate(response.timestamp)}
-                </TimeStamp>
-              </ResponseMeta>
-            </ResponseCard>
-          ))
+          <>
+            {paginatedResponses.map((response, index) => (
+              <ResponseCard key={index}>
+                <ResponseContent>
+                  <ResponseText>{response.answer}</ResponseText>
+                </ResponseContent>
+                <ResponseMeta>
+                  <UserInfo>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <Link to={`/response/${response.id}`}>
+                      Anonymous #{response.responderId}
+                    </Link>
+                  </UserInfo>
+                  <TimeStamp>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {formatDate(response.timestamp)}
+                  </TimeStamp>
+                </ResponseMeta>
+              </ResponseCard>
+            ))}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div style={{ marginTop: "2rem" }}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            )}
+          </>
         ) : (
           <NoResponses>No responses found for this question</NoResponses>
         )}
