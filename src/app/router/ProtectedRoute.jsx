@@ -15,10 +15,9 @@ const ProtectedRoute = () => {
 
   return (
     <>
-        {!hide && <Navbar/>}
-        <Outlet/>
-        {!hide && <Footer/>}
-
+      {!hide && <Navbar />}
+      <Outlet />
+      {!hide && <Footer />}
     </>
   );
 };

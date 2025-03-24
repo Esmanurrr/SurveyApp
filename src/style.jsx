@@ -538,6 +538,7 @@ export const HorizontalListContainer = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: calc(100vh - 200px);
 
   @media (max-width: 768px) {
     padding: 0.5rem;
@@ -837,6 +838,7 @@ export const QuestionListContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
+  min-height: calc(100vh - 200px);
 `;
 
 export const EmptyState = styled.div`
@@ -1010,4 +1012,16 @@ export const TimeStamp = styled.div`
     width: 16px;
     height: 16px;
   }
+`;
+
+export const StatsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: calc(100vh - 200px);
 `;

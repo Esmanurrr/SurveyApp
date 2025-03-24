@@ -3,6 +3,7 @@ import { deleteSurveyAsync } from "../../redux/survey/surveySlice";
 import { toast } from "react-toastify";
 import { HorizontalListContainer, EmptyState } from "../../style";
 import SurveyCard from "./SurveyCard";
+import PropTypes from "prop-types";
 
 function SurveyList({ surveys }) {
   const dispatch = useDispatch();
@@ -41,5 +42,9 @@ function SurveyList({ surveys }) {
     </HorizontalListContainer>
   );
 }
+
+SurveyList.propTypes = {
+  surveys: PropTypes.array.isRequired,
+};
 
 export default SurveyList;

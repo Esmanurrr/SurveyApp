@@ -1,15 +1,15 @@
-import { BaseBackground, Container, Flex, Loader } from '../../style';
+import { BaseBackground, Container, Flex, Loader } from "../../style";
 
 function LoadingPage() {
   return (
-    <BaseBackground style={{height:"100vh"}}>
+    <BaseBackground style={{ height: "100vh" }}>
       <Container>
-      <Flex>
-        <Loader/>
-      </Flex>
-    </Container>
+        <Flex>
+          <Loader />
+        </Flex>
+      </Container>
     </BaseBackground>
-  )
+  );
 }
 
 export default LoadingPage;

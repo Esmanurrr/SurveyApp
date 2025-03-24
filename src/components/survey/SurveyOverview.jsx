@@ -8,6 +8,7 @@ import {
   EmptyState,
   QuestionListContainer,
   ActionButton,
+  StatsContainer,
 } from "../../style";
 import { useAuth } from "../../contexts/authContext";
 import { createPortal } from "react-dom";
@@ -62,17 +63,6 @@ const OptionLabel = styled.div`
   color: #4a5568;
   font-size: 0.9rem;
   margin-bottom: 4px;
-`;
-
-const StatsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
 `;
 
 const QuestionNumber = styled.span`
