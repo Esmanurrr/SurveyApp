@@ -480,15 +480,58 @@ export const LinkButton = styled.a`
 `;
 
 export const FooterWrapper = styled.div`
-  padding-block: 2rem;
-  padding-inline: 5rem;
-  gap: 10px;
-  border-top: 1px solid rgb(212, 230, 248);
+  padding: 3rem 2rem 2rem;
   background-color: #fff;
-  position: relative;
+  border-top: 1px solid rgb(212, 230, 248);
+  width: 100%;
+`;
+
+export const FooterContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const FooterSection = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+
+  p {
+    color: #718096;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+`;
+
+export const FooterTitle = styled.h3`
+  color: #2d3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+`;
+
+export const FooterLink = styled(Link)`
+  color: #718096;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #4a9dec;
+  }
 `;
 
 export const AuthSubmitButton = styled.button`
