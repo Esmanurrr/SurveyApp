@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const PaginationContainer = styled.div`
@@ -47,8 +46,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   const renderPageButtons = () => {
     const buttons = [];
-    const maxPageButtons = 5; // Maksimum gösterilecek sayfa düğmesi sayısı
-
+    const maxPageButtons = 5;
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
 
@@ -56,7 +54,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       startPage = Math.max(1, endPage - maxPageButtons + 1);
     }
 
-    // İlk sayfa
     if (startPage > 1) {
       buttons.push(
         <PageButton key={1} onClick={() => onPageChange(1)}>
@@ -68,7 +65,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       }
     }
 
-    // Sayfa düğmeleri
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <PageButton
@@ -81,7 +77,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       );
     }
 
-    // Son sayfa
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         buttons.push(<span key="ellipsis2">...</span>);
@@ -107,12 +102,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       </PageButton>
     </PaginationContainer>
   );
-};
-
-Pagination.propTypes = {
-  currentPage: PropTypes.number.isRequired,
-  totalPages: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
 };
 
 export default Pagination;
