@@ -8,6 +8,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { auth } from "../../firebase/firebase";
@@ -50,9 +51,19 @@ export const fetchResponsesAsync = createAsyncThunk(
 export const createResponseAsync = createAsyncThunk(
   "responses/createResponse",
   async (responseData) => {
+    const dataWithTimestamp = {
+      ...responseData,
+      createdAt: serverTimestamp(),
+    };
+
     const responsesRef = collection(db, "responses");
-    const docRef = await addDoc(responsesRef, responseData);
-    return { id: docRef.id, ...responseData };
+    const docRef = await addDoc(responsesRef, dataWithTimestamp);
+
+    return {
+      id: docRef.id,
+      ...responseData,
+      createdAt: new Date(),
+    };
   }
 );
 
@@ -138,18 +149,23 @@ export const fetchResponseByIdAsync = createAsyncThunk(
       const responseSnap = await getDoc(responseRef);
 
       if (responseSnap.exists()) {
-        const responseData = { id: responseSnap.id, ...responseSnap.data() };
+        const responseData = responseSnap.data();
+        const formattedResponse = {
+          id: responseSnap.id,
+          ...responseData,
+          createdAt: responseData.createdAt?.toDate?.() || new Date(),
+        };
 
-        const surveyRef = doc(db, "surveys", responseData.surveyId);
+        const surveyRef = doc(db, "surveys", formattedResponse.surveyId);
         const surveySnap = await getDoc(surveyRef);
 
         if (surveySnap.exists()) {
           return {
-            ...responseData,
+            ...formattedResponse,
             surveyTitle: surveySnap.data().title,
           };
         }
-        return responseData;
+        return formattedResponse;
       } else {
         return rejectWithValue("Response not found");
       }
@@ -181,7 +197,7 @@ export const fetchQuestionResponsesAsync = createAsyncThunk(
           responses.push({
             id: doc.id,
             answer: questionResponse.answer,
-            createdAt: responseData.createdAt,
+            createdAt: responseData.createdAt?.toDate?.() || new Date(),
           });
         }
       });
@@ -215,6 +231,7 @@ export const fetchResponsesByQuestionIdAsync = createAsyncThunk(
           responses.push({
             id: doc.id,
             ...responseData,
+            createdAt: responseData.createdAt?.toDate?.() || new Date(),
           });
         }
       });

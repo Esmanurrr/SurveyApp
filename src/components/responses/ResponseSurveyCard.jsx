@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import {
   HorizontalCard,
   CardContent,
@@ -9,13 +9,17 @@ import {
   CardActions,
   ActionButton,
 } from "../../style";
-import { Link } from "react-router-dom";
 
-const formatTimeAgo = (date) => {
+export const formatTimeAgo = (date) => {
   if (!date) return "Date not available";
 
+  const responseDate = date instanceof Date ? date : new Date(date);
+
+  if (isNaN(responseDate.getTime())) {
+    return "Invalid date";
+  }
+
   const now = new Date();
-  const responseDate = new Date(date);
   const diffInSeconds = Math.floor((now - responseDate) / 1000);
 
   if (diffInSeconds < 60) {

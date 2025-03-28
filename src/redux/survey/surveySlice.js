@@ -9,7 +9,7 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { auth } from "../../firebase/firebase";
@@ -57,11 +57,16 @@ export const addSurveyAsync = createAsyncThunk(
       const surveyWithUser = {
         ...newSurvey,
         userId: auth.currentUser.uid,
-        createdAt: new Date().toISOString(),
+        createdAt: serverTimestamp(),
       };
 
       const docRef = await addDoc(collection(db, "surveys"), surveyWithUser);
-      return { id: docRef.id, ...surveyWithUser };
+
+      return {
+        id: docRef.id,
+        ...surveyWithUser,
+        createdAt: new Date(),
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -100,7 +105,11 @@ export const fetchSurveyByIdAsync = createAsyncThunk(
 
       if (surveyDoc.exists()) {
         const surveyData = surveyDoc.data();
-        return { id: surveyDoc.id, ...surveyData };
+        return {
+          id: surveyDoc.id,
+          ...surveyData,
+          createdAt: surveyData.createdAt?.toDate?.() || new Date(),
+        };
       } else {
         return rejectWithValue("Survey not found");
       }
@@ -151,7 +160,11 @@ export const fetchSurveyByQuestionIdAsync = createAsyncThunk(
           (q) => q.id === questionId
         );
         if (hasQuestion) {
-          targetSurvey = { id: doc.id, ...surveyData };
+          targetSurvey = {
+            id: doc.id,
+            ...surveyData,
+            createdAt: surveyData.createdAt?.toDate?.() || new Date(),
+          };
         }
       });
 
