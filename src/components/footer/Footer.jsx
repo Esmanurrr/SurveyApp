@@ -6,6 +6,7 @@ import {
   FooterLink,
   FooterTitle,
 } from "../../style";
+import logo from "../../../public/logo.png";
 
 function Footer() {
   return (
@@ -39,6 +40,14 @@ function Footer() {
           >
             LinkedIn
           </FooterLink>
+        </FooterSection>
+
+        <FooterSection>
+          <img
+            style={{ width: "100px", height: "100px" }}
+            src={logo}
+            alt="Survey App Logo"
+          />
         </FooterSection>
       </FooterContent>
 

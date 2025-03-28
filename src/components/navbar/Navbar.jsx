@@ -4,40 +4,56 @@ import { NavbarWrapper } from "../../style";
 import { useAuth } from "../../contexts/authContext";
 import { doSignOut } from "../../firebase/auth";
 import { toast } from "react-toastify";
+import logo from "../../../public/logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { userLoggedIn } = useAuth();
   return (
     <NavbarWrapper>
-        <ul>
-          <li>
-            <Link to="/">Surveys</Link>
-          </li>
-          <li>
-            <Link to="/responses">Responses</Link>
-          </li>
-        </ul>
-        <>
-          {userLoggedIn ? (
-            <div
-            style={{cursor:"pointer"}}
-              onClick={() => {
-                doSignOut().then(() => {
-                  navigate("/login");
-                  toast.success("Logged Out! See you soon!", {position: "top-right"})
+      <ul style={{ display: "flex", alignItems: "center" }}>
+        <li>
+          <Link to="/">
+            <img
+              style={{ width: "50px", height: "50px" }}
+              src={logo}
+              alt="logo"
+            />
+          </Link>
+        </li>
+        <li>
+          <Link style={{ fontSize: "1.2rem" }} to="/">
+            Surveys
+          </Link>
+        </li>
+        <li>
+          <Link style={{ fontSize: "1.2rem" }} to="/responses">
+            Responses
+          </Link>
+        </li>
+      </ul>
+      <>
+        {userLoggedIn ? (
+          <Link
+            style={{ fontSize: "1.2rem" }}
+            onClick={() => {
+              doSignOut().then(() => {
+                navigate("/login");
+                toast.success("Logged Out! See you soon!", {
+                  position: "top-right",
                 });
-              }}
-            >
-              Logout
-            </div>
-          ) : (
-            <div>
-              <Link to={"/login"}>Login</Link>
-              <Link to={"/register"}>Register New Account</Link>
-            </div>
-          )}
-        </>
+              });
+            }}
+          >
+            Logout
+          </Link>
+        ) : (
+          <div>
+            <Link to={"/login"}>Login</Link>
+            <Link to={"/register"}>Register New Account</Link>
+          </div>
+        )}
+      </>
     </NavbarWrapper>
   );
 };
