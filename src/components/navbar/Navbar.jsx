@@ -35,7 +35,7 @@ const Navbar = () => {
       <>
         {userLoggedIn ? (
           <Link
-            style={{ fontSize: "1.2rem" }}
+            style={{ fontSize: "1.2rem", alignSelf: "center" }}
             onClick={() => {
               doSignOut().then(() => {
                 navigate("/login");

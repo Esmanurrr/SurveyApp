@@ -13,7 +13,7 @@ function Footer() {
     <FooterWrapper>
       <FooterContent>
         <FooterSection>
-          <FooterTitle>Survey App</FooterTitle>
+          <FooterTitle>QEST</FooterTitle>
           <p>Create and share surveys easily with our platform.</p>
         </FooterSection>
 
@@ -54,7 +54,7 @@ function Footer() {
       <FooterSection
         style={{ textAlign: "center", width: "100%", marginTop: "2rem" }}
       >
-        <p>© 2024 Survey App. All rights reserved.</p>
+        <p>© 2025 Qest. All rights reserved.</p>
       </FooterSection>
     </FooterWrapper>
   );
