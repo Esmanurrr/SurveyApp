@@ -1,25 +1,21 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Your web app's Firebase configuration
+// Firebase yapılandırması
 const firebaseConfig = {
-  apiKey: "AIzaSyBIc7SnhKLcKnXrd7SiMBv3qJAeUCOVC28",
-  authDomain: "survey-app-server-6ef65.firebaseapp.com",
-  projectId: "survey-app-server-6ef65",
-  storageBucket: "survey-app-server-6ef65.appspot.com",
-  messagingSenderId: "777600249477",
-  appId: "1:777600249477:web:7c1c180a67c9833d1f03ec"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-// İhtiyacınıza göre Firestore veya Realtime Database'i burada da başlatabilirsiniz
-// Örneğin Firestore kullanıyorsanız:
-import { getFirestore } from "firebase/firestore";
 const db = getFirestore(app);
 
-
-export {app, db, auth}; // Uygulama örneğini dışarı aktar
+export { app, db, auth };
