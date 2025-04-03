@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { deleteQuestionAsync } from "../../redux/question/questionSlice";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 
 // ActionButton'ı style.jsx'den import etmek yerine burada tanımlıyoruz
 const ActionButton = styled.button`
@@ -142,6 +143,7 @@ const QuestionCard = ({ question, index, surveyId }) => {
             <ActionButton
               as={Link}
               to={`/survey/edit-question/${question.id}`}
+              state={{ surveyId: surveyId }}
               title="Edit Question"
             >
               <svg
@@ -183,4 +185,16 @@ const QuestionCard = ({ question, index, surveyId }) => {
     </Card>
   );
 };
+
+QuestionCard.propTypes = {
+  question: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    options: PropTypes.array,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+  surveyId: PropTypes.string.isRequired,
+};
+
 export default QuestionCard;
