@@ -6,7 +6,7 @@ import { BaseBackground, Container, Header } from "../../style";
 import LoadingPage from "../infos/LoadingPage";
 import { fetchSurveyResponsesAsync } from "../../redux/response/responseSlice";
 import { fetchSurveyByQuestionIdAsync } from "../../redux/survey/surveySlice";
-import { useAuth } from "../../contexts/authContext";
+import { useAuth } from "../../contexts/authContext/index";
 import { Link } from "react-router-dom";
 import Pagination from "../common/Pagination";
 import {

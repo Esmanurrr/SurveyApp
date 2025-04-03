@@ -10,7 +10,7 @@ import {
   ActionButton,
   StatsContainer,
 } from "../../style";
-import { useAuth } from "../../contexts/authContext";
+import { useAuth } from "../../contexts/authContext/index";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "../common/Pagination";

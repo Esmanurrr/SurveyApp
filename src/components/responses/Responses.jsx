@@ -11,7 +11,7 @@ import CreateSurveyModal from "../dashboard/CreateSurveyModal";
 import { createPortal } from "react-dom";
 import ResponseList from "./ResponseList";
 import LoadingPage from "../infos/LoadingPage";
-import { useAuth } from "../../contexts/authContext";
+import { useAuth } from "../../contexts/authContext/index";
 import { Navigate } from "react-router-dom";
 import { resetPagination } from "../../redux/pagination/paginationSlice";
 import { fetchResponsesAsync } from "../../redux/response/responseSlice";

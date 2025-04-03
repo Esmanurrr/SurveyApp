@@ -4,7 +4,7 @@ import {
   fetchResponsesAsync,
   deleteResponseAsync,
 } from "../../redux/response/responseSlice";
-import { useAuth } from "../../contexts/authContext";
+import { useAuth } from "../../contexts/authContext/index";
 import {
   HorizontalListContainer,
   EmptyState,
