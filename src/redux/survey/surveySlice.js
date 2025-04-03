@@ -16,12 +16,14 @@ import { auth } from "../../firebase/firebase";
 
 export const fetchSurveysAsync = createAsyncThunk(
   "surveys/fetchSurveys",
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      if (!userId) {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
         return rejectWithValue("User not authenticated");
       }
 
+      const userId = currentUser.uid;
       const q = query(collection(db, "surveys"), where("userId", "==", userId));
 
       const querySnapshot = await getDocs(q);
@@ -50,13 +52,14 @@ export const addSurveyAsync = createAsyncThunk(
   "survey/addSurveyAsync",
   async (newSurvey, { rejectWithValue }) => {
     try {
-      if (!auth.currentUser) {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
         return rejectWithValue("User not authenticated");
       }
 
       const surveyWithUser = {
         ...newSurvey,
-        userId: auth.currentUser.uid,
+        userId: currentUser.uid,
         createdAt: serverTimestamp(),
       };
 
@@ -223,11 +226,7 @@ const surveySlice = createSlice({
       .addCase(fetchSurveysAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        if (action.payload === "User not authenticated") {
-          state.surveys = [];
-          state.currentSurvey = null;
-          state.initialized = false;
-        }
+        state.initialized = true;
       })
       .addCase(addSurveyAsync.pending, (state) => {
         state.loading = true;

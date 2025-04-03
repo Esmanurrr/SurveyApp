@@ -1,6 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../../firebase/firebase";
+import PropTypes from "prop-types";
 
 const AuthContext = React.createContext();
 
@@ -14,20 +15,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, initializeUser);
-    return unsubscribe;
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+        setUserLoggedIn(true);
+      } else {
+        setCurrentUser(null);
+        setUserLoggedIn(false);
+      }
+      setLoading(false);
+    });
 
-  async function initializeUser(user) {
-    if (user) {
-      setCurrentUser({ ...user });
-      setUserLoggedIn(true);
-    } else {
-      setCurrentUser(null);
-      setUserLoggedIn(false);
-    }
-    setLoading(false);
-  }
+    return () => unsubscribe();
+  }, []);
 
   const value = {
     currentUser,
@@ -41,3 +41,7 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};

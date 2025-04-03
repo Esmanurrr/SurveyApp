@@ -15,7 +15,7 @@ import {
   fetchSurveysAsync,
   clearSurveys,
 } from "../../redux/survey/surveySlice";
-import { useAuth } from "../../contexts/authContext";
+import { useAuth } from "../../contexts/authContext/index";
 import LoadingPage from "../infos/LoadingPage";
 import { Navigate } from "react-router-dom";
 import Pagination from "../common/Pagination";
@@ -48,16 +48,26 @@ function Surveys() {
   );
   const totalPages = Math.ceil(surveys.length / itemsPerPage);
 
+  // Keep track of the previous user ID to detect user changes
+  const [prevUserId, setPrevUserId] = useState(null);
+
   useEffect(() => {
     if (!userLoggedIn || !currentUser) {
       dispatch(clearSurveys());
+      setPrevUserId(null);
       return;
     }
 
-    if (!initialized) {
-      dispatch(fetchSurveysAsync(currentUser.uid));
+    // If the user has changed, clear surveys and fetch new ones
+    if (prevUserId !== currentUser.uid) {
+      dispatch(clearSurveys());
+      dispatch(fetchSurveysAsync());
+      setPrevUserId(currentUser.uid);
+    } else if (!initialized) {
+      // If it's the first load, fetch surveys
+      dispatch(fetchSurveysAsync());
     }
-  }, [dispatch, userLoggedIn, currentUser, initialized]);
+  }, [dispatch, userLoggedIn, currentUser, initialized, prevUserId]);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -89,7 +99,7 @@ function Surveys() {
             {surveys.length > 0 && <CreateSurvey handlePortal={handlePortal} />}
           </PageHeader>
 
-          {!initialized && surveysLoading ? (
+          {surveysLoading ? (
             <LoadingPage />
           ) : surveys.length === 0 ? (
             <EmptyStateWrapper>
