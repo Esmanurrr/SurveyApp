@@ -21,23 +21,24 @@ export const BlackSection = styled.div`
 
 export const SurveyModal = styled.div`
   position: fixed;
-  top: 30%;
-  left: 33%;
-  transform: translate(-%50, -%50);
-  width: 30%;
-  min-width: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
   background-color: white;
   border: 1px solid #dedede;
   box-shadow: 10px 10px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
   min-height: 400px;
-  padding: 2rem 2rem;
+  padding: 2rem;
   text-align: center;
+  z-index: 1000;
 
-  @media (max-width: 1020px) {
-    width: 40%;
-    left: 20%;
+  @media (max-width: 768px) {
+    width: 95%;
     padding: 1.5rem;
+    min-height: 350px;
   }
 `;
 
