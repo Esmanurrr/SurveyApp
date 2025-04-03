@@ -26,6 +26,8 @@ const NavMenu = styled.div`
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  position: relative;
+  z-index: 1;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -76,10 +78,14 @@ const NavItem = styled.button`
 const ContentWrapper = styled.div`
   padding: 1rem;
   background-color: #f8fafc;
+  position: relative;
+  z-index: 1;
 `;
 
 const TabContent = styled.div`
   margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 `;
 
 const Survey = () => {

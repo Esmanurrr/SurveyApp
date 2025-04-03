@@ -130,7 +130,13 @@ const SurveyResponses = ({ surveyId }) => {
         <EmptyState>
           <h2>No Responses Yet</h2>
           <p>Share your survey to start collecting responses!</p>
-          <ActionButton as={Link} to={`/share/${surveyId}`} $primary>
+          <ActionButton
+            as={Link}
+            to={`/survey/fill-survey/${surveyId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            $primary
+          >
             Share Survey
           </ActionButton>
         </EmptyState>

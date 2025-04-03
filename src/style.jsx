@@ -335,7 +335,7 @@ export const MobileMenu = styled.div`
   backdrop-filter: blur(10px);
   padding: 5rem 2rem 2rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 999;
+  z-index: 1000;
   box-shadow: ${({ isOpen }) =>
     isOpen ? "0 0 30px rgba(0, 0, 0, 0.1)" : "none"};
 
@@ -410,6 +410,7 @@ export const MobileMenu = styled.div`
     width: auto;
     background: transparent;
     box-shadow: none;
+    z-index: 1;
 
     ul {
       flex-direction: row;
@@ -898,7 +899,9 @@ export const ActionButton = styled.button`
 
 export const PageHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
@@ -908,6 +911,13 @@ export const PageHeader = styled.div`
     margin: 0;
     color: #2d3748;
     font-size: 1.8rem;
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
   }
 `;
 
