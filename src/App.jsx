@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import LoadingPage from "./components/infos/LoadingPage";
 import { auth } from "./firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +27,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <ScrollToTop />
       <Outlet />
       <ToastContainer />
     </AuthProvider>
