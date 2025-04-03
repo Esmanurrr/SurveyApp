@@ -235,7 +235,12 @@ export const EditButton = styled.button`
 
 export const SurveyWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const SurveyDef = styled.div`
@@ -254,6 +259,33 @@ export const SurveyDef = styled.div`
   flex-direction: column;
   justify-content: center;
   z-index: 10;
+
+  h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  p {
+    color: #718096;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 2rem 1rem;
+    border-right: none;
+    border-bottom: 1px solid rgb(212, 230, 248);
+    box-shadow: none;
+    float: none;
+    left: auto;
+    top: auto;
+  }
 `;
 
 export const Question = styled.div`
@@ -274,6 +306,12 @@ export const BaseWrapper = styled.div`
   align-items: center;
   margin-left: 30%;
   padding-left: 2rem;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    padding-left: 0;
+    padding: 1rem;
+  }
 `;
 export const SubmitButton = styled(Button)`
   padding: 0.5rem 1rem;
@@ -281,12 +319,21 @@ export const SubmitButton = styled(Button)`
 `;
 export const ShortInput = styled(InputRes)`
   width: 70%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 export const ShortTextarea = styled(Textarea)`
   width: 70%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 export const ShortDropdown = styled(Dropdown)`
   width: 70%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const NavbarWrapper = styled.nav`

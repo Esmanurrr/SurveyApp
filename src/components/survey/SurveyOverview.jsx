@@ -397,7 +397,11 @@ const SurveyOverview = ({ surveyId }) => {
         <EmptyState>
           <h2>No questions found</h2>
           <p>Add some questions to your survey to see responses here.</p>
-          <ActionButton as={Link} to={`/survey/${surveyId}/edit`} $primary>
+          <ActionButton
+            as={Link}
+            to={`/survey/new-question/${surveyId}`}
+            $primary
+          >
             Add Questions
           </ActionButton>
         </EmptyState>
