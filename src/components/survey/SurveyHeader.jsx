@@ -4,8 +4,11 @@ import {
   Header,
   HeaderContent,
   HeaderTitle,
-  LinkButton,
-  StyledButton,
+  TitleWrapper,
+  DescriptionWrapper,
+  ButtonContainer,
+  OpenSurveyButton,
+  CopyLinkButton,
 } from "../../style";
 import { toast } from "react-toastify";
 
@@ -22,19 +25,11 @@ const SurveyHeader = ({ title, description, id }) => {
       <Container>
         <HeaderContent>
           <HeaderTitle>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <TitleWrapper>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                style={{ width: "24px", height: "24px", color: "#4a9dec" }}
               >
                 <path d="M11.625 16.5a1.875 1.875 0 100-3.75 1.875 1.875 0 000 3.75zm0 1.5a3.375 3.375 0 100-6.75 3.375 3.375 0 000 6.75z" />
                 <path
@@ -44,75 +39,38 @@ const SurveyHeader = ({ title, description, id }) => {
                 />
               </svg>
               <h1>{title}</h1>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              <p style={{ color: "#718096", margin: 0 }}>{description}</p>
-            </div>
+            </TitleWrapper>
+            <DescriptionWrapper>
+              <p>{description}</p>
+            </DescriptionWrapper>
           </HeaderTitle>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <LinkButton
+          <ButtonContainer>
+            <OpenSurveyButton
               href={shareableLink}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                background: "#4a9dec0d",
-                color: "#4a9dec",
-                padding: "0.5rem 1rem",
-                borderRadius: "20px",
-                fontSize: "0.9rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                textDecoration: "none",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                style={{ width: "16px", height: "16px" }}
               >
                 <path d="M21 13v7a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1h7v2H5v14h14v-6h2zm3-8h-6V4h6v1z" />
               </svg>
               Open Survey
-            </LinkButton>
-            <StyledButton
-              onClick={handleCopyLink}
-              style={{
-                background: "#4a9dec",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "20px",
-                fontSize: "0.9rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-            >
+            </OpenSurveyButton>
+            <CopyLinkButton onClick={handleCopyLink}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                style={{ width: "16px", height: "16px" }}
               >
                 <path d="M8 4v12a2 2 0 002 2h8a2 2 0 002-2V7.242a2 2 0 00-.602-1.43L16.083 2.57A2 2 0 0014.685 2H10a2 2 0 00-2 2z" />
                 <path d="M16 18v2a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2h2" />
               </svg>
               Copy Shareable Link
-            </StyledButton>
-          </div>
+            </CopyLinkButton>
+          </ButtonContainer>
         </HeaderContent>
       </Container>
     </Header>

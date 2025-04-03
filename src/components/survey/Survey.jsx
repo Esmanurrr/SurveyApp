@@ -22,6 +22,18 @@ const NavMenu = styled.div`
   background-color: #f8fafc;
   border-bottom: 1px solid #eef2f6;
   font-size: 0.9rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
 `;
 
 const NavItem = styled.button`
@@ -38,6 +50,7 @@ const NavItem = styled.button`
     props.$active
       ? "0 2px 4px rgba(74, 157, 236, 0.1)"
       : "0 1px 2px rgba(0, 0, 0, 0.05)"};
+  white-space: nowrap;
 
   &:hover {
     background: ${(props) => (props.$active ? "#4a9dec" : "#edf2f7")};
@@ -52,6 +65,11 @@ const NavItem = styled.button`
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 `;
 

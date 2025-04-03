@@ -288,31 +288,175 @@ export const ShortDropdown = styled(Dropdown)`
   width: 70%;
 `;
 
-export const NavbarWrapper = styled.div`
-  padding-block: 2rem;
-  padding-inline: 5rem;
-  gap: 10px;
-  border-bottom: 1px solid rgb(212, 230, 248);
-  background-color: #fff;
-  z-index: 11;
-  position: relative;
+export const NavbarWrapper = styled.nav`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  a {
-    text-decoration: none;
-    color: #8285a5;
-    font-weight: 500;
-    &:hover {
-      color: #1964ff;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1002;
+
+    img {
+      transition: transform 0.3s ease;
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
+`;
+
+export const MobileMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: ${({ isOpen }) => (isOpen ? "0" : "-100%")};
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  padding: 5rem 2rem 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  box-shadow: ${({ isOpen }) =>
+    isOpen ? "0 0 30px rgba(0, 0, 0, 0.1)" : "none"};
+
   ul {
-    display: flex;
-    gap: 3rem;
-  }
-  ul > li {
     list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  li a {
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: #2d3748;
+    display: block;
+    padding: 0.8rem 0;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 500;
+
+    &:after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: #4a9dec;
+      transition: width 0.3s ease;
+    }
+
+    &:hover {
+      color: #4a9dec;
+      &:after {
+        width: 100%;
+      }
+    }
+  }
+
+  .auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    a {
+      font-size: 1.1rem;
+      text-decoration: none;
+      color: #2d3748;
+      padding: 0.8rem 1.5rem;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      font-weight: 500;
+      text-align: center;
+
+      &:hover {
+        background-color: #4a9dec;
+        color: white;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    position: static;
+    height: auto;
+    padding: 0;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
+    background: transparent;
+    box-shadow: none;
+
+    ul {
+      flex-direction: row;
+      gap: 2.5rem;
+    }
+
+    .auth-buttons {
+      flex-direction: row;
+      margin-top: 0;
+      gap: 1.5rem;
+
+      a {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+      }
+    }
+  }
+`;
+
+export const HamburgerButton = styled.button`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+  position: relative;
+  transition: all 0.3s ease;
+
+  span {
+    width: 100%;
+    height: 3px;
+    background-color: #2d3748;
+    transition: all 0.3s ease-in-out;
+    border-radius: 3px;
+  }
+
+  &:hover span {
+    background-color: #4a9dec;
+  }
+
+  @media (min-width: 768px) {
+    display: none;
   }
 `;
 
@@ -320,6 +464,7 @@ export const BaseBackground = styled.div`
   background-color: #f8fafc;
   min-height: 80vh;
   height: auto;
+  padding-top: 2rem;
 `;
 
 export const moving = keyframes`
@@ -1033,14 +1178,127 @@ export const ErrorMessage = styled.div`
 
 export const HeaderContent = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+  }
 `;
 
 export const HeaderTitle = styled.div`
+  flex: 1;
+  min-width: 0;
+
   h1 {
     margin: 0;
-    margin-bottom: 0.25rem;
+    color: #2d3748;
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 0.5rem 0 0;
+    color: #718096;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+`;
+
+export const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: #4a9dec;
+  }
+`;
+
+export const DescriptionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  p {
+    color: #718096;
+    margin: 0;
+  }
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    width: auto;
+  }
+`;
+
+export const OpenSurveyButton = styled(LinkButton)`
+  background: #4a9dec0d;
+  color: #4a9dec;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+`;
+
+export const CopyLinkButton = styled(StyledButton)`
+  background: #4a9dec;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (min-width: 768px) {
+    width: auto;
   }
 `;
 
