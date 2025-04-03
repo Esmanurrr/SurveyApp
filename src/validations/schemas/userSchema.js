@@ -1,4 +1,21 @@
 import * as yup from "yup";
+import { getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
+
+// Password validation regex
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+// Email existence check
+const checkEmailExists = async (email) => {
+  try {
+    const auth = getAuth();
+    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+    return signInMethods.length > 0;
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return false;
+  }
+};
 
 export const loginValidationSchema = yup.object().shape({
   email: yup
@@ -7,19 +24,35 @@ export const loginValidationSchema = yup.object().shape({
     .required("Email is required"),
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      passwordRegex,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
+    ),
 });
 
 export const registerValidationSchema = yup.object().shape({
   email: yup
     .string()
     .email("Enter a valid e-mail")
-    .required("Email is required"),
+    .required("Email is required")
+    .test(
+      "email-exists",
+      "This email is already registered",
+      async function (value) {
+        if (!value) return true;
+        return !(await checkEmailExists(value));
+      }
+    ),
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      passwordRegex,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
+    ),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "Passwords must match")
