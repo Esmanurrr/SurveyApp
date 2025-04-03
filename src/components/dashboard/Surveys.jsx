@@ -30,9 +30,11 @@ function Surveys() {
   const [portal, setPortal] = useState(false);
   const dispatch = useDispatch();
   const { userLoggedIn, loading: authLoading, currentUser } = useAuth();
-  const { surveys, loading: surveysLoading } = useSelector(
-    (state) => state.survey
-  );
+  const {
+    surveys,
+    loading: surveysLoading,
+    initialized,
+  } = useSelector((state) => state.survey);
 
   // Pagination state
   const currentPage = useSelector(selectCurrentPage);
@@ -52,8 +54,10 @@ function Surveys() {
       return;
     }
 
-    dispatch(fetchSurveysAsync(currentUser.uid));
-  }, [dispatch, userLoggedIn, currentUser]);
+    if (!initialized) {
+      dispatch(fetchSurveysAsync(currentUser.uid));
+    }
+  }, [dispatch, userLoggedIn, currentUser, initialized]);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -68,7 +72,7 @@ function Surveys() {
     setPortal(false);
   };
 
-  if (authLoading || surveysLoading) {
+  if (authLoading) {
     return <LoadingPage />;
   }
 
@@ -85,7 +89,9 @@ function Surveys() {
             {surveys.length > 0 && <CreateSurvey handlePortal={handlePortal} />}
           </PageHeader>
 
-          {surveys.length === 0 ? (
+          {!initialized && surveysLoading ? (
+            <LoadingPage />
+          ) : surveys.length === 0 ? (
             <EmptyStateWrapper>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

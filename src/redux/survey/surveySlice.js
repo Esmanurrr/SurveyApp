@@ -279,6 +279,9 @@ const surveySlice = createSlice({
         state.surveys = state.surveys.filter(
           (survey) => survey.id !== action.payload
         );
+        if (state.currentSurvey?.id === action.payload) {
+          state.currentSurvey = null;
+        }
         state.loading = false;
         state.error = null;
       })

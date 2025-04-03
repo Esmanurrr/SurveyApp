@@ -133,7 +133,7 @@ const Survey = () => {
     return <LoadingPage />;
   }
 
-  if (error || !currentSurvey) {
+  if (!surveyLoading && (error || !currentSurvey)) {
     return <NotFound />;
   }
 

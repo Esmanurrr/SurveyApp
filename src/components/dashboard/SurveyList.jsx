@@ -21,7 +21,7 @@ function SurveyList({ surveys }) {
     }
   };
 
-  if (surveys.length === 0) {
+  if (!surveys || surveys.length === 0) {
     return (
       <EmptyState>
         <h3>No Surveys Yet</h3>
