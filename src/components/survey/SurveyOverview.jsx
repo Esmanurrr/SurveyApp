@@ -63,6 +63,11 @@ const OptionLabel = styled.div`
   color: #4a5568;
   font-size: 0.9rem;
   margin-bottom: 4px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const QuestionNumber = styled.span`
@@ -198,6 +203,11 @@ const ResponseItem = styled.div`
         text-decoration: underline;
       }
     }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      float: left;
+    }
   }
 
   .timestamp {
@@ -211,6 +221,11 @@ const CardHeader = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const SeeMoreButton = styled.button`

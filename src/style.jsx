@@ -513,7 +513,6 @@ export const BaseBackground = styled.div`
   background-color: #f8fafc;
   min-height: 80vh;
   height: auto;
-  padding-top: 2rem;
 `;
 
 export const moving = keyframes`
@@ -553,41 +552,38 @@ export const Loader = styled.div`
 
 export const FormWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
+  align-items: center;
+  min-height: 100vh;
   background-color: #f0f4f8;
-  padding: 1rem;
+  padding: 2rem;
 `;
 
 export const LoginDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  max-width: 400px;
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  text-align: center;
+  max-width: 400px;
 
   h1 {
-    margin-bottom: 1.5rem;
-    color: #333333;
+    color: #2d3748;
     font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
   }
 
   p {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #666666;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #4a5568;
+    font-size: 0.95rem;
 
     a {
-      color: #0071e2;
-      font-weight: bold;
+      color: #4a9dec;
       text-decoration: none;
+      font-weight: 500;
 
       &:hover {
         text-decoration: underline;
@@ -595,20 +591,16 @@ export const LoginDiv = styled.div`
     }
   }
 
-  button {
-    margin-top: 1rem;
-    width: 100%;
-    padding: 0.8rem;
-    border: none;
-    background-color: #4a9dec;
-    color: white;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  @media (max-width: 480px) {
+    padding: 1.5rem;
 
-    &:hover {
-      background-color: #1964ff;
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 0.9rem;
     }
   }
 `;
@@ -616,27 +608,71 @@ export const LoginDiv = styled.div`
 export const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  p {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
 `;
 
 export const Input = styled.input`
-  border: 2px solid transparent;
-  width: 15em;
-  height: 2.5em;
-  padding-left: 0.8em;
-  outline: none;
-  overflow: hidden;
-  background-color: #f3f3f3;
-  border-radius: 10px;
-  transition: all 0.5s;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
 
-  &:hover,
   &:focus {
-    border: 2px solid #0071e2;
-    box-shadow: 0px 0px 0px 7px rgba(74, 157, 236, 0.2);
-    background-color: white;
+    outline: none;
+    border-color: #4a9dec;
+    box-shadow: 0 0 0 3px rgba(74, 157, 236, 0.1);
+  }
+
+  &:disabled {
+    background-color: #edf2f7;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: #a0aec0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+  }
+`;
+
+export const AuthSubmitButton = styled.button`
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4a9dec;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #3182ce;
+  }
+
+  &:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.625rem;
+    font-size: 0.95rem;
   }
 `;
 
@@ -725,28 +761,6 @@ export const FooterLink = styled(Link)`
 
   &:hover {
     color: #4a9dec;
-  }
-`;
-
-export const AuthSubmitButton = styled.button`
-  margin-top: 1rem;
-  width: 100%;
-  padding: 0.8rem;
-  border: none;
-  background-color: #4a9dec;
-  color: white;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #1964ff;
-  }
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
   }
 `;
 

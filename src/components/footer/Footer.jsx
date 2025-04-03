@@ -20,21 +20,21 @@ function Footer() {
         <FooterSection>
           <FooterTitle>Quick Links</FooterTitle>
           <FooterLink to="/">Home</FooterLink>
-          <FooterLink to="/surveys">My Surveys</FooterLink>
+          <FooterLink to="/">My Surveys</FooterLink>
           <FooterLink to="/responses">Responses</FooterLink>
         </FooterSection>
 
         <FooterSection>
           <FooterTitle>Connect</FooterTitle>
           <FooterLink
-            href="https://github.com/Esmanurrr"
+            to="https://github.com/Esmanurrr"
             target="_blank"
             rel="noopener noreferrer"
           >
             GitHub
           </FooterLink>
           <FooterLink
-            href="https://www.linkedin.com/in/esmanur-mazlum/"
+            to="https://www.linkedin.com/in/esmanur-mazlum/"
             target="_blank"
             rel="noopener noreferrer"
           >
